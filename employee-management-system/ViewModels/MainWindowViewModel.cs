@@ -9,6 +9,6 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        _currentView = new LoginViewModel();
+        _currentView = new LoginViewModel(this);
     }
 }

@@ -1,0 +1,152 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:employee_management_system.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
+             x:Class="employee_management_system.Views.UserPanelView"
+             x:DataType="vm:UserPanelViewModel">
+
+    <Design.DataContext>
+        <vm:UserPanelViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <!-- ComboBox style matching project theme -->
+        <Style Selector="ComboBox">
+            <Style.Resources>
+                <SolidColorBrush x:Key="ComboBoxBackground" Color="White"/>
+                <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="White"/>
+                <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="White"/>
+
+                <SolidColorBrush x:Key="ComboBoxForeground" Color="Black"/>
+                <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="Black"/>
+                <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="Black"/>
+                <SolidColorBrush x:Key="ComboBoxForegroundFocused" Color="Black"/>
+
+                <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="#999999"/>
+                <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="#999999"/>
+                <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="#0000FF"/>
+                <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="#0000FF"/>
+
+                <SolidColorBrush x:Key="ComboBoxPlaceholderForeground" Color="#888888"/>
+                <SolidColorBrush x:Key="ComboBoxPlaceholderForegroundPointerOver" Color="#888888"/>
+                <SolidColorBrush x:Key="ComboBoxPlaceholderForegroundFocused" Color="#888888"/>
+            </Style.Resources>
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24" Spacing="16">
+
+            <!-- Card 1: Pracownik + ID zlecenia -->
+            <Border Background="White"
+                    CornerRadius="12"
+                    Padding="24,16"
+                    BoxShadow="0 1 4 0 #22000000">
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="Pracownik:"
+                                   FontSize="12"
+                                   Foreground="#666"/>
+                        <TextBlock Text="{Binding EmployeeName}"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#111"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">
+                        <TextBlock Text="ID zlecenia:"
+                                   FontSize="12"
+                                   Foreground="#666"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock Text="{Binding OrderId}"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#0000FF"
+                                   HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Card 2: Wykonywana operacja -->
+            <Border Background="White"
+                    CornerRadius="12"
+                    Padding="24,20"
+                    BoxShadow="0 1 4 0 #22000000">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Wykonywana operacja:"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="#111"/>
+                    <Border Background="#F8F8F8"
+                            CornerRadius="8"
+                            Padding="16"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1">
+                        <TextBlock Text="{Binding CurrentOperation}"
+                                   FontSize="18"
+                                   Foreground="#333"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Card 3: Wybierz operację -->
+            <Border Background="White"
+                    CornerRadius="12"
+                    Padding="24,20"
+                    BoxShadow="0 1 4 0 #22000000">
+                <StackPanel Spacing="14">
+                    <TextBlock Text="Wybierz operację"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="#111"/>
+
+                    <ComboBox ItemsSource="{Binding AvailableOperations}"
+                              SelectedItem="{Binding SelectedOperation}"
+                              PlaceholderText="Wybierz operację"
+                              HorizontalAlignment="Stretch"
+                              Padding="12"/>
+
+                    <Grid ColumnDefinitions="*,16,*">
+                        <!-- Rozpocznij -->
+                        <Button Grid.Column="0"
+                                Command="{Binding StartOperationCommand}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Padding="14"
+                                CornerRadius="8"
+                                Background="#C8D8E8"
+                                Foreground="#D44"
+                                FontWeight="SemiBold">
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <TextBlock Text="▶" VerticalAlignment="Center"/>
+                                <TextBlock Text="Rozpocznij" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Zakończ -->
+                        <Button Grid.Column="2"
+                                Command="{Binding StopOperationCommand}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Padding="14"
+                                CornerRadius="8"
+                                Background="#C8D8E8"
+                                Foreground="#D44"
+                                FontWeight="SemiBold">
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <TextBlock Text="◻" VerticalAlignment="Center"/>
+                                <TextBlock Text="Zakończ" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

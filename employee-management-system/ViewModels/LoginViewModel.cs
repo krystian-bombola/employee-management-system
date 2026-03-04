@@ -6,6 +6,8 @@ namespace employee_management_system.ViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {
+    private readonly MainWindowViewModel _mainVm;
+
     [ObservableProperty]
     private string _employeeId = string.Empty;
 
@@ -17,6 +19,16 @@ public partial class LoginViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isErrorVisible;
+
+    public LoginViewModel()
+    {
+        _mainVm = null!;
+    }
+
+    public LoginViewModel(MainWindowViewModel mainVm)
+    {
+        _mainVm = mainVm;
+    }
 
     [RelayCommand]
     private async Task LoginAsync()
@@ -36,7 +48,7 @@ public partial class LoginViewModel : ViewModelBase
             ErrorMessage = string.Empty;
             IsErrorVisible = false;
 
-            // TODO: powiadom MainWindowViewModel o pomyślnym logowaniu
+            _mainVm.CurrentView = new UserPanelViewModel(EmployeeId, OrderId);
         }
         else
         {
