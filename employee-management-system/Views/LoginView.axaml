@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:employee_management_system.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
+             x:Class="employee_management_system.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <Design.DataContext>
+        <vm:LoginViewModel/>
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Style.Resources>
+                <SolidColorBrush x:Key="TextControlBackground" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="White"/>
+
+                <SolidColorBrush x:Key="TextControlForeground" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundFocused" Color="Black"/>
+
+                <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#888888"/>
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#888888"/>
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#888888"/>
+
+                <SolidColorBrush x:Key="TextControlBorderBrush" Color="#999999"/>
+                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#999999"/>
+                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#0000FF"/>
+            </Style.Resources>
+        </Style>
+        <Style Selector="Button">
+            <Style.Resources>
+                <SolidColorBrush x:Key="ButtonBackground" Color="#0000FF"/>
+                <SolidColorBrush x:Key="ButtonForeground" Color="White"/>
+
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0000AA"/>
+                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#000088"/>
+                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+            </Style.Resources>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*" Margin="24">
+        <TextBlock Grid.Row="0"
+                   Text="System zarządzania produkcją"
+                   Foreground="#000"
+                   FontSize="24"
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Center"
+                   Margin="0,50,0,24"/>
+
+        <Border Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Padding="24"
+                CornerRadius="8"
+                BorderThickness="1">
+            <StackPanel Width="320" Spacing="10">
+                <TextBlock Text="ID pracownika" Foreground="#000"/>
+                <TextBox
+                    Text="{Binding EmployeeId}"
+                    Watermark="Wpisz ID pracownika"
+                    Padding="12"/>
+
+                <TextBlock Text="ID zlecenia" Foreground="#000" Margin="0,6,0,0"/>
+                <TextBox
+                    Text="{Binding OrderId}"
+                    Watermark="Wpisz ID zlecenia"
+                    Padding="12"/>
+
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="Red"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           IsVisible="{Binding IsErrorVisible}"
+                           Margin="0,4,0,0"/>
+
+                <Button Content="Zaloguj"
+                        Command="{Binding LoginCommand}"
+                        Foreground="White"
+                        Background="#0000FF"
+                        Margin="0,12,0,0"
+                        Padding="12"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

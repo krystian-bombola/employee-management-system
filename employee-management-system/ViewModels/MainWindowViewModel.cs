@@ -1,6 +1,14 @@
-﻿namespace employee_management_system.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace employee_management_system.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    public string Greeting { get; } = "Welcome to Avalonia!";
+    [ObservableProperty]
+    private ViewModelBase _currentView;
+
+    public MainWindowViewModel()
+    {
+        _currentView = new LoginViewModel();
+    }
 }
