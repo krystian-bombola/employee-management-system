@@ -1,0 +1,130 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:employee_management_system.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="450"
+             x:Class="employee_management_system.Views.AdminWindowView"
+             x:DataType="vm:AdminWindowViewModel">
+
+    <Design.DataContext>
+        <vm:AdminWindowViewModel/>
+    </Design.DataContext>
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Style.Resources>
+                <SolidColorBrush x:Key="TextControlBackground" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="White"/>
+
+                <SolidColorBrush x:Key="TextControlForeground" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundFocused" Color="Black"/>
+
+                <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#888888"/>
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#888888"/>
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#888888"/>
+
+                <SolidColorBrush x:Key="TextControlBorderBrush" Color="#999999"/>
+                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#999999"/>
+                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#0000FF"/>
+            </Style.Resources>
+        </Style>
+        <Style Selector="Button">
+            <Style.Resources>
+                <SolidColorBrush x:Key="ButtonBackground" Color="#0000FF"/>
+                <SolidColorBrush x:Key="ButtonForeground" Color="White"/>
+
+                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0000AA"/>
+                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
+
+                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#000088"/>
+                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
+            </Style.Resources>
+        </Style>
+    </UserControl.Styles>
+    <Grid Background="#F3F4F6">
+        <Grid Margin="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+     <Border Grid.Column="0"
+                    Padding="24"
+                    Background="White"
+                    CornerRadius="14">
+                <StackPanel>
+                    <TextBlock Text="Dodawanie operacji" Classes="header"/>
+                    <TextBlock Text="Nazwa operacji" Classes="label"/>
+
+                    <TextBox Watermark="Nazwa operacji"
+                             Text="{Binding NewOperationName, Mode=TwoWay}"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="10"
+                                Margin="0,10,0,0">
+                        <Button Content="+ Dodaj operację"
+                                Command="{Binding AddOperationCommand}"/>
+                        <Button Content="- Usuń operację"
+                                Command="{Binding RemoveOperationCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2"
+                    Padding="24"
+                    Background="White"
+                    CornerRadius="14">
+                <StackPanel>
+                    <TextBlock Text="Podgląd czasu produkcji" Classes="header"/>
+
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                       <TextBlock Grid.Column="0" Text="Pracownik" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="1" Text="Operacja" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="2" Text="Czas rozpoczęcia" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="3" Text="Czas zakończenia" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="4" Text="Czas trwania" FontWeight="Bold" TextWrapping="Wrap"/>
+                    </Grid>
+
+                    <Separator Margin="0,5"/>
+
+                    <!-- Lista produkcji -->
+                    <ScrollViewer Height="300">
+                        <ItemsControl ItemsSource="{Binding ProductionRecords}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:ProductionRecord">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="2*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="{Binding Employee}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Operation}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding StartTime}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding EndTime}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding Duration}" TextWrapping="Wrap"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
