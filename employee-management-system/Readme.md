@@ -34,7 +34,7 @@ Logowanie
 ADMIN: Identyfikator = admin (numer zlecenia dowolny jeszcze) 
 
 Użytkownik: Identyfikator zgodny z Uzytkownicy.Identyfikator, numer zlecenia zgodny z Zlecenia.Id.
-
+przykładowe na ten moment : Identyfikator = 123, numer zlecenia = 8888 (ale możecie na adminie dodawać jakie chcecie)
 TODO / do poprawy
 
 Poprawić logowanie – dodać dodatkowe zabezpieczenia (hashowanie haseł, sprawdzanie uprawnień).
