@@ -56,7 +56,6 @@
                     CornerRadius="14">
                 <StackPanel>
                     <TextBlock Text="Dodawanie operacji" Classes="header"/>
-                    <TextBlock Text="Nazwa operacji" Classes="label"/>
 
                     <TextBox Watermark="Nazwa operacji"
                              Text="{Binding NewOperationName, Mode=TwoWay}"/>
@@ -68,6 +67,43 @@
                                 Command="{Binding AddOperationCommand}"/>
                         <Button Content="- Usuń operację"
                                 Command="{Binding RemoveOperationCommand}"/>
+                    </StackPanel>
+
+                    <TextBlock Text="Dodawanie zlecenia" Classes="header"/>
+                    <TextBox Watermark="Identyfikator zlecenia"
+                             Text="{Binding NewJobName, Mode=TwoWay}"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="10"
+                                Margin="0,10,0,0">
+                        <Button Content="+ Dodaj zlecenie"
+                                Command="{Binding AddJobCommand}"/>
+                        <Button Content="- Usuń zlecenie"
+                                Command="{Binding RemoveJobCommand}"/>
+
+                    </StackPanel>
+
+                     <TextBlock Text="Dodawanie Pracownika" Classes="header"/>
+                    
+
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="10"
+                                Margin="0,10,0,0">
+                    <TextBox Watermark="Imię"
+                             Text="{Binding NewUserFirstName, Mode=TwoWay}"/>
+                        <TextBox Watermark="Nazwisko"
+                             Text="{Binding NewUserLastName, Mode=TwoWay}"/>
+                        <TextBox Watermark="Identyfikator"
+                             Text="{Binding NewUserID, Mode=TwoWay}"/>
+                        </StackPanel>
+                     <StackPanel Orientation="Horizontal"
+                                Spacing="10"
+                                Margin="0,10,0,0">
+                        <Button Content="+ Dodaj Użytkownika"
+                                Command="{Binding AddUserCommand}"/>
+                        <Button Content="- Usuń Użytkownika"
+                                Command="{Binding RemoveUserCommand}"/>
+
                     </StackPanel>
                 </StackPanel>
             </Border>
