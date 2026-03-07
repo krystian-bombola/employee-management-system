@@ -110,7 +110,7 @@
                               HorizontalAlignment="Stretch"
                               Padding="12"/>
 
-                    <Grid ColumnDefinitions="*,16,*">
+                    <Grid ColumnDefinitions="*,16,*,16,*">
                         <!-- Rozpocznij -->
                         <Button Grid.Column="0"
                                 Command="{Binding StartOperationCommand}"
@@ -118,27 +118,100 @@
                                 HorizontalContentAlignment="Center"
                                 Padding="14"
                                 CornerRadius="8"
-                                Background="#C8D8E8"
-                                Foreground="#D44"
+                                Background="#4AD94A"
+                                Foreground="White"
                                 FontWeight="SemiBold">
+
+                            <Button.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Background" Value="#4AD94A"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#35BD35"/>
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#2A992A"/>
+                                </Style>
+                                <Style Selector="Button:disabled /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#7FE07F"/>
+                                    <Setter Property="TextElement.Foreground" Value="White"/>
+                                </Style>
+                            </Button.Styles>
+
                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                 <TextBlock Text="▶" VerticalAlignment="Center"/>
-                                <TextBlock Text="Rozpocznij" VerticalAlignment="Center"/>
+                                <TextBlock Text="Rozpocznj" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <!-- Zakończ -->
+                        <!-- Wstrzymaj -->
                         <Button Grid.Column="2"
                                 Command="{Binding StopOperationCommand}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 Padding="14"
                                 CornerRadius="8"
-                                Background="#C8D8E8"
-                                Foreground="#D44"
+                                Background="#4A90D9"
+                                Foreground="White"
                                 FontWeight="SemiBold">
+
+                            <Button.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Background" Value="#4A90D9"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#357ABD"/>
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#2A6099"/>
+                                </Style>
+                                <Style Selector="Button:disabled /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#7FB3E0"/>
+                                    <Setter Property="TextElement.Foreground" Value="White"/>
+                                </Style>
+                            </Button.Styles>
+
                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                                <TextBlock Text="◻" VerticalAlignment="Center"/>
+                                <TextBlock Text="⏸" VerticalAlignment="Center"/>
+                                <TextBlock Text="Wstrzymaj" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Zakończ -->
+                        <Button Grid.Column="4"
+                                Command="{Binding StopOperationCommand}"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Padding="14"
+                                CornerRadius="8"
+                                Background="#D94A4A"
+                                Foreground="White"
+                                FontWeight="SemiBold">
+
+                            <Button.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Background" Value="#D94A4A"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Style>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#BD3535"/>
+                                </Style>
+                                <Style Selector="Button:pressed /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#992A2A"/>
+                                </Style>
+                                <Style Selector="Button:disabled /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#E07F7F"/>
+                                    <Setter Property="TextElement.Foreground" Value="White"/>
+                                </Style>
+                            </Button.Styles>
+
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                                <TextBlock Text="⏹" VerticalAlignment="Center"/>
                                 <TextBlock Text="Zakończ" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
