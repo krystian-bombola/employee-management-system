@@ -10,9 +10,11 @@
         Title="System zarządzania produkcją"
         Background="#eee"
         Foreground="#111"
-        Width="600"
-        Height="450"
-        CanResize="False">
+        Width="960"
+        Height="640"
+        MinWidth="1280"
+        MinHeight="720"
+        CanResize="True">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
