@@ -10,6 +10,7 @@
     <Design.DataContext>
         <vm:AdminWindowViewModel/>
     </Design.DataContext>
+
     <UserControl.Styles>
         <Style Selector="TextBox">
             <Style.Resources>
@@ -30,19 +31,30 @@
                 <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#0000FF"/>
             </Style.Resources>
         </Style>
-        <Style Selector="Button">
-            <Style.Resources>
-                <SolidColorBrush x:Key="ButtonBackground" Color="#0000FF"/>
-                <SolidColorBrush x:Key="ButtonForeground" Color="White"/>
 
-                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0000AA"/>
-                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
-
-                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#000088"/>
-                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
-            </Style.Resources>
+        <!-- Unified Admin button style (same colors for all buttons) -->
+        <Style Selector="Button.admin-button">
+            <Setter Property="Background" Value="#2F6FB7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="170"/>
+        </Style>
+        <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#255A93"/>
+        </Style>
+        <Style Selector="Button.admin-button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#1E4875"/>
+        </Style>
+        <Style Selector="Button.admin-button:disabled /template/ ContentPresenter">
+            <Setter Property="Background" Value="#8FB8E6"/>
+            <Setter Property="TextElement.Foreground" Value="White"/>
         </Style>
     </UserControl.Styles>
+
     <Grid Background="#F3F4F6">
         <Grid Margin="40">
             <Grid.ColumnDefinitions>
@@ -50,7 +62,8 @@
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-     <Border Grid.Column="0"
+
+            <Border Grid.Column="0"
                     Padding="24"
                     Background="White"
                     CornerRadius="14">
@@ -63,9 +76,11 @@
                     <StackPanel Orientation="Horizontal"
                                 Spacing="10"
                                 Margin="0,10,0,0">
-                        <Button Content="+ Dodaj operację"
+                        <Button Classes="admin-button"
+                                Content="+ Dodaj operację"
                                 Command="{Binding AddOperationCommand}"/>
-                        <Button Content="- Usuń operację"
+                        <Button Classes="admin-button"
+                                Content="- Usuń operację"
                                 Command="{Binding RemoveOperationCommand}"/>
                     </StackPanel>
 
@@ -76,34 +91,36 @@
                     <StackPanel Orientation="Horizontal"
                                 Spacing="10"
                                 Margin="0,10,0,0">
-                        <Button Content="+ Dodaj zlecenie"
+                        <Button Classes="admin-button"
+                                Content="+ Dodaj zlecenie"
                                 Command="{Binding AddJobCommand}"/>
-                        <Button Content="- Usuń zlecenie"
+                        <Button Classes="admin-button"
+                                Content="- Usuń zlecenie"
                                 Command="{Binding RemoveJobCommand}"/>
-
                     </StackPanel>
 
-                     <TextBlock Text="Dodawanie Pracownika" Classes="header"/>
-                    
+                    <TextBlock Text="Dodawanie Pracownika" Classes="header"/>
 
                     <StackPanel Orientation="Horizontal"
                                 Spacing="10"
                                 Margin="0,10,0,0">
-                    <TextBox Watermark="Imię"
-                             Text="{Binding NewUserFirstName, Mode=TwoWay}"/>
+                        <TextBox Watermark="Imię"
+                                 Text="{Binding NewUserFirstName, Mode=TwoWay}"/>
                         <TextBox Watermark="Nazwisko"
-                             Text="{Binding NewUserLastName, Mode=TwoWay}"/>
+                                 Text="{Binding NewUserLastName, Mode=TwoWay}"/>
                         <TextBox Watermark="Identyfikator"
-                             Text="{Binding NewUserID, Mode=TwoWay}"/>
-                        </StackPanel>
-                     <StackPanel Orientation="Horizontal"
+                                 Text="{Binding NewUserID, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
                                 Spacing="10"
                                 Margin="0,10,0,0">
-                        <Button Content="+ Dodaj Użytkownika"
+                        <Button Classes="admin-button"
+                                Content="+ Dodaj Użytkownika"
                                 Command="{Binding AddUserCommand}"/>
-                        <Button Content="- Usuń Użytkownika"
+                        <Button Classes="admin-button"
+                                Content="- Usuń Użytkownika"
                                 Command="{Binding RemoveUserCommand}"/>
-
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -115,7 +132,6 @@
                 <StackPanel>
                     <TextBlock Text="Podgląd czasu produkcji" Classes="header"/>
 
-
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*"/>
@@ -125,7 +141,7 @@
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
 
-                       <TextBlock Grid.Column="0" Text="Pracownik" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock Grid.Column="0" Text="Pracownik" FontWeight="Bold" TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="1" Text="Operacja" FontWeight="Bold" TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="2" Text="Czas rozpoczęcia" FontWeight="Bold" TextWrapping="Wrap"/>
                         <TextBlock Grid.Column="3" Text="Czas zakończenia" FontWeight="Bold" TextWrapping="Wrap"/>
@@ -134,7 +150,6 @@
 
                     <Separator Margin="0,5"/>
 
-                    <!-- Lista produkcji -->
                     <ScrollViewer Height="300">
                         <ItemsControl ItemsSource="{Binding ProductionRecords}">
                             <ItemsControl.ItemTemplate>
