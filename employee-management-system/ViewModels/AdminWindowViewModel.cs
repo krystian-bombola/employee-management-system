@@ -11,6 +11,8 @@ namespace employee_management_system.ViewModels;
 
 public partial class AdminWindowViewModel : ViewModelBase
 {
+    private readonly MainWindowViewModel _mainVm;
+
     [ObservableProperty]
     private string? _newOperationName;
 
@@ -32,16 +34,15 @@ public partial class AdminWindowViewModel : ViewModelBase
 
     public ObservableCollection<ProductionRecord> ProductionRecords { get; } = new();
 
-    public AdminWindowViewModel()
+    public AdminWindowViewModel(MainWindowViewModel mainVm)
     {
+        _mainVm = mainVm;
+
         Jobs.Add(new Zlecenie { Id = 1, NazwaZlecenia = "Testowe zlecenie", DataUtworzenia = DateTime.Now, Status = "Nowe" });
         using (var db = new DatabaseContext())
         {
-
             db.Database.EnsureCreated();
 
-
-           
             var pracownicy = db.Uzytkownicy.ToList();
             foreach (var p in pracownicy)
             {
@@ -49,6 +50,12 @@ public partial class AdminWindowViewModel : ViewModelBase
                     $"{p.Imie} {p.Nazwisko}", "Brak operacji", DateTime.Now, DateTime.Now));
             }
         }
+    }
+
+    [RelayCommand]
+    private void Logout()
+    {
+        _mainVm.CurrentView = new LoginViewModel(_mainVm);
     }
 
     [RelayCommand]

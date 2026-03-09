@@ -45,7 +45,7 @@ public partial class LoginViewModel : ViewModelBase
             ErrorMessage = string.Empty;
             IsErrorVisible = false;
 
-            _mainVm.CurrentView = new AdminWindowViewModel();
+            _mainVm.CurrentView = new AdminWindowViewModel(_mainVm);
             return;
         }
         var user = await db.Uzytkownicy.FirstOrDefaultAsync(u => u.Identyfikator == EmployeeId);
@@ -56,7 +56,6 @@ public partial class LoginViewModel : ViewModelBase
             ErrorMessage = string.Empty;
             IsErrorVisible = false;
 
-            
             _mainVm.CurrentView = new UserPanelViewModel(EmployeeId, OrderId)
             {
                 OrderId = job.NazwaZlecenia,
