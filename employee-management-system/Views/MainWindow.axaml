@@ -13,7 +13,7 @@
         Width="960"
         Height="640"
         MinWidth="1280"
-        MinHeight="720"
+        MinHeight="840"
         CanResize="True">
 
     <Design.DataContext>

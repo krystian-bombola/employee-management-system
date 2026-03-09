@@ -43,7 +43,11 @@ public partial class AdminWindowViewModel : ViewModelBase
         foreach (var p in db.Uzytkownicy.ToList())
         {
             ProductionRecords.Add(new ProductionRecord(
-                $"{p.Imie} {p.Nazwisko}", "Brak operacji", DateTime.Now, DateTime.Now));
+                p.Identyfikator ?? string.Empty,
+                $"{p.Imie} {p.Nazwisko}",
+                "Brak operacji",
+                DateTime.Now,
+                DateTime.Now));
         }
     }
 
@@ -143,8 +147,8 @@ public partial class AdminWindowViewModel : ViewModelBase
         db.Uzytkownicy.Add(pracownik);
         db.SaveChanges();
 
-        // ← aktualizacja listy w UI bez przelogowania
         ProductionRecords.Add(new ProductionRecord(
+            pracownik.Identyfikator ?? string.Empty,
             $"{pracownik.Imie} {pracownik.Nazwisko}",
             "Brak operacji",
             DateTime.Now,
@@ -174,9 +178,8 @@ public partial class AdminWindowViewModel : ViewModelBase
             db.Uzytkownicy.Remove(userToDelete);
             db.SaveChanges();
 
-            // ← aktualizacja listy w UI bez przelogowania
-            var fullName = $"{userToDelete.Imie} {userToDelete.Nazwisko}";
-            var record = ProductionRecords.FirstOrDefault(r => r.Employee == fullName);
+            var record = ProductionRecords.FirstOrDefault(r =>
+                r.EmployeeId == (userToDelete.Identyfikator ?? string.Empty));
             if (record != null)
                 ProductionRecords.Remove(record);
 
@@ -187,7 +190,7 @@ public partial class AdminWindowViewModel : ViewModelBase
     }
 }
 
-public record ProductionRecord(string Employee, string Operation, DateTime StartTime, DateTime EndTime)
+public record ProductionRecord(string EmployeeId, string Employee, string Operation, DateTime StartTime, DateTime EndTime)
 {
     public string Duration => (EndTime - StartTime).ToString(@"hh\:mm\:ss");
 }

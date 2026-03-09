@@ -191,18 +191,19 @@
                                     BorderBrush="#E5E7EB"
                                     BorderThickness="1">
 
-                                <Grid ColumnDefinitions="2*,2*,2*,2*,2*" RowDefinitions="Auto,Auto">
-                                    <TextBlock Grid.Column="0" Text="Pracownik" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
-                                    <TextBlock Grid.Column="1" Text="Operacja" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
-                                    <TextBlock Grid.Column="2" Text="Czas rozpoczęcia" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
-                                    <TextBlock Grid.Column="3" Text="Czas zakończenia" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
-                                    <TextBlock Grid.Column="4" Text="Czas trwania" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
+                                <Grid ColumnDefinitions="2*,2*,2*,2*,2*,2*" RowDefinitions="Auto,Auto">
+                                    <TextBlock Grid.Column="0" Text="ID" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="1" Text="Pracownik" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="2" Text="Operacja" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="3" Text="Czas rozpoczęcia" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="4" Text="Czas zakończenia" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="5" Text="Czas trwania" FontWeight="SemiBold" Foreground="#111" TextWrapping="Wrap"/>
 
-                                    <Separator Grid.Row="1" Grid.ColumnSpan="5" Margin="0,10,0,0"/>
+                                    <Separator Grid.Row="1" Grid.ColumnSpan="6" Margin="0,10,0,0"/>
                                 </Grid>
                             </Border>
 
-                            <ScrollViewer Height="360"
+                            <ScrollViewer Height="600"
                                           HorizontalScrollBarVisibility="Disabled">
                                 <ItemsControl ItemsSource="{Binding ProductionRecords}">
                                     <ItemsControl.ItemTemplate>
@@ -213,12 +214,13 @@
                                                     Margin="0,0,0,10"
                                                     BorderBrush="#E5E7EB"
                                                     BorderThickness="1">
-                                                <Grid ColumnDefinitions="2*,2*,2*,2*,2*">
-                                                    <TextBlock Grid.Column="0" Text="{Binding Employee}" TextWrapping="Wrap"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Operation}" TextWrapping="Wrap"/>
-                                                    <TextBlock Grid.Column="2" Text="{Binding StartTime}" TextWrapping="Wrap"/>
-                                                    <TextBlock Grid.Column="3" Text="{Binding EndTime}" TextWrapping="Wrap"/>
-                                                    <TextBlock Grid.Column="4" Text="{Binding Duration}" TextWrapping="Wrap"/>
+                                                <Grid ColumnDefinitions="2*,2*,2*,2*,2*,2*">
+                                                    <TextBlock Grid.Column="0" Text="{Binding EmployeeId}" TextWrapping="Wrap"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Employee}" TextWrapping="Wrap"/>
+                                                    <TextBlock Grid.Column="2" Text="{Binding Operation}" TextWrapping="Wrap"/>
+                                                    <TextBlock Grid.Column="3" Text="{Binding StartTime}" TextWrapping="Wrap"/>
+                                                    <TextBlock Grid.Column="4" Text="{Binding EndTime}" TextWrapping="Wrap"/>
+                                                    <TextBlock Grid.Column="5" Text="{Binding Duration}" TextWrapping="Wrap"/>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
