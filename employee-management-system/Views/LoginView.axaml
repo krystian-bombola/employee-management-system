@@ -45,22 +45,21 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="Auto,*" Margin="24">
-        <TextBlock Grid.Row="0"
-                   Text="System zarządzania produkcją"
-                   Foreground="#000"
-                   FontSize="24"
-                   FontWeight="SemiBold"
-                   HorizontalAlignment="Center"
-                   Margin="0,50,0,24"/>
+    <Grid Margin="24">
+        <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="24">
+            <TextBlock Text="System zarządzania produkcją"
+                       Foreground="#000"
+                       FontSize="24"
+                       FontWeight="SemiBold"
+                       HorizontalAlignment="Center"/>
 
-        <Border Grid.Row="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Padding="24"
-                CornerRadius="8"
-                BorderThickness="1">
-            <StackPanel Width="320" Spacing="10">
+            <Border HorizontalAlignment="Center"
+                    Padding="24"
+                    CornerRadius="8"
+                    BorderThickness="1">
+                <StackPanel Width="320" Spacing="10">
                 <TextBlock Text="ID pracownika" Foreground="#000"/>
                 <TextBox
                     Text="{Binding EmployeeId}"
@@ -88,7 +87,8 @@
                         Padding="12"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"/>
-            </StackPanel>
-        </Border>
+                </StackPanel>
+            </Border>
+        </StackPanel>
     </Grid>
 </UserControl>

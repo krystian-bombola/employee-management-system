@@ -1,11 +1,15 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using employee_management_system.Data;
+using System.Linq;
 
 namespace employee_management_system.ViewModels;
 
 public partial class UserPanelViewModel : ViewModelBase
 {
+    private readonly MainWindowViewModel _mainVm;
+
     [ObservableProperty]
     private string _employeeName = "---";
 
@@ -21,23 +25,33 @@ public partial class UserPanelViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isOperationRunning;
 
-    public ObservableCollection<string> AvailableOperations { get; } = new()
-    {
-        "Montaż",
-        "Spawanie",
-        "Kontrola jakości",
-        "Pakowanie",
-        "Transport"
-    };
+    private Uzytkownik user;
 
-    public UserPanelViewModel()
-    {
-    }
+    public ObservableCollection<string> AvailableOperations { get; } = new();
 
-    public UserPanelViewModel(string employeeName, string orderId)
+    public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName, string orderId)
     {
+        _mainVm = mainVm;
         _employeeName = employeeName;
         _orderId = orderId;
+
+        LoadOperationsFromDb();
+    }
+
+    [RelayCommand]
+    private void Logout()
+    {
+        _mainVm.CurrentView = new LoginViewModel(_mainVm);
+    }
+
+    private void LoadOperationsFromDb()
+    {
+        using var db = new DatabaseContext();
+        AvailableOperations.Clear();
+
+        var operations = db.Operacja.Select(o => o.NazwaOperacji).ToList();
+        foreach (var op in operations)
+            AvailableOperations.Add(op);
     }
 
     [RelayCommand(CanExecute = nameof(CanStartOperation))]
