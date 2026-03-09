@@ -8,6 +8,8 @@ namespace employee_management_system.ViewModels;
 
 public partial class UserPanelViewModel : ViewModelBase
 {
+    private readonly MainWindowViewModel _mainVm;
+
     [ObservableProperty]
     private string _employeeName = "---";
 
@@ -22,18 +24,24 @@ public partial class UserPanelViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isOperationRunning;
+
     private Uzytkownik user;
 
     public ObservableCollection<string> AvailableOperations { get; } = new();
 
-
-
-    public UserPanelViewModel(string employeeName, string orderId)
+    public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName, string orderId)
     {
+        _mainVm = mainVm;
         _employeeName = employeeName;
         _orderId = orderId;
 
         LoadOperationsFromDb();
+    }
+
+    [RelayCommand]
+    private void Logout()
+    {
+        _mainVm.CurrentView = new LoginViewModel(_mainVm);
     }
 
     private void LoadOperationsFromDb()
@@ -42,11 +50,9 @@ public partial class UserPanelViewModel : ViewModelBase
         AvailableOperations.Clear();
 
         var operations = db.Operacja.Select(o => o.NazwaOperacji).ToList();
-                foreach (var op in operations)
+        foreach (var op in operations)
             AvailableOperations.Add(op);
     }
-
-
 
     [RelayCommand(CanExecute = nameof(CanStartOperation))]
     private void StartOperation()

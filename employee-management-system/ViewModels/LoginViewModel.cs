@@ -56,7 +56,7 @@ public partial class LoginViewModel : ViewModelBase
             ErrorMessage = string.Empty;
             IsErrorVisible = false;
 
-            _mainVm.CurrentView = new UserPanelViewModel(EmployeeId, OrderId)
+            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, EmployeeId, OrderId)
             {
                 OrderId = job.NazwaZlecenia,
             };
