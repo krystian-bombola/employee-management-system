@@ -25,8 +25,6 @@ public partial class UserPanelViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isOperationRunning;
 
-    private Uzytkownik user;
-
     public ObservableCollection<string> AvailableOperations { get; } = new();
 
     public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName, string orderId)

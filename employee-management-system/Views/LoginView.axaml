@@ -62,7 +62,7 @@
                 <StackPanel Width="320" Spacing="10">
                 <TextBlock Text="ID pracownika" Foreground="#000"/>
                 <TextBox
-                    Text="{Binding EmployeeId}"
+                    Text="{Binding Identyfikator}"
                     Watermark="Wpisz ID pracownika"
                     Padding="12"/>
 

@@ -1,17 +1,17 @@
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.IO;
+
 namespace employee_management_system.ViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {
-    private readonly MainWindowViewModel _mainVm;
+    private readonly MainWindowViewModel? _mainVm;
 
     [ObservableProperty]
-    private string _employeeId = string.Empty;
+    private string _identyfikator = string.Empty;
 
     [ObservableProperty]
     private string _orderId = string.Empty;
@@ -22,49 +22,64 @@ public partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isErrorVisible;
 
+    public LoginViewModel()
+    {
+    }
+
     public LoginViewModel(MainWindowViewModel mainVm)
     {
         _mainVm = mainVm;
     }
 
     [RelayCommand]
-    private async Task LoginAsync()
+    private void Login()
     {
-        if (string.IsNullOrWhiteSpace(EmployeeId) || string.IsNullOrWhiteSpace(OrderId))
+        if (_mainVm is null)
         {
-            ErrorMessage = "Wypełnij oba pola!";
+            return;
+        }
+
+        var identyfikator = Identyfikator.Trim();
+        if (string.IsNullOrWhiteSpace(identyfikator))
+        {
+            ErrorMessage = "Wpisz identyfikator.";
             IsErrorVisible = true;
             return;
         }
 
-        await Task.Delay(200); // symulacja operacji asynchronicznej
-        using var db = new DatabaseContext();
-        // TODO: zastąp właściwą logiką uwierzytelniania
-        if (EmployeeId == "admin")
+        var orderId = OrderId.Trim();
+        if (string.IsNullOrWhiteSpace(orderId))
         {
-            ErrorMessage = string.Empty;
-            IsErrorVisible = false;
-
-            _mainVm.CurrentView = new AdminWindowViewModel(_mainVm);
+            ErrorMessage = "Wpisz ID zlecenia.";
+            IsErrorVisible = true;
             return;
         }
-        var user = await db.Uzytkownicy.FirstOrDefaultAsync(u => u.Identyfikator == EmployeeId);
-        var job = await db.Zlecenia.FirstOrDefaultAsync(z => z.NazwaZlecenia == OrderId);
 
-        if (user != null && job !=null)
+        var dbPath = Path.Combine(AppContext.BaseDirectory, "produkcja.db");
+        var uzytkownik = DatabaseService.FindByIdentyfikator(identyfikator, dbPath);
+        if (uzytkownik is null)
         {
-            ErrorMessage = string.Empty;
-            IsErrorVisible = false;
-
-            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, EmployeeId, OrderId)
-            {
-                OrderId = job.NazwaZlecenia,
-            };
-        }
-        else
-        {
-            ErrorMessage = "Nieprawidłowe ID pracownika lub ID zlecenia.";
+            ErrorMessage = "Nie znaleziono użytkownika.";
             IsErrorVisible = true;
+            return;
+        }
+
+        ErrorMessage = string.Empty;
+        IsErrorVisible = false;
+
+        switch (uzytkownik.Identyfikator)
+        {
+            case "admin":
+                _mainVm.CurrentView = new AdminWindowViewModel(_mainVm, uzytkownik);
+                break;
+            case "user":
+                var employeeName = $"{uzytkownik.Imie} {uzytkownik.Nazwisko}".Trim();
+                _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName, orderId);
+                break;
+            default:
+                ErrorMessage = "Brak uprawnień dla tego konta.";
+                IsErrorVisible = true;
+                break;
         }
     }
 }
