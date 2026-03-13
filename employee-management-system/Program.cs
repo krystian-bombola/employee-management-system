@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using System.IO;
 using System.Linq;
 using employee_management_system.Data;
 using employee_management_system.ViewModels;
@@ -11,14 +12,16 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        var dbPath = Path.Combine(AppContext.BaseDirectory, "produkcja.db");
+        DatabaseInitializer.Initialize(dbPath);
+
+        using (var db = new DatabaseContext())
         {
-            using (var db = new DatabaseContext())
-            {
-                db.Database.EnsureCreated();
-            }
-            BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+            db.Database.EnsureCreated();
         }
+
+        BuildAvaloniaApp()
+        .StartWithClassicDesktopLifetime(args);
     }
 
     public static AppBuilder BuildAvaloniaApp()

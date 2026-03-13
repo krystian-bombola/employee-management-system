@@ -10,7 +10,10 @@ namespace employee_management_system.ViewModels;
 
 public partial class AdminWindowViewModel : ViewModelBase
 {
-    private readonly MainWindowViewModel _mainVm;
+    private readonly MainWindowViewModel? _mainVm;
+
+    [ObservableProperty]
+    private string _loggedUserSurname = string.Empty;
 
     [ObservableProperty]
     private string? _newOperationName;
@@ -31,9 +34,14 @@ public partial class AdminWindowViewModel : ViewModelBase
     public ObservableCollection<Operacja> Operations { get; } = new();
     public ObservableCollection<ProductionRecord> ProductionRecords { get; } = new();
 
-    public AdminWindowViewModel(MainWindowViewModel mainVm)
+    public AdminWindowViewModel()
+    {
+    }
+
+    public AdminWindowViewModel(MainWindowViewModel mainVm, Uzytkownik uzytkownik)
     {
         _mainVm = mainVm;
+        LoggedUserSurname = uzytkownik.Nazwisko;
 
         Jobs.Add(new Zlecenie { Id = 1, NazwaZlecenia = "Testowe zlecenie", DataUtworzenia = DateTime.Now, Status = "Nowe" });
 
@@ -43,7 +51,7 @@ public partial class AdminWindowViewModel : ViewModelBase
         foreach (var p in db.Uzytkownicy.ToList())
         {
             ProductionRecords.Add(new ProductionRecord(
-                p.Identyfikator ?? string.Empty,
+                p.Identyfikator,
                 $"{p.Imie} {p.Nazwisko}",
                 "Brak operacji",
                 DateTime.Now,
@@ -54,6 +62,11 @@ public partial class AdminWindowViewModel : ViewModelBase
     [RelayCommand]
     private void Logout()
     {
+        if (_mainVm is null)
+        {
+            return;
+        }
+
         _mainVm.CurrentView = new LoginViewModel(_mainVm);
     }
 
