@@ -8,10 +8,10 @@ public class JobTask
     public int Id { get; set; }
 
     public int JobId { get; set; }
-    public Job Job { get; set; }
+    public Job Job { get; set; } = null!;
 
     public int OperationId { get; set; }
-    public Operation Operation { get; set; }
+    public Operation Operation { get; set; } = null!;
 
     public int Order { get; set; }
     public DateTime OperationStart { get; set; }

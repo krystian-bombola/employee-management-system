@@ -16,13 +16,13 @@ public class JobService
 
     public List<Job> GetAll() => _jobRepository.GetAll();
 
-    public void Add(string jobName)
+    public void Add(string jobName, string status = "Nowe")
     {
         var job = new Job
         {
             JobName = jobName,
             CreatedAt = DateTime.Now,
-            Status = "New"
+            Status = status
         };
         _jobRepository.Add(job);
     }

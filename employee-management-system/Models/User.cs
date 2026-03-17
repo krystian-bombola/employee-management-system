@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace employee_management_system.Models;
 
@@ -13,6 +14,8 @@ public class User
     public string PasswordSalt { get; set; } = string.Empty;
 
     public bool IsAdmin { get; set; } = false;
+
+    public string EmploymentDate { get; set; } = System.DateTime.Now.ToString("yyyy-MM-dd");
 
     public ICollection<WorkLog> WorkLogs { get; set; } = new List<WorkLog>();
 }

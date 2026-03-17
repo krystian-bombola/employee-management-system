@@ -13,11 +13,16 @@ public class OperationService
         _operationRepository = operationRepository;
     }
 
+    public List<Operation> GetAll() => _operationRepository.GetAll();
     public List<string> GetAllNames() => _operationRepository.GetAllNames();
 
-    public void Add(string operationName)
+    public void Add(string operationName, string description)
     {
-        var operation = new Operation { OperationName = operationName };
+        var operation = new Operation 
+        { 
+            OperationName = operationName,
+            Description = description
+        };
         _operationRepository.Add(operation);
     }
 
