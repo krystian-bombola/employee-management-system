@@ -12,7 +12,7 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var dbPath = Path.Combine(AppContext.BaseDirectory, "produkcja.db");
+        var dbPath = Path.Combine(AppContext.BaseDirectory, "production.db");
         DatabaseInitializer.Initialize(dbPath);
 
         using (var db = new DatabaseContext())

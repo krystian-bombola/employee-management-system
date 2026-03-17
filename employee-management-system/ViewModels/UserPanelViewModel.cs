@@ -1,3 +1,4 @@
+
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -17,7 +18,7 @@ public partial class UserPanelViewModel : ViewModelBase
     private string _orderId = "---";
 
     [ObservableProperty]
-    private string _currentOperation = "brak operacji";
+    private string _currentOperation = "No operation";
 
     [ObservableProperty]
     private string? _selectedOperation;
@@ -27,11 +28,10 @@ public partial class UserPanelViewModel : ViewModelBase
 
     public ObservableCollection<string> AvailableOperations { get; } = new();
 
-    public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName, string orderId)
+    public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName)
     {
         _mainVm = mainVm;
         _employeeName = employeeName;
-        _orderId = orderId;
 
         LoadOperationsFromDb();
     }
@@ -47,7 +47,7 @@ public partial class UserPanelViewModel : ViewModelBase
         using var db = new DatabaseContext();
         AvailableOperations.Clear();
 
-        var operations = db.Operacja.Select(o => o.NazwaOperacji).ToList();
+        var operations = db.Operations.Select(o => o.OperationName).ToList();
         foreach (var op in operations)
             AvailableOperations.Add(op);
     }
@@ -66,7 +66,7 @@ public partial class UserPanelViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanStopOperation))]
     private void StopOperation()
     {
-        CurrentOperation = "brak operacji";
+        CurrentOperation = "No operation";
         IsOperationRunning = false;
         StartOperationCommand.NotifyCanExecuteChanged();
         StopOperationCommand.NotifyCanExecuteChanged();

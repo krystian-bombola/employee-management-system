@@ -1,7 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
-using Microsoft.EntityFrameworkCore;
+using employee_management_system.Models;
+using employee_management_system.Repositories;
+using employee_management_system.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -30,30 +33,29 @@ public partial class AdminWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _newJobName = string.Empty;
 
-    public ObservableCollection<Zlecenie> Jobs { get; } = new();
-    public ObservableCollection<Operacja> Operations { get; } = new();
+    public ObservableCollection<Job> Jobs { get; } = new();
+    public ObservableCollection<Operation> Operations { get; } = new();
     public ObservableCollection<ProductionRecord> ProductionRecords { get; } = new();
 
     public AdminWindowViewModel()
     {
     }
 
-    public AdminWindowViewModel(MainWindowViewModel mainVm, Uzytkownik uzytkownik)
+    public AdminWindowViewModel(MainWindowViewModel mainVm, User user)
     {
         _mainVm = mainVm;
-        LoggedUserSurname = uzytkownik.Nazwisko;
-
-        Jobs.Add(new Zlecenie { Id = 1, NazwaZlecenia = "Testowe zlecenie", DataUtworzenia = DateTime.Now, Status = "Nowe" });
+        LoggedUserSurname = user.LastName;
 
         using var db = new DatabaseContext();
         db.Database.EnsureCreated();
 
-        foreach (var p in db.Uzytkownicy.ToList())
+        var userService = new UserService(new UserRepository(db));
+        foreach (var u in userService.GetAll())
         {
             ProductionRecords.Add(new ProductionRecord(
-                p.Identyfikator,
-                $"{p.Imie} {p.Nazwisko}",
-                "Brak operacji",
+                u.Identifier,
+                $"{u.FirstName} {u.LastName}",
+                "No operation",
                 DateTime.Now,
                 DateTime.Now));
         }
@@ -63,9 +65,7 @@ public partial class AdminWindowViewModel : ViewModelBase
     private void Logout()
     {
         if (_mainVm is null)
-        {
             return;
-        }
 
         _mainVm.CurrentView = new LoginViewModel(_mainVm);
     }
@@ -77,11 +77,10 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var operacja = new Operacja { NazwaOperacji = NewOperationName };
-        db.Operacja.Add(operacja);
-        db.SaveChanges();
+        var operationService = new OperationService(new OperationRepository(db));
+        operationService.Add(NewOperationName);
 
-        Operations.Add(operacja);
+        Operations.Add(new Operation { OperationName = NewOperationName });
         NewOperationName = string.Empty;
     }
 
@@ -92,16 +91,14 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var operationToRemove = db.Operacja.FirstOrDefault(z => z.NazwaOperacji == NewOperationName);
+        var operationService = new OperationService(new OperationRepository(db));
+        operationService.Remove(NewOperationName);
 
-        if (operationToRemove != null)
-        {
-            db.Operacja.Remove(operationToRemove);
-            db.SaveChanges();
+        var local = Operations.FirstOrDefault(o => o.OperationName == NewOperationName);
+        if (local != null)
+            Operations.Remove(local);
 
-            Operations.Remove(operationToRemove);
-            NewOperationName = string.Empty;
-        }
+        NewOperationName = string.Empty;
     }
 
     [RelayCommand]
@@ -111,16 +108,10 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var zlecenie = new Zlecenie
-        {
-            NazwaZlecenia = NewJobName,
-            DataUtworzenia = DateTime.Now,
-            Status = "Nowe"
-        };
-        db.Zlecenia.Add(zlecenie);
-        db.SaveChanges();
+        var jobService = new JobService(new JobRepository(db));
+        jobService.Add(NewJobName);
 
-        Jobs.Add(zlecenie);
+        Jobs.Add(new Job { JobName = NewJobName, CreatedAt = DateTime.Now, Status = "New" });
         NewJobName = string.Empty;
     }
 
@@ -131,16 +122,14 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var jobToRemove = db.Zlecenia.FirstOrDefault(z => z.NazwaZlecenia == NewJobName);
+        var jobService = new JobService(new JobRepository(db));
+        jobService.Remove(NewJobName);
 
-        if (jobToRemove != null)
-        {
-            db.Zlecenia.Remove(jobToRemove);
-            db.SaveChanges();
+        var local = Jobs.FirstOrDefault(j => j.JobName == NewJobName);
+        if (local != null)
+            Jobs.Remove(local);
 
-            Jobs.Remove(jobToRemove);
-            NewJobName = string.Empty;
-        }
+        NewJobName = string.Empty;
     }
 
     [RelayCommand]
@@ -151,19 +140,13 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var pracownik = new Uzytkownik
-        {
-            Imie = NewUserFirstName,
-            Nazwisko = NewUserLastName,
-            Identyfikator = NewUserID
-        };
-        db.Uzytkownicy.Add(pracownik);
-        db.SaveChanges();
+        var userService = new UserService(new UserRepository(db));
+        userService.Add(NewUserFirstName, NewUserLastName, NewUserID ?? string.Empty);
 
         ProductionRecords.Add(new ProductionRecord(
-            pracownik.Identyfikator ?? string.Empty,
-            $"{pracownik.Imie} {pracownik.Nazwisko}",
-            "Brak operacji",
+            NewUserID ?? string.Empty,
+            $"{NewUserFirstName} {NewUserLastName}",
+            "No operation",
             DateTime.Now,
             DateTime.Now));
 
@@ -181,25 +164,16 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var userToDelete = db.Uzytkownicy.FirstOrDefault(u =>
-            u.Imie == NewUserFirstName &&
-            u.Nazwisko == NewUserLastName &&
-            u.Identyfikator == NewUserID);
+        var userService = new UserService(new UserRepository(db));
+        userService.Remove(NewUserFirstName ?? string.Empty, NewUserLastName ?? string.Empty, NewUserID ?? string.Empty);
 
-        if (userToDelete != null)
-        {
-            db.Uzytkownicy.Remove(userToDelete);
-            db.SaveChanges();
+        var record = ProductionRecords.FirstOrDefault(r => r.EmployeeId == NewUserID);
+        if (record != null)
+            ProductionRecords.Remove(record);
 
-            var record = ProductionRecords.FirstOrDefault(r =>
-                r.EmployeeId == (userToDelete.Identyfikator ?? string.Empty));
-            if (record != null)
-                ProductionRecords.Remove(record);
-
-            NewUserFirstName = "";
-            NewUserLastName = "";
-            NewUserID = "";
-        }
+        NewUserFirstName = "";
+        NewUserLastName = "";
+        NewUserID = "";
     }
 }
 

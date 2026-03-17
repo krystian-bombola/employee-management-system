@@ -1,8 +1,9 @@
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
-using System;
-using System.IO;
+using employee_management_system.Repositories;
+using employee_management_system.Services;
 
 namespace employee_management_system.ViewModels;
 
@@ -11,10 +12,10 @@ public partial class LoginViewModel : ViewModelBase
     private readonly MainWindowViewModel? _mainVm;
 
     [ObservableProperty]
-    private string _identyfikator = string.Empty;
+    private string _identifier = string.Empty;
 
     [ObservableProperty]
-    private string _orderId = string.Empty;
+    private string _password = string.Empty;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -35,31 +36,30 @@ public partial class LoginViewModel : ViewModelBase
     private void Login()
     {
         if (_mainVm is null)
-        {
             return;
-        }
 
-        var identyfikator = Identyfikator.Trim();
-        if (string.IsNullOrWhiteSpace(identyfikator))
+        var identifier = Identifier.Trim();
+        if (string.IsNullOrWhiteSpace(identifier))
         {
             ErrorMessage = "Wpisz identyfikator.";
             IsErrorVisible = true;
             return;
         }
 
-        var orderId = OrderId.Trim();
-        if (string.IsNullOrWhiteSpace(orderId))
+        if (string.IsNullOrWhiteSpace(Password))
         {
-            ErrorMessage = "Wpisz ID zlecenia.";
+            ErrorMessage = "Wpisz hasło.";
             IsErrorVisible = true;
             return;
         }
 
-        var dbPath = Path.Combine(AppContext.BaseDirectory, "produkcja.db");
-        var uzytkownik = DatabaseService.FindByIdentyfikator(identyfikator, dbPath);
-        if (uzytkownik is null)
+        using var db = new DatabaseContext();
+        var authService = new AuthService(new UserRepository(db));
+        var user = authService.Login(identifier, Password);
+
+        if (user is null)
         {
-            ErrorMessage = "Nie znaleziono użytkownika.";
+            ErrorMessage = "Nieprawidłowy identyfikator lub hasło.";
             IsErrorVisible = true;
             return;
         }
@@ -67,19 +67,14 @@ public partial class LoginViewModel : ViewModelBase
         ErrorMessage = string.Empty;
         IsErrorVisible = false;
 
-        switch (uzytkownik.Identyfikator)
+        if (user.IsAdmin)
         {
-            case "admin":
-                _mainVm.CurrentView = new AdminWindowViewModel(_mainVm, uzytkownik);
-                break;
-            case "user":
-                var employeeName = $"{uzytkownik.Imie} {uzytkownik.Nazwisko}".Trim();
-                _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName, orderId);
-                break;
-            default:
-                ErrorMessage = "Brak uprawnień dla tego konta.";
-                IsErrorVisible = true;
-                break;
+            _mainVm.CurrentView = new AdminWindowViewModel(_mainVm, user);
+        }
+        else
+        {
+            var employeeName = $"{user.FirstName} {user.LastName}".Trim();
+            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName);
         }
     }
 }
