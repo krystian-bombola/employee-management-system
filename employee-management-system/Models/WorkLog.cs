@@ -1,5 +1,7 @@
 ﻿using System;
 
+namespace employee_management_system.Models;
+
 public class WorkLog
 {
     public int Id { get; set; }

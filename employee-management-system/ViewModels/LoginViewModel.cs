@@ -1,8 +1,9 @@
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
-using System;
-using System.IO;
+using employee_management_system.Repositories;
+using employee_management_system.Services;
 
 namespace employee_management_system.ViewModels;
 
@@ -53,8 +54,10 @@ public partial class LoginViewModel : ViewModelBase
             return;
         }
 
-        var dbPath = Path.Combine(AppContext.BaseDirectory, "produkcja.db");
-        var user = DatabaseService.FindByIdentifier(identifier, dbPath);
+        using var db = new DatabaseContext();
+        var authService = new AuthService(new UserRepository(db));
+        var user = authService.Login(identifier);
+
         if (user is null)
         {
             ErrorMessage = "Nie znaleziono użytkownika.";

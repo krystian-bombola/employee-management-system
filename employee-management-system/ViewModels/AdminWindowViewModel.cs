@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
-using Microsoft.EntityFrameworkCore;
+using employee_management_system.Models;
+using employee_management_system.Repositories;
+using employee_management_system.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -44,12 +46,11 @@ public partial class AdminWindowViewModel : ViewModelBase
         _mainVm = mainVm;
         LoggedUserSurname = user.LastName;
 
-        Jobs.Add(new Job { Id = 1, JobName = "Test job", CreatedAt = DateTime.Now, Status = "New" });
-
         using var db = new DatabaseContext();
         db.Database.EnsureCreated();
 
-        foreach (var u in db.Users.ToList())
+        var userService = new UserService(new UserRepository(db));
+        foreach (var u in userService.GetAll())
         {
             ProductionRecords.Add(new ProductionRecord(
                 u.Identifier,
@@ -76,11 +77,10 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var operation = new Operation { OperationName = NewOperationName };
-        db.Operations.Add(operation);
-        db.SaveChanges();
+        var operationService = new OperationService(new OperationRepository(db));
+        operationService.Add(NewOperationName);
 
-        Operations.Add(operation);
+        Operations.Add(new Operation { OperationName = NewOperationName });
         NewOperationName = string.Empty;
     }
 
@@ -91,16 +91,14 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var operationToRemove = db.Operations.FirstOrDefault(o => o.OperationName == NewOperationName);
+        var operationService = new OperationService(new OperationRepository(db));
+        operationService.Remove(NewOperationName);
 
-        if (operationToRemove != null)
-        {
-            db.Operations.Remove(operationToRemove);
-            db.SaveChanges();
+        var local = Operations.FirstOrDefault(o => o.OperationName == NewOperationName);
+        if (local != null)
+            Operations.Remove(local);
 
-            Operations.Remove(operationToRemove);
-            NewOperationName = string.Empty;
-        }
+        NewOperationName = string.Empty;
     }
 
     [RelayCommand]
@@ -110,16 +108,10 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var job = new Job
-        {
-            JobName = NewJobName,
-            CreatedAt = DateTime.Now,
-            Status = "New"
-        };
-        db.Jobs.Add(job);
-        db.SaveChanges();
+        var jobService = new JobService(new JobRepository(db));
+        jobService.Add(NewJobName);
 
-        Jobs.Add(job);
+        Jobs.Add(new Job { JobName = NewJobName, CreatedAt = DateTime.Now, Status = "New" });
         NewJobName = string.Empty;
     }
 
@@ -130,16 +122,14 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var jobToRemove = db.Jobs.FirstOrDefault(j => j.JobName == NewJobName);
+        var jobService = new JobService(new JobRepository(db));
+        jobService.Remove(NewJobName);
 
-        if (jobToRemove != null)
-        {
-            db.Jobs.Remove(jobToRemove);
-            db.SaveChanges();
+        var local = Jobs.FirstOrDefault(j => j.JobName == NewJobName);
+        if (local != null)
+            Jobs.Remove(local);
 
-            Jobs.Remove(jobToRemove);
-            NewJobName = string.Empty;
-        }
+        NewJobName = string.Empty;
     }
 
     [RelayCommand]
@@ -150,18 +140,12 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var user = new User
-        {
-            FirstName = NewUserFirstName,
-            LastName = NewUserLastName,
-            Identifier = NewUserID ?? string.Empty
-        };
-        db.Users.Add(user);
-        db.SaveChanges();
+        var userService = new UserService(new UserRepository(db));
+        userService.Add(NewUserFirstName, NewUserLastName, NewUserID ?? string.Empty);
 
         ProductionRecords.Add(new ProductionRecord(
-            user.Identifier,
-            $"{user.FirstName} {user.LastName}",
+            NewUserID ?? string.Empty,
+            $"{NewUserFirstName} {NewUserLastName}",
             "No operation",
             DateTime.Now,
             DateTime.Now));
@@ -180,25 +164,16 @@ public partial class AdminWindowViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var userToDelete = db.Users.FirstOrDefault(u =>
-            u.FirstName == NewUserFirstName &&
-            u.LastName == NewUserLastName &&
-            u.Identifier == NewUserID);
+        var userService = new UserService(new UserRepository(db));
+        userService.Remove(NewUserFirstName ?? string.Empty, NewUserLastName ?? string.Empty, NewUserID ?? string.Empty);
 
-        if (userToDelete != null)
-        {
-            db.Users.Remove(userToDelete);
-            db.SaveChanges();
+        var record = ProductionRecords.FirstOrDefault(r => r.EmployeeId == NewUserID);
+        if (record != null)
+            ProductionRecords.Remove(record);
 
-            var record = ProductionRecords.FirstOrDefault(r =>
-                r.EmployeeId == userToDelete.Identifier);
-            if (record != null)
-                ProductionRecords.Remove(record);
-
-            NewUserFirstName = "";
-            NewUserLastName = "";
-            NewUserID = "";
-        }
+        NewUserFirstName = "";
+        NewUserLastName = "";
+        NewUserID = "";
     }
 }
 
