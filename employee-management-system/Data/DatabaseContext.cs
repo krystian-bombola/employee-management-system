@@ -6,11 +6,11 @@ namespace employee_management_system.Data;
 
 public class DatabaseContext : DbContext
 {
-    public DbSet<Zlecenie> Zlecenia { get; set; }
-    public DbSet<Uzytkownik> Uzytkownicy { get; set; }
-    public DbSet<Operacja> Operacja { get; set; }
-    public DbSet<OperacjaPrzypisana> OperacjePrzypisane { get; set; }
-    public DbSet<ZarzadzanieProdukcja> ZarzadzanieProdukcja { get; set; }
+    public DbSet<Job> Jobs { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Operation> Operations { get; set; }
+    public DbSet<JobTask> JobTasks { get; set; }
+    public DbSet<WorkLog> WorkLogs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -20,12 +20,30 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Uzytkownik>().ToTable("Uzytkownik");
-        modelBuilder.Entity<Zlecenie>().ToTable("Zlecenie");
+        modelBuilder.Entity<User>().ToTable("Users");
+        modelBuilder.Entity<Job>().ToTable("Jobs");
+        modelBuilder.Entity<Operation>().ToTable("Operations");
+        modelBuilder.Entity<JobTask>().ToTable("JobTasks");
+        modelBuilder.Entity<WorkLog>().ToTable("WorkLogs");
 
-        modelBuilder.Entity<OperacjaPrzypisana>().HasOne(o => o.Zlecenie).WithMany(z => z.OperacjePrzypisane).HasForeignKey(o => o.IdZlecenia);
-        modelBuilder.Entity<OperacjaPrzypisana>().HasOne(o => o.Operacja).WithMany(o => o.OperacjePrzypisane).HasForeignKey(o => o.IdOperacji);
-        modelBuilder.Entity<ZarzadzanieProdukcja>().HasOne(z => z.OperacjaPrzypisana).WithMany(o => o.ZarzadzanieProdukcja).HasForeignKey(z => z.IdOperacjiPrzypisanej);
-        modelBuilder.Entity<ZarzadzanieProdukcja>().HasOne(z => z.Uzytkownicy).WithMany(p => p.ZarzadzanieProdukcja).HasForeignKey(z => z.IdPracownika);
+        modelBuilder.Entity<JobTask>()
+            .HasOne(jt => jt.Job)
+            .WithMany(j => j.JobTasks)
+            .HasForeignKey(jt => jt.JobId);
+
+        modelBuilder.Entity<JobTask>()
+            .HasOne(jt => jt.Operation)
+            .WithMany(o => o.JobTasks)
+            .HasForeignKey(jt => jt.OperationId);
+
+        modelBuilder.Entity<WorkLog>()
+            .HasOne(wl => wl.JobTask)
+            .WithMany(jt => jt.WorkLogs)
+            .HasForeignKey(wl => wl.JobTaskId);
+
+        modelBuilder.Entity<WorkLog>()
+            .HasOne(wl => wl.User)
+            .WithMany(u => u.WorkLogs)
+            .HasForeignKey(wl => wl.UserId);
     }
 }

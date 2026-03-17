@@ -11,7 +11,7 @@ public partial class LoginViewModel : ViewModelBase
     private readonly MainWindowViewModel? _mainVm;
 
     [ObservableProperty]
-    private string _identyfikator = string.Empty;
+    private string _identifier = string.Empty;
 
     [ObservableProperty]
     private string _orderId = string.Empty;
@@ -35,12 +35,10 @@ public partial class LoginViewModel : ViewModelBase
     private void Login()
     {
         if (_mainVm is null)
-        {
             return;
-        }
 
-        var identyfikator = Identyfikator.Trim();
-        if (string.IsNullOrWhiteSpace(identyfikator))
+        var identifier = Identifier.Trim();
+        if (string.IsNullOrWhiteSpace(identifier))
         {
             ErrorMessage = "Wpisz identyfikator.";
             IsErrorVisible = true;
@@ -56,8 +54,8 @@ public partial class LoginViewModel : ViewModelBase
         }
 
         var dbPath = Path.Combine(AppContext.BaseDirectory, "produkcja.db");
-        var uzytkownik = DatabaseService.FindByIdentyfikator(identyfikator, dbPath);
-        if (uzytkownik is null)
+        var user = DatabaseService.FindByIdentifier(identifier, dbPath);
+        if (user is null)
         {
             ErrorMessage = "Nie znaleziono użytkownika.";
             IsErrorVisible = true;
@@ -67,19 +65,14 @@ public partial class LoginViewModel : ViewModelBase
         ErrorMessage = string.Empty;
         IsErrorVisible = false;
 
-        switch (uzytkownik.Identyfikator)
+        if (user.IsAdmin)
         {
-            case "admin":
-                _mainVm.CurrentView = new AdminWindowViewModel(_mainVm, uzytkownik);
-                break;
-            case "user":
-                var employeeName = $"{uzytkownik.Imie} {uzytkownik.Nazwisko}".Trim();
-                _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName, orderId);
-                break;
-            default:
-                ErrorMessage = "Brak uprawnień dla tego konta.";
-                IsErrorVisible = true;
-                break;
+            _mainVm.CurrentView = new AdminWindowViewModel(_mainVm, user);
+        }
+        else
+        {
+            var employeeName = $"{user.FirstName} {user.LastName}".Trim();
+            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName, orderId);
         }
     }
 }
