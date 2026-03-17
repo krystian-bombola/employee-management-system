@@ -66,10 +66,11 @@
                     Watermark="Wpisz ID pracownika"
                     Padding="12"/>
 
-                <TextBlock Text="ID zlecenia" Foreground="#000" Margin="0,6,0,0"/>
+                <TextBlock Text="Hasło" Foreground="#000" Margin="0,6,0,0"/>
                 <TextBox
-                    Text="{Binding OrderId}"
-                    Watermark="Wpisz ID zlecenia"
+                    Text="{Binding Password}"
+                    PasswordChar="●"
+                    Watermark="Wpisz hasło"
                     Padding="12"/>
 
                 <TextBlock Text="{Binding ErrorMessage}"

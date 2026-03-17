@@ -1,6 +1,6 @@
-
 using System;
 using Microsoft.Data.Sqlite;
+using employee_management_system.Services;
 
 namespace employee_management_system.Data;
 
@@ -68,11 +68,19 @@ public static class DatabaseInitializer
 
         var adminExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Users WHERE Identifier = 'admin'", connection).ExecuteScalar()!;
         if (adminExists == 0)
-            ExecuteNonQuery(connection, "INSERT INTO Users (FirstName, LastName, Identifier, IsAdmin) VALUES ('Jan', 'Kowalski', 'admin', 1)");
+        {
+            var salt = PasswordService.GenerateSalt();
+            var hash = PasswordService.HashPassword("admin123", salt);
+            ExecuteNonQuery(connection, $"INSERT INTO Users (FirstName, LastName, Identifier, PasswordHash, PasswordSalt, IsAdmin) VALUES ('Jan', 'Kowalski', 'admin', '{hash}', '{salt}', 1)");
+        }
 
         var userExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Users WHERE Identifier = 'user'", connection).ExecuteScalar()!;
         if (userExists == 0)
-            ExecuteNonQuery(connection, "INSERT INTO Users (FirstName, LastName, Identifier, IsAdmin) VALUES ('Anna', 'Nowak', 'user', 0)");
+        {
+            var salt = PasswordService.GenerateSalt();
+            var hash = PasswordService.HashPassword("user123", salt);
+            ExecuteNonQuery(connection, $"INSERT INTO Users (FirstName, LastName, Identifier, PasswordHash, PasswordSalt, IsAdmin) VALUES ('Anna', 'Nowak', 'user', '{hash}', '{salt}', 0)");
+        }
 
         var orderExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Jobs WHERE JobName = 'aaaa'", connection).ExecuteScalar()!;
         if (orderExists == 0)

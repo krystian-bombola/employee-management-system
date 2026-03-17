@@ -28,11 +28,10 @@ public partial class UserPanelViewModel : ViewModelBase
 
     public ObservableCollection<string> AvailableOperations { get; } = new();
 
-    public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName, string orderId)
+    public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName)
     {
         _mainVm = mainVm;
         _employeeName = employeeName;
-        _orderId = orderId;
 
         LoadOperationsFromDb();
     }

@@ -12,6 +12,15 @@ public class AuthService
         _userRepository = userRepository;
     }
 
-    public User? Login(string identifier)
-        => _userRepository.GetByIdentifier(identifier);
+    public User? Login(string identifier, string password)
+    {
+        var user = _userRepository.GetByIdentifier(identifier);
+        if (user is null)
+            return null;
+
+        if (!PasswordService.VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
+            return null;
+
+        return user;
+    }
 }

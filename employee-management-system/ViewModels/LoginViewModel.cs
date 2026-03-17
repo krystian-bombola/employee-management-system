@@ -15,7 +15,7 @@ public partial class LoginViewModel : ViewModelBase
     private string _identifier = string.Empty;
 
     [ObservableProperty]
-    private string _orderId = string.Empty;
+    private string _password = string.Empty;
 
     [ObservableProperty]
     private string _errorMessage = string.Empty;
@@ -46,21 +46,20 @@ public partial class LoginViewModel : ViewModelBase
             return;
         }
 
-        var orderId = OrderId.Trim();
-        if (string.IsNullOrWhiteSpace(orderId))
+        if (string.IsNullOrWhiteSpace(Password))
         {
-            ErrorMessage = "Wpisz ID zlecenia.";
+            ErrorMessage = "Wpisz hasło.";
             IsErrorVisible = true;
             return;
         }
 
         using var db = new DatabaseContext();
         var authService = new AuthService(new UserRepository(db));
-        var user = authService.Login(identifier);
+        var user = authService.Login(identifier, Password);
 
         if (user is null)
         {
-            ErrorMessage = "Nie znaleziono użytkownika.";
+            ErrorMessage = "Nieprawidłowy identyfikator lub hasło.";
             IsErrorVisible = true;
             return;
         }
@@ -75,7 +74,7 @@ public partial class LoginViewModel : ViewModelBase
         else
         {
             var employeeName = $"{user.FirstName} {user.LastName}".Trim();
-            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName, orderId);
+            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName);
         }
     }
 }
