@@ -36,7 +36,6 @@
             <Setter Property="Padding" Value="12"/>
         </Style>
 
-        <!-- Unified Admin button style -->
         <Style Selector="Button.admin-button">
             <Setter Property="Background" Value="#2F6FB7"/>
             <Setter Property="Foreground" Value="White"/>
@@ -58,7 +57,6 @@
             <Setter Property="TextElement.Foreground" Value="White"/>
         </Style>
 
-        <!-- Logout button (red) -->
         <Style Selector="Button.logout-button">
             <Setter Property="Background" Value="#D94A4A"/>
             <Setter Property="Foreground" Value="White"/>
@@ -76,7 +74,6 @@
             <Setter Property="Background" Value="#992A2A"/>
         </Style>
 
-        <!-- Card + headers -->
         <Style Selector="Border.card">
             <Setter Property="Background" Value="White"/>
             <Setter Property="CornerRadius" Value="12"/>
@@ -102,10 +99,8 @@
                   HorizontalAlignment="Stretch"
                   MaxWidth="1440">
 
-                <!-- Make right side fill the remaining space -->
                 <Grid ColumnDefinitions="480,24,*">
 
-                    <!-- LEFT -->
                     <Border Grid.Column="0" Classes="card">
                         <StackPanel Spacing="14">
 
@@ -178,7 +173,6 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- RIGHT (fills the rest of the page up to 1440px) -->
                     <Border Grid.Column="2" Classes="card"
                             HorizontalAlignment="Stretch">
                         <StackPanel Spacing="14">

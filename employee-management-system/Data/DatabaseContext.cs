@@ -15,7 +15,7 @@ public class DatabaseContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        var dbPath = Path.Combine(AppContext.BaseDirectory, "produkcja.db");
+        var dbPath = Path.Combine(AppContext.BaseDirectory, "production.db");
         options.UseSqlite($"Data Source={dbPath}");
     }
 
