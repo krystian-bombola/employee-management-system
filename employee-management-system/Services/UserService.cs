@@ -17,11 +17,17 @@ public class UserService
 
     public void Add(string firstName, string lastName, string identifier)
     {
+        var defaultPassword = $"{firstName}123";
+        var salt = PasswordService.GenerateSalt();
+        var hash = PasswordService.HashPassword(defaultPassword, salt);
+
         var user = new User
         {
             FirstName = firstName,
             LastName = lastName,
-            Identifier = identifier
+            Identifier = identifier,
+            PasswordHash = hash,
+            PasswordSalt = salt
         };
         _userRepository.Add(user);
     }
