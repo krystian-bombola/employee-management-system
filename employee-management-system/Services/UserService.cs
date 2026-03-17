@@ -27,7 +27,8 @@ public class UserService
             LastName = lastName,
             Identifier = identifier,
             PasswordHash = hash,
-            PasswordSalt = salt
+            PasswordSalt = salt,
+            EmploymentDate = System.DateTime.Now.ToString("yyyy-MM-dd")
         };
         _userRepository.Add(user);
     }

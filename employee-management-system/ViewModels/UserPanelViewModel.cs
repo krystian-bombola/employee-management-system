@@ -26,6 +26,8 @@ public partial class UserPanelViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isOperationRunning;
 
+    private string? _runningOperationName;
+
     public ObservableCollection<string> AvailableOperations { get; } = new();
 
     public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName)
@@ -57,6 +59,17 @@ public partial class UserPanelViewModel : ViewModelBase
     {
         if (SelectedOperation is null) return;
 
+        using (var db = new DatabaseContext())
+        {
+            var op = db.Operations.FirstOrDefault(o => o.OperationName == SelectedOperation);
+            if (op is not null)
+            {
+                op.CurrentWorkersCount++;
+                db.SaveChanges();
+            }
+        }
+
+        _runningOperationName = SelectedOperation;
         CurrentOperation = SelectedOperation;
         IsOperationRunning = true;
         StartOperationCommand.NotifyCanExecuteChanged();
@@ -66,6 +79,20 @@ public partial class UserPanelViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanStopOperation))]
     private void StopOperation()
     {
+        if (!string.IsNullOrEmpty(_runningOperationName))
+        {
+            using (var db = new DatabaseContext())
+            {
+                var op = db.Operations.FirstOrDefault(o => o.OperationName == _runningOperationName);
+                if (op is not null && op.CurrentWorkersCount > 0)
+                {
+                    op.CurrentWorkersCount--;
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        _runningOperationName = null;
         CurrentOperation = "No operation";
         IsOperationRunning = false;
         StartOperationCommand.NotifyCanExecuteChanged();

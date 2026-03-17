@@ -15,27 +15,69 @@ public partial class AdminWindowViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel? _mainVm;
 
-    [ObservableProperty]
     private string _loggedUserSurname = string.Empty;
+    public string LoggedUserSurname { get => _loggedUserSurname; set => SetProperty(ref _loggedUserSurname, value); }
 
-    [ObservableProperty]
     private string? _newOperationName;
+    public string? NewOperationName { get => _newOperationName; set => SetProperty(ref _newOperationName, value); }
 
-    [ObservableProperty]
+    private string? _newOperationDescription;
+    public string? NewOperationDescription { get => _newOperationDescription; set => SetProperty(ref _newOperationDescription, value); }
+
     private string? _newUserFirstName;
+    public string? NewUserFirstName { get => _newUserFirstName; set => SetProperty(ref _newUserFirstName, value); }
 
-    [ObservableProperty]
     private string? _newUserLastName;
+    public string? NewUserLastName { get => _newUserLastName; set => SetProperty(ref _newUserLastName, value); }
 
-    [ObservableProperty]
     private string? _newUserID;
+    public string? NewUserID { get => _newUserID; set => SetProperty(ref _newUserID, value); }
 
-    [ObservableProperty]
     private string _newJobName = string.Empty;
+    public string NewJobName { get => _newJobName; set => SetProperty(ref _newJobName, value); }
 
-    public ObservableCollection<Job> Jobs { get; } = new();
-    public ObservableCollection<Operation> Operations { get; } = new();
-    public ObservableCollection<ProductionRecord> ProductionRecords { get; } = new();
+    private string _newJobStatus = "Nowe";
+    public string NewJobStatus { get => _newJobStatus; set => SetProperty(ref _newJobStatus, value); }
+
+    private string _searchQuery = string.Empty;
+    public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) ApplyFilter(); } }
+
+    private int _userCount;
+    public int UserCount { get => _userCount; set => SetProperty(ref _userCount, value); }
+
+    private int _operationCount;
+    public int OperationCount { get => _operationCount; set => SetProperty(ref _operationCount, value); }
+
+    private int _jobCount;
+    public int JobCount { get => _jobCount; set => SetProperty(ref _jobCount, value); }
+
+    private ViewModelBase? _currentView;
+    public ViewModelBase? CurrentView { get => _currentView; set => SetProperty(ref _currentView, value); }
+
+    private int _currentTabIndex = 0;
+    public int CurrentTabIndex { get => _currentTabIndex; set { if (SetProperty(ref _currentTabIndex, value)) { OnCurrentTabIndexChanged(); } } }
+
+    public bool IsUsersVisible => CurrentTabIndex == 0;
+    public bool IsOperationsVisible => CurrentTabIndex == 1;
+    public bool IsJobsVisible => CurrentTabIndex == 2;
+
+    private void OnCurrentTabIndexChanged()
+    {
+        OnPropertyChanged(nameof(IsUsersVisible));
+        OnPropertyChanged(nameof(IsOperationsVisible));
+        OnPropertyChanged(nameof(IsJobsVisible));
+        ApplyFilter();
+    }
+
+    public ObservableCollection<JobItemViewModel> Jobs { get; } = new();
+    public ObservableCollection<OperationItemViewModel> Operations { get; } = new();
+    public ObservableCollection<UserItemViewModel> Users { get; } = new();
+
+    public ObservableCollection<string> JobStatuses { get; } = new();
+
+    public ObservableCollection<JobItemViewModel> FilteredJobs { get; } = new();
+    public ObservableCollection<OperationItemViewModel> FilteredOperations { get; } = new();
+    public ObservableCollection<UserItemViewModel> FilteredUsers { get; } = new();
 
     public AdminWindowViewModel()
     {
@@ -46,18 +88,73 @@ public partial class AdminWindowViewModel : ViewModelBase
         _mainVm = mainVm;
         LoggedUserSurname = user.LastName;
 
+        JobStatuses.Add("Nowe");
+        JobStatuses.Add("W trakcie");
+        JobStatuses.Add("Zatrzymane");
+        JobStatuses.Add("Zakończone");
+
+        RefreshAll();
+    }
+
+    private void RefreshAll()
+    {
         using var db = new DatabaseContext();
         db.Database.EnsureCreated();
 
         var userService = new UserService(new UserRepository(db));
+        Users.Clear();
         foreach (var u in userService.GetAll())
         {
-            ProductionRecords.Add(new ProductionRecord(
-                u.Identifier,
-                $"{u.FirstName} {u.LastName}",
-                "No operation",
-                DateTime.Now,
-                DateTime.Now));
+            Users.Add(new UserItemViewModel(u));
+        }
+        UserCount = Users.Count;
+
+        var operationService = new OperationService(new OperationRepository(db));
+        Operations.Clear();
+        foreach (var op in operationService.GetAll())
+        {
+            Operations.Add(new OperationItemViewModel(op));
+        }
+        OperationCount = Operations.Count;
+
+        var jobService = new JobService(new JobRepository(db));
+        Jobs.Clear();
+        foreach (var job in jobService.GetAll())
+        {
+            Jobs.Add(new JobItemViewModel(job));
+        }
+        JobCount = Jobs.Count;
+
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        var query = SearchQuery.ToLower();
+
+        FilteredUsers.Clear();
+        foreach (var u in Users.Where(u => string.IsNullOrEmpty(query) ||
+            u.FirstName.ToLower().Contains(query) ||
+            u.LastName.ToLower().Contains(query) ||
+            u.Identifier.ToLower().Contains(query)))
+        {
+            FilteredUsers.Add(u);
+        }
+
+        FilteredOperations.Clear();
+        foreach (var op in Operations.Where(o => string.IsNullOrEmpty(query) ||
+            o.OperationName.ToLower().Contains(query) ||
+            o.Description.ToLower().Contains(query)))
+        {
+            FilteredOperations.Add(op);
+        }
+
+        FilteredJobs.Clear();
+        foreach (var j in Jobs.Where(j => string.IsNullOrEmpty(query) ||
+            j.JobName.ToLower().Contains(query) ||
+            j.Status.ToLower().Contains(query)))
+        {
+            FilteredJobs.Add(j);
         }
     }
 
@@ -78,27 +175,32 @@ public partial class AdminWindowViewModel : ViewModelBase
 
         using var db = new DatabaseContext();
         var operationService = new OperationService(new OperationRepository(db));
-        operationService.Add(NewOperationName);
+        operationService.Add(NewOperationName, NewOperationDescription ?? string.Empty);
 
-        Operations.Add(new Operation { OperationName = NewOperationName });
         NewOperationName = string.Empty;
+        NewOperationDescription = string.Empty;
+        RefreshAll();
     }
 
     [RelayCommand]
-    private void RemoveOperation()
+    private void RemoveOperation(OperationItemViewModel? item)
     {
-        if (string.IsNullOrWhiteSpace(NewOperationName))
-            return;
-
         using var db = new DatabaseContext();
         var operationService = new OperationService(new OperationRepository(db));
-        operationService.Remove(NewOperationName);
 
-        var local = Operations.FirstOrDefault(o => o.OperationName == NewOperationName);
-        if (local != null)
-            Operations.Remove(local);
-
-        NewOperationName = string.Empty;
+        if (item is not null)
+        {
+            operationService.Remove(item.OperationName);
+        }
+        else
+        {
+            var selected = Operations.Where(o => o.IsSelected).ToList();
+            foreach (var s in selected)
+            {
+                operationService.Remove(s.OperationName);
+            }
+        }
+        RefreshAll();
     }
 
     [RelayCommand]
@@ -109,27 +211,32 @@ public partial class AdminWindowViewModel : ViewModelBase
 
         using var db = new DatabaseContext();
         var jobService = new JobService(new JobRepository(db));
-        jobService.Add(NewJobName);
+        jobService.Add(NewJobName, NewJobStatus);
 
-        Jobs.Add(new Job { JobName = NewJobName, CreatedAt = DateTime.Now, Status = "New" });
         NewJobName = string.Empty;
+        NewJobStatus = "Nowe";
+        RefreshAll();
     }
 
     [RelayCommand]
-    private void RemoveJob()
+    private void RemoveJob(JobItemViewModel? item)
     {
-        if (string.IsNullOrWhiteSpace(NewJobName))
-            return;
-
         using var db = new DatabaseContext();
         var jobService = new JobService(new JobRepository(db));
-        jobService.Remove(NewJobName);
 
-        var local = Jobs.FirstOrDefault(j => j.JobName == NewJobName);
-        if (local != null)
-            Jobs.Remove(local);
-
-        NewJobName = string.Empty;
+        if (item is not null)
+        {
+            jobService.Remove(item.JobName);
+        }
+        else
+        {
+            var selected = Jobs.Where(j => j.IsSelected).ToList();
+            foreach (var s in selected)
+            {
+                jobService.Remove(s.JobName);
+            }
+        }
+        RefreshAll();
     }
 
     [RelayCommand]
@@ -143,41 +250,98 @@ public partial class AdminWindowViewModel : ViewModelBase
         var userService = new UserService(new UserRepository(db));
         userService.Add(NewUserFirstName, NewUserLastName, NewUserID ?? string.Empty);
 
-        ProductionRecords.Add(new ProductionRecord(
-            NewUserID ?? string.Empty,
-            $"{NewUserFirstName} {NewUserLastName}",
-            "No operation",
-            DateTime.Now,
-            DateTime.Now));
-
         NewUserFirstName = "";
         NewUserLastName = "";
         NewUserID = "";
+        RefreshAll();
     }
 
     [RelayCommand]
-    private void RemoveUser()
+    private void RemoveUser(UserItemViewModel? item)
     {
-        if (string.IsNullOrWhiteSpace(NewUserFirstName) &&
-            string.IsNullOrWhiteSpace(NewUserLastName) &&
-            string.IsNullOrWhiteSpace(NewUserID))
-            return;
-
         using var db = new DatabaseContext();
         var userService = new UserService(new UserRepository(db));
-        userService.Remove(NewUserFirstName ?? string.Empty, NewUserLastName ?? string.Empty, NewUserID ?? string.Empty);
 
-        var record = ProductionRecords.FirstOrDefault(r => r.EmployeeId == NewUserID);
-        if (record != null)
-            ProductionRecords.Remove(record);
+        if (item is not null)
+        {
+            userService.Remove(item.FirstName, item.LastName, item.Identifier);
+        }
+        else
+        {
+            var selected = Users.Where(u => u.IsSelected).ToList();
+            foreach (var s in selected)
+            {
+                userService.Remove(s.FirstName, s.LastName, s.Identifier);
+            }
+        }
+        RefreshAll();
+    }
+    [RelayCommand]
+    private void ShowUsers()
+    {
+        CurrentTabIndex = 0;
+        RefreshAll();
+    }
 
-        NewUserFirstName = "";
-        NewUserLastName = "";
-        NewUserID = "";
+    [RelayCommand]
+    private void ShowOperations()
+    {
+        CurrentTabIndex = 1;
+        RefreshAll();
+    }
+
+    [RelayCommand]
+    private void ShowJobs()
+    {
+        CurrentTabIndex = 2;
+        RefreshAll();
     }
 }
 
-public record ProductionRecord(string EmployeeId, string Employee, string Operation, DateTime StartTime, DateTime EndTime)
+public partial class UserItemViewModel : ObservableObject
 {
-    public string Duration => (EndTime - StartTime).ToString(@"hh\:mm\:ss");
+    [ObservableProperty] private bool _isSelected;
+    public string FirstName { get; }
+    public string LastName { get; }
+    public string Identifier { get; }
+    public string EmploymentDate { get; }
+
+    public UserItemViewModel(User user)
+    {
+        FirstName = user.FirstName;
+        LastName = user.LastName;
+        Identifier = user.Identifier;
+        EmploymentDate = user.EmploymentDate;
+    }
 }
+
+public partial class OperationItemViewModel : ObservableObject
+{
+    [ObservableProperty] private bool _isSelected;
+    public string OperationName { get; }
+    public string Description { get; }
+    public int CurrentWorkersCount { get; }
+
+    public OperationItemViewModel(Operation op)
+    {
+        OperationName = op.OperationName;
+        Description = op.Description;
+        CurrentWorkersCount = op.CurrentWorkersCount;
+    }
+}
+
+public partial class JobItemViewModel : ObservableObject
+{
+    [ObservableProperty] private bool _isSelected;
+    public string JobName { get; }
+    public string Status { get; }
+    public DateTime CreatedAt { get; }
+
+    public JobItemViewModel(Job job)
+    {
+        JobName = job.JobName;
+        Status = job.Status;
+        CreatedAt = job.CreatedAt;
+    }
+}
+

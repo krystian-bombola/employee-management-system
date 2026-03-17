@@ -19,7 +19,8 @@ public static class DatabaseInitializer
                 Identifier TEXT NOT NULL,
                 PasswordHash TEXT NOT NULL DEFAULT '',
                 PasswordSalt TEXT NOT NULL DEFAULT '',
-                IsAdmin INTEGER NOT NULL DEFAULT 0
+                IsAdmin INTEGER NOT NULL DEFAULT 0,
+                EmploymentDate TEXT NOT NULL DEFAULT ''
             );";
 
         var createJobs = @"
@@ -33,7 +34,8 @@ public static class DatabaseInitializer
         var createOperations = @"
             CREATE TABLE IF NOT EXISTS Operations (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                OperationName TEXT NOT NULL
+                OperationName TEXT NOT NULL,
+                Description TEXT NOT NULL DEFAULT ''
             );";
 
         var createJobTasks = @"
@@ -66,12 +68,20 @@ public static class DatabaseInitializer
         ExecuteNonQuery(connection, createJobTasks);
         ExecuteNonQuery(connection, createWorkLogs);
 
+
+        var today = DateTime.Now.ToString("yyyy-MM-dd");
+        EnsureColumnExists(connection, "Users", "EmploymentDate", $"TEXT NOT NULL DEFAULT '{today}'");
+        EnsureColumnExists(connection, "Operations", "Description", "TEXT NOT NULL DEFAULT ''");
+        EnsureColumnExists(connection, "Operations", "CurrentWorkersCount", "INTEGER NOT NULL DEFAULT 0");
+
+        ExecuteNonQuery(connection, $"UPDATE Users SET EmploymentDate = '{today}' WHERE EmploymentDate = '' OR EmploymentDate IS NULL;");
+
         var adminExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Users WHERE Identifier = 'admin'", connection).ExecuteScalar()!;
         if (adminExists == 0)
         {
             var salt = PasswordService.GenerateSalt();
             var hash = PasswordService.HashPassword("admin123", salt);
-            ExecuteNonQuery(connection, $"INSERT INTO Users (FirstName, LastName, Identifier, PasswordHash, PasswordSalt, IsAdmin) VALUES ('Jan', 'Kowalski', 'admin', '{hash}', '{salt}', 1)");
+            ExecuteNonQuery(connection, $"INSERT INTO Users (FirstName, LastName, Identifier, PasswordHash, PasswordSalt, IsAdmin, EmploymentDate) VALUES ('Jan', 'Kowalski', 'admin', '{hash}', '{salt}', 1, '{DateTime.Now:yyyy-MM-dd}')");
         }
 
         var userExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Users WHERE Identifier = 'user'", connection).ExecuteScalar()!;
@@ -79,7 +89,7 @@ public static class DatabaseInitializer
         {
             var salt = PasswordService.GenerateSalt();
             var hash = PasswordService.HashPassword("user123", salt);
-            ExecuteNonQuery(connection, $"INSERT INTO Users (FirstName, LastName, Identifier, PasswordHash, PasswordSalt, IsAdmin) VALUES ('Anna', 'Nowak', 'user', '{hash}', '{salt}', 0)");
+            ExecuteNonQuery(connection, $"INSERT INTO Users (FirstName, LastName, Identifier, PasswordHash, PasswordSalt, IsAdmin, EmploymentDate) VALUES ('Anna', 'Nowak', 'user', '{hash}', '{salt}', 0, '{DateTime.Now:yyyy-MM-dd}')");
         }
 
         var orderExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Jobs WHERE JobName = 'aaaa'", connection).ExecuteScalar()!;
@@ -91,5 +101,23 @@ public static class DatabaseInitializer
     {
         using var cmd = new SqliteCommand(sql, conn);
         cmd.ExecuteNonQuery();
+    }
+
+    private static void EnsureColumnExists(SqliteConnection conn, string table, string columnName, string columnDef)
+    {
+
+        var pragma = new SqliteCommand($"PRAGMA table_info({table});", conn);
+        using var reader = pragma.ExecuteReader();
+        var exists = false;
+        while (reader.Read())
+        {
+            var name = reader.GetString(1);
+            if (name == columnName) { exists = true; break; }
+        }
+
+        if (!exists)
+        {
+            ExecuteNonQuery(conn, $"ALTER TABLE {table} ADD COLUMN {columnName} {columnDef};");
+        }
     }
 }
