@@ -134,6 +134,7 @@
                         <!-- Pola dla Zleceń -->
                         <StackPanel IsVisible="{Binding IsJobsVisible}" Spacing="10">
                             <TextBox Watermark="Nazwa zlecenia" Text="{Binding NewJobName}"/>
+                            <TextBox Watermark="Opis zlecenia" Text="{Binding NewJobDescription}"/>
                             <ComboBox ItemsSource="{Binding JobStatuses}" SelectedItem="{Binding NewJobStatus}"/>
                             <Button Classes="admin-button" Content="+ Dodaj zlecenie" Command="{Binding AddJobCommand}"/>
                             <Button Classes="admin-button" Content="- Usuń zaznaczone" Command="{Binding RemoveJobCommand}"/>
@@ -236,21 +237,23 @@
 
                                 <!-- Widok Zleceń -->
                                 <StackPanel IsVisible="{Binding IsJobsVisible}">
-                                    <Grid ColumnDefinitions="50,3*,2*,2*,Auto" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="50,2*,4*,2*,2*,Auto" Margin="0,0,0,10">
                                         <TextBlock Grid.Column="1" Text="Nazwa zlecenia" FontWeight="Bold"/>
-                                        <TextBlock Grid.Column="2" Text="Status" FontWeight="Bold"/>
-                                        <TextBlock Grid.Column="3" Text="Data utworzenia" FontWeight="Bold"/>
+                                        <TextBlock Grid.Column="2" Text="Opis zlecenia" FontWeight="Bold"/>
+                                        <TextBlock Grid.Column="3" Text="Status" FontWeight="Bold"/>
+                                        <TextBlock Grid.Column="4" Text="Data utworzenia" FontWeight="Bold"/>
                                     </Grid>
                                     <ItemsControl ItemsSource="{Binding FilteredJobs}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="vm:JobItemViewModel">
                                                 <Border BorderBrush="#EEE" BorderThickness="0,0,0,1" Padding="0,10">
-                                                    <Grid ColumnDefinitions="50,3*,2*,2*,Auto">
+                                                    <Grid ColumnDefinitions="50,2*,4*,2*,2*,Auto">
                                                         <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center"/>
                                                         <TextBlock Grid.Column="1" Text="{Binding JobName}" VerticalAlignment="Center"/>
-                                                        <TextBlock Grid.Column="2" Text="{Binding Status}" VerticalAlignment="Center"/>
-                                                        <TextBlock Grid.Column="3" Text="{Binding CreatedAt, StringFormat=\{0:yyyy-MM-dd HH:mm\}}" VerticalAlignment="Center"/>
-                                                        <Button Grid.Column="4" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
+                                                        <TextBlock Grid.Column="2" Text="{Binding Description}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                                        <TextBlock Grid.Column="3" Text="{Binding Status}" VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="4" Text="{Binding CreatedAt, StringFormat=\{0:yyyy-MM-dd HH:mm\}}" VerticalAlignment="Center"/>
+                                                        <Button Grid.Column="5" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
                                                                 Command="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).RemoveJobCommand}"
                                                                 CommandParameter="{Binding}"/>
                                                     </Grid>
