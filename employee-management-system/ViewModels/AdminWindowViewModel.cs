@@ -36,6 +36,9 @@ public partial class AdminWindowViewModel : ViewModelBase
     private string _newJobName = string.Empty;
     public string NewJobName { get => _newJobName; set => SetProperty(ref _newJobName, value); }
 
+    private string _newJobDescription = string.Empty;
+    public string NewJobDescription { get => _newJobDescription; set => SetProperty(ref _newJobDescription, value); }
+
     private string _newJobStatus = "Nowe";
     public string NewJobStatus { get => _newJobStatus; set => SetProperty(ref _newJobStatus, value); }
 
@@ -152,6 +155,7 @@ public partial class AdminWindowViewModel : ViewModelBase
         FilteredJobs.Clear();
         foreach (var j in Jobs.Where(j => string.IsNullOrEmpty(query) ||
             j.JobName.ToLower().Contains(query) ||
+            j.Description.ToLower().Contains(query) ||
             j.Status.ToLower().Contains(query)))
         {
             FilteredJobs.Add(j);
@@ -211,9 +215,10 @@ public partial class AdminWindowViewModel : ViewModelBase
 
         using var db = new DatabaseContext();
         var jobService = new JobService(new JobRepository(db));
-        jobService.Add(NewJobName, NewJobStatus);
+        jobService.Add(NewJobName, NewJobDescription, NewJobStatus);
 
         NewJobName = string.Empty;
+        NewJobDescription = string.Empty;
         NewJobStatus = "Nowe";
         RefreshAll();
     }
@@ -334,12 +339,14 @@ public partial class JobItemViewModel : ObservableObject
 {
     [ObservableProperty] private bool _isSelected;
     public string JobName { get; }
+    public string Description { get; }
     public string Status { get; }
     public DateTime CreatedAt { get; }
 
     public JobItemViewModel(Job job)
     {
         JobName = job.JobName;
+        Description = job.Description;
         Status = job.Status;
         CreatedAt = job.CreatedAt;
     }

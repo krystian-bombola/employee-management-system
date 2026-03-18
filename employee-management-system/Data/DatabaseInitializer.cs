@@ -27,6 +27,7 @@ public static class DatabaseInitializer
             CREATE TABLE IF NOT EXISTS Jobs (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 JobName TEXT,
+                Description TEXT NOT NULL DEFAULT '',
                 CreatedAt TEXT,
                 Status TEXT
             );";
@@ -71,6 +72,7 @@ public static class DatabaseInitializer
 
         var today = DateTime.Now.ToString("yyyy-MM-dd");
         EnsureColumnExists(connection, "Users", "EmploymentDate", $"TEXT NOT NULL DEFAULT '{today}'");
+        EnsureColumnExists(connection, "Jobs", "Description", "TEXT NOT NULL DEFAULT ''");
         EnsureColumnExists(connection, "Operations", "Description", "TEXT NOT NULL DEFAULT ''");
         EnsureColumnExists(connection, "Operations", "CurrentWorkersCount", "INTEGER NOT NULL DEFAULT 0");
 
@@ -94,7 +96,7 @@ public static class DatabaseInitializer
 
         var orderExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Jobs WHERE JobName = 'aaaa'", connection).ExecuteScalar()!;
         if (orderExists == 0)
-            ExecuteNonQuery(connection, $"INSERT INTO Jobs (JobName, CreatedAt, Status) VALUES ('aaaa', '{DateTime.Now:yyyy-MM-dd}', 'New')");
+            ExecuteNonQuery(connection, $"INSERT INTO Jobs (JobName, Description, CreatedAt, Status) VALUES ('aaaa', 'Opis zlecenia aaaa', '{DateTime.Now:yyyy-MM-dd}', 'New')");
     }
 
     private static void ExecuteNonQuery(SqliteConnection conn, string sql)

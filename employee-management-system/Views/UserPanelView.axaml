@@ -56,8 +56,9 @@
         <!-- ... existing code ... -->
     </UserControl.Styles>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="24" Spacing="16">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24" Spacing="16">
 
             <!-- Card 1: Pracownik + ID zlecenia -->
             <Border Background="White"
@@ -103,7 +104,7 @@
                     Padding="24,20"
                     BoxShadow="0 1 4 0 #22000000">
                 <StackPanel Spacing="12">
-                    <TextBlock Text="Wykonywana operacja:"
+                    <TextBlock Text="Praca:"
                                FontSize="16"
                                FontWeight="SemiBold"
                                Foreground="#111"/>
@@ -127,6 +128,18 @@
                     Padding="24,20"
                     BoxShadow="0 1 4 0 #22000000">
                 <StackPanel Spacing="14">
+                    <TextBlock Text="Wybierz zlecenie"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="#111"/>
+
+                    <ComboBox ItemsSource="{Binding AvailableJobs}"
+                              SelectedItem="{Binding SelectedJob}"
+                              PlaceholderText="Wybierz zlecenie"
+                              IsEnabled="{Binding AreSelectorsEnabled}"
+                              HorizontalAlignment="Stretch"
+                              Padding="12"/>
+
                     <TextBlock Text="Wybierz operację"
                                FontSize="16"
                                FontWeight="SemiBold"
@@ -135,6 +148,7 @@
                     <ComboBox ItemsSource="{Binding AvailableOperations}"
                               SelectedItem="{Binding SelectedOperation}"
                               PlaceholderText="Wybierz operację"
+                              IsEnabled="{Binding AreSelectorsEnabled}"
                               HorizontalAlignment="Stretch"
                               Padding="12"/>
 
@@ -211,7 +225,7 @@
 
                         <!-- Zakończ -->
                         <Button Grid.Column="4"
-                                Command="{Binding StopOperationCommand}"
+                                Command="{Binding RequestEndOperationCommand}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 Padding="14"
@@ -247,7 +261,49 @@
                 </StackPanel>
             </Border>
 
-        </StackPanel>
-    </ScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border IsVisible="{Binding IsEndOperationConfirmationVisible}"
+                Background="#80000000"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+            <Border Width="420"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BoxShadow="0 4 16 0 #33000000">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Potwierdzenie"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#111"/>
+                    <TextBlock Text="Czy na pewno operacja została zrealizowana?"
+                               TextWrapping="Wrap"
+                               Foreground="#333"/>
+                    <Grid ColumnDefinitions="*,12,*">
+                        <Button Grid.Column="0"
+                                Content="Nie"
+                                Command="{Binding CancelEndOperationCommand}"
+                                Background="#4A90D9"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                Padding="12"
+                                CornerRadius="8"/>
+                        <Button Grid.Column="2"
+                                Content="Tak, zakończ"
+                                Command="{Binding ConfirmEndOperationCommand}"
+                                Background="#D94A4A"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                Padding="12"
+                                CornerRadius="8"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
 
 </UserControl>
