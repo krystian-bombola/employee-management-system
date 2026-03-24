@@ -43,4 +43,24 @@ public class UserService
         if (user is not null)
             _userRepository.Remove(user);
     }
+
+    public void Update(int id, string firstName, string lastName, string identifier, string? newPassword, int? positionId)
+    {
+        var user = _userRepository.GetAll().Find(u => u.Id == id);
+        if (user is null) return;
+
+        user.FirstName = firstName;
+        user.LastName = lastName;
+        user.Identifier = identifier;
+        user.PositionId = positionId;
+
+        if (!string.IsNullOrWhiteSpace(newPassword))
+        {
+            var salt = PasswordService.GenerateSalt();
+            user.PasswordHash = PasswordService.HashPassword(newPassword, salt);
+            user.PasswordSalt = salt;
+        }
+
+        _userRepository.Update(user);
+    }
 }

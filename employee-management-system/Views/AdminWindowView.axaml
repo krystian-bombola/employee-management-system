@@ -211,14 +211,17 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="vm:UserItemViewModel">
                                                 <Border BorderBrush="#EEE" BorderThickness="0,0,0,1" Padding="0,10">
-                                                    <Grid ColumnDefinitions="50,2*,2*,1*,2*,2*,Auto">
+                                                    <Grid ColumnDefinitions="50,2*,2*,1*,2*,2*,Auto,Auto">
                                                         <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center"/>
                                                         <TextBlock Grid.Column="1" Text="{Binding FirstName}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="2" Text="{Binding LastName}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="3" Text="{Binding Identifier}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="4" Text="{Binding EmploymentDate}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="5" Text="{Binding PositionName}" VerticalAlignment="Center"/>
-                                                        <Button Grid.Column="6" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
+                                                        <Button Grid.Column="6" Content="Edytuj" Classes="admin-button" Padding="8,4" FontSize="12" Margin="0,0,6,0"
+                                                                Command="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).EditUserCommand}"
+                                                                CommandParameter="{Binding}"/>
+                                                        <Button Grid.Column="7" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
                                                                 Command="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).RemoveUserCommand}"
                                                                 CommandParameter="{Binding}"/>
                                                     </Grid>

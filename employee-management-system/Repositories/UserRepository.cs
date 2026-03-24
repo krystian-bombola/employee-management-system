@@ -27,6 +27,12 @@ public class UserRepository
         _db.SaveChanges();
     }
 
+    public void Update(User user)
+    {
+        _db.Users.Update(user);
+        _db.SaveChanges();
+    }
+
     public void Remove(User user)
     {
         _db.Users.Remove(user);

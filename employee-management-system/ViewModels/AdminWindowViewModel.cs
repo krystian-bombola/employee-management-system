@@ -1,5 +1,4 @@
-﻿
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
 using employee_management_system.Models;
@@ -8,6 +7,8 @@ using employee_management_system.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia;
 
 namespace employee_management_system.ViewModels;
 
@@ -358,6 +359,23 @@ public partial class AdminWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async System.Threading.Tasks.Task EditUser(UserItemViewModel? item)
+    {
+        if (item is null) return;
+
+        var vm = new EditUserViewModel(item, Positions);
+        var window = new Views.EditUserWindow(vm);
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
+
+        RefreshAll();
+    }
+
+    [RelayCommand]
     private void ShowUsers() { CurrentTabIndex = 0; RefreshAll(); }
 
     [RelayCommand]
@@ -373,6 +391,7 @@ public partial class AdminWindowViewModel : ViewModelBase
 public partial class UserItemViewModel : ObservableObject
 {
     [ObservableProperty] private bool _isSelected;
+    public int Id { get; }
     public string FirstName { get; }
     public string LastName { get; }
     public string Identifier { get; }
@@ -381,6 +400,7 @@ public partial class UserItemViewModel : ObservableObject
 
     public UserItemViewModel(User user)
     {
+        Id = user.Id;
         FirstName = user.FirstName;
         LastName = user.LastName;
         Identifier = user.Identifier;
@@ -434,4 +454,3 @@ public partial class JobItemViewModel : ObservableObject
         CreatedAt = job.CreatedAt;
     }
 }
-
