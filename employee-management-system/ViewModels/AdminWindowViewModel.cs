@@ -34,7 +34,7 @@ public partial class AdminWindowViewModel : ViewModelBase
     public string? NewUserID { get => _newUserID; set => SetProperty(ref _newUserID, value); }
 
     private string _newJobName = string.Empty;
-    public string NewJobName { get => _newJobName; set => SetProperty(ref _newJobName, value); }
+    public string NewJobName { get => _newJobName; set { if (SetProperty(ref _newJobName, value)) { try { ConfirmAddJobCommand.NotifyCanExecuteChanged(); } catch { } } } }
 
     private string _newJobDescription = string.Empty;
     public string NewJobDescription { get => _newJobDescription; set => SetProperty(ref _newJobDescription, value); }
@@ -75,6 +75,11 @@ public partial class AdminWindowViewModel : ViewModelBase
     public ObservableCollection<JobItemViewModel> Jobs { get; } = new();
     public ObservableCollection<OperationItemViewModel> Operations { get; } = new();
     public ObservableCollection<UserItemViewModel> Users { get; } = new();
+
+    private bool _isAssignOperationsVisible;
+    public bool IsAssignOperationsVisible { get => _isAssignOperationsVisible; set => SetProperty(ref _isAssignOperationsVisible, value); }
+
+    public ObservableCollection<OperationItemViewModel> AvailableOperationsForAssign { get; } = new();
 
     public ObservableCollection<string> JobStatuses { get; } = new();
 
@@ -207,20 +212,62 @@ public partial class AdminWindowViewModel : ViewModelBase
         RefreshAll();
     }
 
+
+    [RelayCommand]
+    private void PrepareAddJob()
+    {
+
+        AvailableOperationsForAssign.Clear();
+
+        foreach (var existing in Operations)
+        {
+            var op = new Operation { Id = existing.OperationName.GetHashCode(), OperationName = existing.OperationName, Description = existing.Description, CurrentWorkersCount = existing.CurrentWorkersCount };
+            var vm = new OperationItemViewModel(op);
+            vm.PropertyChanged += (_, __) => ConfirmAddJobCommand.NotifyCanExecuteChanged();
+            AvailableOperationsForAssign.Add(vm);
+        }
+
+        IsAssignOperationsVisible = true;
+    }
+
     [RelayCommand]
     private void AddJob()
+    {
+        PrepareAddJob();
+    }
+
+    [RelayCommand(CanExecute = nameof(CanConfirmAddJob))]
+    private void ConfirmAddJob()
     {
         if (string.IsNullOrWhiteSpace(NewJobName))
             return;
 
-        using var db = new DatabaseContext();
-        var jobService = new JobService(new JobRepository(db));
-        jobService.Add(NewJobName, NewJobDescription, NewJobStatus);
 
+        if (!AvailableOperationsForAssign.Any(o => o.IsSelected))
+            return;
+        using var db = new DatabaseContext();
+        var selectedNames = AvailableOperationsForAssign.Where(o => o.IsSelected).Select(o => o.OperationName).ToList();
+        var selectedOpIds = db.Operations.Where(o => selectedNames.Contains(o.OperationName)).Select(o => o.Id).ToList();
+
+        var jobService = new JobService(new JobRepository(db));
+        jobService.Add(NewJobName, NewJobDescription, selectedOpIds, NewJobStatus);
+
+        IsAssignOperationsVisible = false;
         NewJobName = string.Empty;
         NewJobDescription = string.Empty;
         NewJobStatus = "Nowe";
         RefreshAll();
+    }
+
+    private bool CanConfirmAddJob()
+    {
+        return !string.IsNullOrWhiteSpace(NewJobName) && AvailableOperationsForAssign.Any(o => o.IsSelected);
+    }
+
+    [RelayCommand]
+    private void CancelAddJob()
+    {
+        IsAssignOperationsVisible = false;
     }
 
     [RelayCommand]
@@ -332,6 +379,20 @@ public partial class OperationItemViewModel : ObservableObject
         OperationName = op.OperationName;
         Description = op.Description;
         CurrentWorkersCount = op.CurrentWorkersCount;
+    }
+}
+public partial class OperationSelectionItemViewModel : ObservableObject
+{
+    [ObservableProperty] private bool _isSelected;
+    public int Id { get; }
+    public string OperationName { get; }
+    public string Description { get; }
+
+    public OperationSelectionItemViewModel(Operation op)
+    {
+        Id = op.Id;
+        OperationName = op.OperationName;
+        Description = op.Description;
     }
 }
 

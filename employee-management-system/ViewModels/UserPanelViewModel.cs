@@ -18,6 +18,7 @@ public partial class UserPanelViewModel : ViewModelBase
     [ObservableProperty]
     private string _orderId = "---";
 
+
     [ObservableProperty]
     private string _currentOperation = "Brak pracy";
 
@@ -70,6 +71,30 @@ public partial class UserPanelViewModel : ViewModelBase
                 ? $"{job.Id} - {job.JobName}"
                 : $"{job.Id} - {job.JobName} - {job.Description}";
             AvailableJobs.Add(display);
+        }
+    }
+
+    private void LoadOperationsForJob(string? jobDisplay)
+    {
+        AvailableOperations.Clear();
+        if (string.IsNullOrWhiteSpace(jobDisplay))
+            return;
+
+        var parts = jobDisplay.Split(" - ", 2, StringSplitOptions.None);
+        if (!int.TryParse(parts[0], out var jobId))
+            return;
+
+        using var db = new DatabaseContext();
+        var ops = from jt in db.JobTasks
+                  join o in db.Operations on jt.OperationId equals o.Id
+                  where jt.JobId == jobId
+                  orderby jt.Order
+                  select new { o.OperationName, o.Description };
+
+        foreach (var op in ops)
+        {
+            var display = string.IsNullOrWhiteSpace(op.Description) ? op.OperationName : $"{op.OperationName} - {op.Description}";
+            AvailableOperations.Add(display);
         }
     }
 
@@ -212,12 +237,14 @@ public partial class UserPanelViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(value))
         {
             OrderId = "---";
+            AvailableOperations.Clear();
             StartOperationCommand.NotifyCanExecuteChanged();
             return;
         }
 
-        var parts = value.Split(" - ", 3, StringSplitOptions.None);
+        var parts = value.Split(" - ", 2, StringSplitOptions.None);
         OrderId = parts.Length > 0 ? parts[0] : value;
+        LoadOperationsForJob(value);
         StartOperationCommand.NotifyCanExecuteChanged();
     }
 
