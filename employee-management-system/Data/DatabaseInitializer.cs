@@ -63,11 +63,19 @@ public static class DatabaseInitializer
                 FOREIGN KEY (JobTaskId) REFERENCES JobTasks(Id)
             );";
 
+        var createPositions = @"
+            CREATE TABLE IF NOT EXISTS Positions (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                PositionName TEXT NOT NULL,
+                HourlyRate REAL NOT NULL DEFAULT 0
+            );";
+
         ExecuteNonQuery(connection, createUsers);
         ExecuteNonQuery(connection, createJobs);
         ExecuteNonQuery(connection, createOperations);
         ExecuteNonQuery(connection, createJobTasks);
         ExecuteNonQuery(connection, createWorkLogs);
+        ExecuteNonQuery(connection, createPositions);
 
 
         var today = DateTime.Now.ToString("yyyy-MM-dd");

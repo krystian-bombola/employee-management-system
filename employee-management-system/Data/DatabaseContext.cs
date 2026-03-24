@@ -12,6 +12,7 @@ public class DatabaseContext : DbContext
     public DbSet<Operation> Operations { get; set; }
     public DbSet<JobTask> JobTasks { get; set; }
     public DbSet<WorkLog> WorkLogs { get; set; }
+    public DbSet<Position> Positions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
@@ -26,6 +27,7 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Operation>().ToTable("Operations");
         modelBuilder.Entity<JobTask>().ToTable("JobTasks");
         modelBuilder.Entity<WorkLog>().ToTable("WorkLogs");
+        modelBuilder.Entity<Position>().ToTable("Positions");
 
         modelBuilder.Entity<JobTask>()
             .HasOne(jt => jt.Job)

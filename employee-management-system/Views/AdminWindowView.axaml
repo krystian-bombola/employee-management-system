@@ -103,6 +103,7 @@
             <Button Classes="admin-button" Content="Użytkownicy" Command="{Binding ShowUsersCommand}" Width="150"/>
             <Button Classes="admin-button" Content="Operacje" Command="{Binding ShowOperationsCommand}" Width="150"/>
             <Button Classes="admin-button" Content="Zlecenia" Command="{Binding ShowJobsCommand}" Width="150"/>
+            <Button Classes="admin-button" Content="Stanowiska" Command="{Binding ShowPositionsCommand}" Width="150"/>
         </StackPanel>
 
         <!-- Panele poniżej zakładek -->
@@ -138,6 +139,14 @@
                             <ComboBox ItemsSource="{Binding JobStatuses}" SelectedItem="{Binding NewJobStatus}"/>
                             <Button Classes="admin-button" Content="+ Dodaj zlecenie" Command="{Binding AddJobCommand}"/>
                             <Button Classes="admin-button" Content="- Usuń zaznaczone" Command="{Binding RemoveJobCommand}"/>
+                        </StackPanel>
+
+                        <!-- Pola dla Stanowisk -->
+                        <StackPanel IsVisible="{Binding IsPositionsVisible}" Spacing="10">
+                            <TextBox Watermark="Nazwa stanowiska" Text="{Binding NewPositionName}"/>
+                            <TextBox Watermark="Stawka godzinowa (zł)" Text="{Binding NewPositionHourlyRate}"/>
+                            <Button Classes="admin-button" Content="+ Dodaj stanowisko" Command="{Binding AddPositionCommand}"/>
+                            <Button Classes="admin-button" Content="- Usuń zaznaczone" Command="{Binding RemovePositionCommand}"/>
                         </StackPanel>
 
                         <Separator Classes="section"/>
@@ -262,6 +271,31 @@
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </StackPanel>
+
+                                <!-- Widok Stanowisk -->
+                                <StackPanel IsVisible="{Binding IsPositionsVisible}">
+                                    <Grid ColumnDefinitions="50,3*,2*,Auto" Margin="0,0,0,10">
+                                        <TextBlock Grid.Column="1" Text="Nazwa stanowiska" FontWeight="Bold"/>
+                                        <TextBlock Grid.Column="2" Text="Stawka godz. (zł)" FontWeight="Bold"/>
+                                    </Grid>
+                                    <ItemsControl ItemsSource="{Binding FilteredPositions}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:PositionItemViewModel">
+                                                <Border BorderBrush="#EEE" BorderThickness="0,0,0,1" Padding="0,10">
+                                                    <Grid ColumnDefinitions="50,3*,2*,Auto">
+                                                        <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding PositionName}" VerticalAlignment="Center"/>
+                                                        <TextBlock Grid.Column="2" Text="{Binding HourlyRate, StringFormat='{}{0:F2} zł'}" VerticalAlignment="Center"/>
+                                                        <Button Grid.Column="3" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
+                                                                Command="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).RemovePositionCommand}"
+                                                                CommandParameter="{Binding}"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+
                             </StackPanel>
                         </ScrollViewer>
                     </StackPanel>
