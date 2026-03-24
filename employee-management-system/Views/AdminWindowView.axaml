@@ -145,7 +145,8 @@
                         <StackPanel IsVisible="{Binding IsJobsVisible}" Spacing="10">
                             <TextBox Watermark="Nazwa zlecenia" Text="{Binding NewJobName}"/>
                             <TextBox Watermark="Opis zlecenia" Text="{Binding NewJobDescription}"/>
-                            <ComboBox ItemsSource="{Binding JobStatuses}" SelectedItem="{Binding NewJobStatus}"/>
+                            <ComboBox ItemsSource="{Binding JobStatuses}" SelectedItem="{Binding NewJobStatus}" HorizontalAlignment="Stretch"/>
+                            <Button Classes="admin-button" Content="Przypisz operacje" Command="{Binding PrepareAddJobCommand}"/>
                             <Button Classes="admin-button" Content="+ Dodaj zlecenie" Command="{Binding AddJobCommand}"/>
                         </StackPanel>
 
@@ -162,29 +163,86 @@
                 </Border>
             </StackPanel>
 
+
             <!-- Prawy panel dynamiczny -->
             <StackPanel Grid.Column="2" Spacing="20">
                 
                 <!-- Podsumowania -->
                 <Grid ColumnDefinitions="*,20,*,20,*">
-                    <Border Grid.Column="0" Classes="card" Padding="16" Background="#E3F2FD">
-                        <StackPanel>
-                            <TextBlock Text="Użytkownicy" FontSize="12" Foreground="#1976D2"/>
-                            <TextBlock Text="{Binding UserCount}" FontSize="24" FontWeight="Bold" Foreground="#1976D2"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Grid.Column="2" Classes="card" Padding="16" Background="#F1F8E9">
-                        <StackPanel>
-                            <TextBlock Text="Operacje" FontSize="12" Foreground="#388E3C"/>
-                            <TextBlock Text="{Binding OperationCount}" FontSize="24" FontWeight="Bold" Foreground="#388E3C"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Grid.Column="4" Classes="card" Padding="16" Background="#FFF3E0">
-                        <StackPanel>
-                            <TextBlock Text="Zlecenia" FontSize="12" Foreground="#F57C00"/>
-                            <TextBlock Text="{Binding JobCount}" FontSize="24" FontWeight="Bold" Foreground="#F57C00"/>
-                        </StackPanel>
-                    </Border>
+                   <Button Grid.Column="0"
+        Command="{Binding ShowUsersCommand}"
+        Background="Transparent"
+        BorderThickness="0"
+        Padding="0"
+         HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+
+
+    <Border Classes="card"
+            Background="#E3F2FD"
+            Padding="16">
+
+        <StackPanel>
+            <TextBlock Text="Użytkownicy"
+                       FontSize="12"
+                       Foreground="#1976D2"/>
+
+            <TextBlock Text="{Binding UserCount}"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="#1976D2"/>
+        </StackPanel>
+
+    </Border>
+</Button>
+                    <Button Grid.Column="2"
+        Command="{Binding ShowOperationsCommand}"
+        Background="Transparent"
+        BorderThickness="0"
+        Padding="0"
+         HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+
+    <Border Classes="card"
+            Background="#F1F8E9"
+            Padding="16">
+
+        <StackPanel>
+            <TextBlock Text="Operacje"
+                       FontSize="12"
+                       Foreground="#388E3C"/>
+            <TextBlock Text="{Binding OperationCount}"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="#388E3C"/>
+        </StackPanel>
+
+    </Border>
+</Button>
+                    <Button Grid.Column="4"
+        Command="{Binding ShowJobsCommand}"
+        Background="Transparent"
+        BorderThickness="0"
+        Padding="0"
+         HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+
+    <Border Classes="card"
+            Background="#FFF3E0"
+            Padding="16">
+
+        <StackPanel>
+            <TextBlock Text="Zlecenia"
+                       FontSize="12"
+                       Foreground="#F57C00"/>
+            <TextBlock Text="{Binding JobCount}"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="#F57C00"/>
+        </StackPanel>
+
+    </Border>
+</Button>
                 </Grid>
 
                 <!-- Filtrowanie i Lista -->
@@ -316,6 +374,33 @@
                     </StackPanel>
                 </Border>
             </StackPanel>
+
+        <Border Grid.ColumnSpan="3" Background="#80000000" IsVisible="{Binding IsAssignOperationsVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="12" Padding="20" Width="600">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Przypisz operacje do zlecenia" FontSize="16" FontWeight="SemiBold"/>
+                    <TextBlock Text="Wybierz operacje które mają należeć do zlecenia:"/>
+                    <ScrollViewer Height="300">
+                        <ItemsControl ItemsSource="{Binding AvailableOperationsForAssign}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:OperationItemViewModel">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <CheckBox IsChecked="{Binding IsSelected}"/>
+                                        <TextBlock Text="{Binding OperationName}" VerticalAlignment="Center"/>
+                                        <TextBlock Text=" - " VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Description}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                    <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+                        <Button Classes="admin-button" Content="Anuluj" Command="{Binding CancelAddJobCommand}"/>
+                        <Button Classes="admin-button" Content="Zatwierdź" Command="{Binding ConfirmAddJobCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
         </Grid>
     </Grid>
 </UserControl>
