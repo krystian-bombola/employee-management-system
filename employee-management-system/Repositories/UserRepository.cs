@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using employee_management_system.Data;
 using employee_management_system.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace employee_management_system.Repositories;
 
@@ -15,14 +16,20 @@ public class UserRepository
     }
 
     public User? GetByIdentifier(string identifier)
-        => _db.Users.FirstOrDefault(u => u.Identifier == identifier);
+        => _db.Users.Include(u => u.Position).FirstOrDefault(u => u.Identifier == identifier);
 
     public List<User> GetAll()
-        => _db.Users.ToList();
+        => _db.Users.Include(u => u.Position).ToList();
 
     public void Add(User user)
     {
         _db.Users.Add(user);
+        _db.SaveChanges();
+    }
+
+    public void Update(User user)
+    {
+        _db.Users.Update(user);
         _db.SaveChanges();
     }
 

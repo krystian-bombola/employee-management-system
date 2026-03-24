@@ -14,8 +14,7 @@ public class User
     public string PasswordSalt { get; set; } = string.Empty;
 
     public bool IsAdmin { get; set; } = false;
-
     public string EmploymentDate { get; set; } = System.DateTime.Now.ToString("yyyy-MM-dd");
-
-    public ICollection<WorkLog> WorkLogs { get; set; } = new List<WorkLog>();
+    public int? PositionId { get; set; }
+    public Position? Position { get; set; }
 }

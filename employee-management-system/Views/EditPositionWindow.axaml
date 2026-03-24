@@ -1,0 +1,122 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:employee_management_system.ViewModels"
+        x:Class="employee_management_system.Views.EditPositionWindow"
+        x:DataType="vm:EditPositionViewModel"
+        Title="Edytuj stanowisko"
+        Width="420"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#F3F4F6">
+
+    <Design.DataContext>
+        <vm:EditPositionViewModel/>
+    </Design.DataContext>
+
+    <Window.Styles>
+        <Style Selector="TextBox">
+            <Style.Resources>
+                <SolidColorBrush x:Key="TextControlBackground" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="White"/>
+                <SolidColorBrush x:Key="TextControlForeground" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundFocused" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#888888"/>
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#888888"/>
+                <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#888888"/>
+                <SolidColorBrush x:Key="TextControlBorderBrush" Color="#999999"/>
+                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#999999"/>
+                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#0000FF"/>
+            </Style.Resources>
+            <Setter Property="Padding" Value="12"/>
+        </Style>
+
+        <Style Selector="Button.admin-button">
+            <Setter Property="Background" Value="#2F6FB7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#255A93"/>
+        </Style>
+        <Style Selector="Button.admin-button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#1E4875"/>
+        </Style>
+
+        <Style Selector="Button.secondary-button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CCCCCC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="Button.secondary-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#F0F0F0"/>
+        </Style>
+        <Style Selector="Button.secondary-button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E0E0E0"/>
+        </Style>
+
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+    </Window.Styles>
+
+    <Border Padding="24">
+        <StackPanel Spacing="0">
+
+            <TextBlock Text="Edytuj stanowisko"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="#111"
+                       Margin="0,0,0,20"/>
+
+            <Border Background="White"
+                    CornerRadius="12"
+                    Padding="20"
+                    BoxShadow="0 1 4 0 #22000000"
+                    Margin="0,0,0,16">
+                <StackPanel Spacing="12">
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Nazwa stanowiska" Classes="label"/>
+                        <TextBox Text="{Binding PositionName}" Watermark="Nazwa stanowiska"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Stawka godzinowa (zł)" Classes="label"/>
+                        <TextBox Text="{Binding HourlyRate}" Watermark="Stawka godzinowa (zł)"/>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+            <Grid ColumnDefinitions="*,12,*">
+                <Button Grid.Column="0"
+                        Classes="secondary-button"
+                        Content="Anuluj"
+                        Command="{Binding CancelCommand}"/>
+                <Button Grid.Column="2"
+                        Classes="admin-button"
+                        Content="Zapisz zmiany"
+                        Command="{Binding SaveCommand}"/>
+            </Grid>
+
+        </StackPanel>
+    </Border>
+</Window>
