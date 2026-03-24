@@ -132,7 +132,6 @@
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
                             <Button Classes="admin-button" Content="+ Dodaj użytkownika" Command="{Binding AddUserCommand}"/>
-                            <Button Classes="admin-button" Content="- Usuń zaznaczonych" Command="{Binding RemoveUserCommand}"/>
                         </StackPanel>
 
                         <!-- Pola dla Operacji -->
