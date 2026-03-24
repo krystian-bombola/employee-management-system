@@ -18,5 +18,15 @@ public class PositionService
     public void Add(string positionName, decimal hourlyRate)
         => _repository.Add(new Position { PositionName = positionName, HourlyRate = hourlyRate });
 
+    public void Update(int id, string positionName, decimal hourlyRate)
+    {
+        var position = _repository.GetAll().Find(p => p.Id == id);
+        if (position is null) return;
+
+        position.PositionName = positionName;
+        position.HourlyRate = hourlyRate;
+        _repository.Update(position);
+    }
+
     public void Remove(int id) => _repository.Remove(id);
 }

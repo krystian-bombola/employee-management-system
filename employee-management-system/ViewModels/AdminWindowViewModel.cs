@@ -376,6 +376,23 @@ public partial class AdminWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async System.Threading.Tasks.Task EditPosition(PositionItemViewModel? item)
+    {
+        if (item is null) return;
+
+        var vm = new EditPositionViewModel(item);
+        var window = new Views.EditPositionWindow(vm);
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
+
+        RefreshAll();
+    }
+
+    [RelayCommand]
     private void ShowUsers() { CurrentTabIndex = 0; RefreshAll(); }
 
     [RelayCommand]

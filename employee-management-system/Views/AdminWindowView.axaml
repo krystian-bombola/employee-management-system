@@ -286,7 +286,7 @@
 
                                 <!-- Widok Stanowisk -->
                                 <StackPanel IsVisible="{Binding IsPositionsVisible}">
-                                    <Grid ColumnDefinitions="50,3*,2*,Auto" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="50,3*,2*,Auto,Auto" Margin="0,0,0,10">
                                         <TextBlock Grid.Column="1" Text="Nazwa stanowiska" FontWeight="Bold"/>
                                         <TextBlock Grid.Column="2" Text="Stawka godz. (zł)" FontWeight="Bold"/>
                                     </Grid>
@@ -294,11 +294,14 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="vm:PositionItemViewModel">
                                                 <Border BorderBrush="#EEE" BorderThickness="0,0,0,1" Padding="0,10">
-                                                    <Grid ColumnDefinitions="50,3*,2*,Auto">
+                                                    <Grid ColumnDefinitions="50,3*,2*,Auto,Auto">
                                                         <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center"/>
                                                         <TextBlock Grid.Column="1" Text="{Binding PositionName}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="2" Text="{Binding HourlyRate, StringFormat='{}{0:F2} zł'}" VerticalAlignment="Center"/>
-                                                        <Button Grid.Column="3" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
+                                                        <Button Grid.Column="3" Content="Edytuj" Classes="admin-button" Padding="8,4" FontSize="12" Margin="0,0,6,0"
+                                                                Command="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).EditPositionCommand}"
+                                                                CommandParameter="{Binding}"/>
+                                                        <Button Grid.Column="4" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
                                                                 Command="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).RemovePositionCommand}"
                                                                 CommandParameter="{Binding}"/>
                                                     </Grid>

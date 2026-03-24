@@ -31,4 +31,10 @@ public class PositionRepository
             _db.SaveChanges();
         }
     }
+
+    public void Update(Position position)
+    {
+        _db.Positions.Update(position);
+        _db.SaveChanges();
+    }
 }
