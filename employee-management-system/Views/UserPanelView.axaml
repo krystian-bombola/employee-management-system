@@ -83,6 +83,9 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Margin="18,0"/>
+                        <Button Classes="logout-button"
+                            Content="Zmień hasło"
+                            Command="{Binding ChangePasswordCommand}"/>
 
                     <StackPanel Grid.Column="2" Spacing="4" HorizontalAlignment="Right">
                         <TextBlock Text="ID zlecenia:"
