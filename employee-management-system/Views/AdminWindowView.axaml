@@ -147,9 +147,6 @@
                             <TextBox Watermark="Opis zlecenia" Text="{Binding NewJobDescription}"/>
                             <ComboBox ItemsSource="{Binding JobStatuses}" SelectedItem="{Binding NewJobStatus}" HorizontalAlignment="Stretch"/>
                             <Button Classes="admin-button" Content="Przypisz operacje" Command="{Binding PrepareAddJobCommand}"/>
-                            <Button Classes="admin-button" Content="+ Dodaj zlecenie" Command="{Binding PrepareAddJobCommand}"/>
-                            <Button Classes="admin-button" Content="- Usuń zaznaczone" Command="{Binding RemoveJobCommand}"/>
-                            <ComboBox ItemsSource="{Binding JobStatuses}" SelectedItem="{Binding NewJobStatus}"/>
                             <Button Classes="admin-button" Content="+ Dodaj zlecenie" Command="{Binding AddJobCommand}"/>
                         </StackPanel>
 

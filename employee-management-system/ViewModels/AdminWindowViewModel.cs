@@ -499,6 +499,9 @@ public partial class OperationSelectionItemViewModel : ObservableObject
         Id = op.Id;
         OperationName = op.OperationName;
         Description = op.Description;
+    }
+}
+
 public partial class PositionItemViewModel : ObservableObject
 {
     [ObservableProperty] private bool _isSelected;
