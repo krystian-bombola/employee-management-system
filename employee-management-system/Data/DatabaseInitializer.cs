@@ -83,6 +83,7 @@ public static class DatabaseInitializer
         EnsureColumnExists(connection, "Jobs", "Description", "TEXT NOT NULL DEFAULT ''");
         EnsureColumnExists(connection, "Operations", "Description", "TEXT NOT NULL DEFAULT ''");
         EnsureColumnExists(connection, "Operations", "CurrentWorkersCount", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumnExists(connection, "Users", "PositionId", "INTEGER NULL REFERENCES Positions(Id)");
 
         ExecuteNonQuery(connection, $"UPDATE Users SET EmploymentDate = '{today}' WHERE EmploymentDate = '' OR EmploymentDate IS NULL;");
 

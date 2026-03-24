@@ -33,6 +33,16 @@ public partial class AdminWindowViewModel : ViewModelBase
     private string? _newUserID;
     public string? NewUserID { get => _newUserID; set => SetProperty(ref _newUserID, value); }
 
+    private string _newUserPassword = string.Empty;
+    public string NewUserPassword { get => _newUserPassword; set => SetProperty(ref _newUserPassword, value); }
+
+    private PositionItemViewModel? _selectedNewUserPosition;
+    public PositionItemViewModel? SelectedNewUserPosition
+    {
+        get => _selectedNewUserPosition;
+        set => SetProperty(ref _selectedNewUserPosition, value);
+    }
+
     private string _newJobName = string.Empty;
     public string NewJobName { get => _newJobName; set => SetProperty(ref _newJobName, value); }
 
@@ -142,6 +152,10 @@ public partial class AdminWindowViewModel : ViewModelBase
         Positions.Clear();
         foreach (var pos in positionService.GetAll())
             Positions.Add(new PositionItemViewModel(pos));
+
+        // Przywróć zaznaczone stanowisko po odświeżeniu
+        if (SelectedNewUserPosition != null)
+            SelectedNewUserPosition = Positions.FirstOrDefault(p => p.Id == SelectedNewUserPosition.Id);
 
         ApplyFilter();
     }
@@ -262,16 +276,24 @@ public partial class AdminWindowViewModel : ViewModelBase
     private void AddUser()
     {
         if (string.IsNullOrWhiteSpace(NewUserFirstName) ||
-            string.IsNullOrWhiteSpace(NewUserLastName))
+            string.IsNullOrWhiteSpace(NewUserLastName) ||
+            string.IsNullOrWhiteSpace(NewUserPassword))
             return;
 
         using var db = new DatabaseContext();
         var userService = new UserService(new UserRepository(db));
-        userService.Add(NewUserFirstName, NewUserLastName, NewUserID ?? string.Empty);
+        userService.Add(
+            NewUserFirstName,
+            NewUserLastName,
+            NewUserID ?? string.Empty,
+            NewUserPassword,
+            SelectedNewUserPosition?.Id);
 
         NewUserFirstName = "";
         NewUserLastName = "";
         NewUserID = "";
+        NewUserPassword = "";
+        SelectedNewUserPosition = null;
         RefreshAll();
     }
 
@@ -355,6 +377,7 @@ public partial class UserItemViewModel : ObservableObject
     public string LastName { get; }
     public string Identifier { get; }
     public string EmploymentDate { get; }
+    public string PositionName { get; }
 
     public UserItemViewModel(User user)
     {
@@ -362,6 +385,7 @@ public partial class UserItemViewModel : ObservableObject
         LastName = user.LastName;
         Identifier = user.Identifier;
         EmploymentDate = user.EmploymentDate;
+        PositionName = user.Position?.PositionName ?? "—";
     }
 }
 

@@ -120,7 +120,19 @@
                             <TextBox Watermark="Imię" Text="{Binding NewUserFirstName}"/>
                             <TextBox Watermark="Nazwisko" Text="{Binding NewUserLastName}"/>
                             <TextBox Watermark="ID / Numer" Text="{Binding NewUserID}"/>
+                            <TextBox Watermark="Hasło" PasswordChar="●" Text="{Binding NewUserPassword}"/>
+                            <ComboBox PlaceholderText="Wybierz stanowisko"
+                                      ItemsSource="{Binding Positions}"
+                                      SelectedItem="{Binding SelectedNewUserPosition}"
+                                      HorizontalAlignment="Stretch">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:PositionItemViewModel">
+                                        <TextBlock Text="{Binding PositionName}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
                             <Button Classes="admin-button" Content="+ Dodaj użytkownika" Command="{Binding AddUserCommand}"/>
+                            <Button Classes="admin-button" Content="- Usuń zaznaczonych" Command="{Binding RemoveUserCommand}"/>
                         </StackPanel>
 
                         <!-- Pola dla Operacji -->
@@ -188,23 +200,25 @@
                             <StackPanel>
                                 <!-- Widok Użytkowników -->
                                 <StackPanel IsVisible="{Binding IsUsersVisible}">
-                                    <Grid ColumnDefinitions="50,2*,2*,1*,2*,Auto" Margin="0,0,0,10">
+                                    <Grid ColumnDefinitions="50,2*,2*,1*,2*,2*,Auto" Margin="0,0,0,10">
                                         <TextBlock Grid.Column="1" Text="Imię" FontWeight="Bold"/>
                                         <TextBlock Grid.Column="2" Text="Nazwisko" FontWeight="Bold"/>
                                         <TextBlock Grid.Column="3" Text="ID" FontWeight="Bold"/>
                                         <TextBlock Grid.Column="4" Text="Data zatrudnienia" FontWeight="Bold"/>
+                                        <TextBlock Grid.Column="5" Text="Stanowisko" FontWeight="Bold"/>
                                     </Grid>
                                     <ItemsControl ItemsSource="{Binding FilteredUsers}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate x:DataType="vm:UserItemViewModel">
                                                 <Border BorderBrush="#EEE" BorderThickness="0,0,0,1" Padding="0,10">
-                                                    <Grid ColumnDefinitions="50,2*,2*,1*,2*,Auto">
+                                                    <Grid ColumnDefinitions="50,2*,2*,1*,2*,2*,Auto">
                                                         <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center"/>
                                                         <TextBlock Grid.Column="1" Text="{Binding FirstName}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="2" Text="{Binding LastName}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="3" Text="{Binding Identifier}" VerticalAlignment="Center"/>
                                                         <TextBlock Grid.Column="4" Text="{Binding EmploymentDate}" VerticalAlignment="Center"/>
-                                                        <Button Grid.Column="5" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
+                                                        <TextBlock Grid.Column="5" Text="{Binding PositionName}" VerticalAlignment="Center"/>
+                                                        <Button Grid.Column="6" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
                                                                 Command="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).RemoveUserCommand}"
                                                                 CommandParameter="{Binding}"/>
                                                     </Grid>

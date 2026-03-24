@@ -46,7 +46,13 @@ public class DatabaseContext : DbContext
 
         modelBuilder.Entity<WorkLog>()
             .HasOne(wl => wl.User)
-            .WithMany(u => u.WorkLogs)
+            .WithMany()
             .HasForeignKey(wl => wl.UserId);
+
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Position)
+            .WithMany()
+            .HasForeignKey(u => u.PositionId)
+            .IsRequired(false);
     }
 }

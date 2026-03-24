@@ -15,11 +15,10 @@ public class UserService
 
     public List<User> GetAll() => _userRepository.GetAll();
 
-    public void Add(string firstName, string lastName, string identifier)
+    public void Add(string firstName, string lastName, string identifier, string password, int? positionId)
     {
-        var defaultPassword = $"{firstName}123";
         var salt = PasswordService.GenerateSalt();
-        var hash = PasswordService.HashPassword(defaultPassword, salt);
+        var hash = PasswordService.HashPassword(password, salt);
 
         var user = new User
         {
@@ -28,6 +27,7 @@ public class UserService
             Identifier = identifier,
             PasswordHash = hash,
             PasswordSalt = salt,
+            PositionId = positionId,
             EmploymentDate = System.DateTime.Now.ToString("yyyy-MM-dd")
         };
         _userRepository.Add(user);
