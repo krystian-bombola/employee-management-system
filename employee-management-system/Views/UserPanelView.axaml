@@ -76,16 +76,19 @@
                                    Foreground="#111"/>
                     </StackPanel>
 
-                    <Button Grid.Column="1"
-                            Classes="logout-button"
-                            Content="Wyloguj"
-                            Command="{Binding LogoutCommand}"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="18,0"/>
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                Spacing="10"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="18,0">
                         <Button Classes="logout-button"
-                            Content="Zmień hasło"
-                            Command="{Binding ChangePasswordCommand}"/>
+                                Content="Zmień hasło"
+                                Command="{Binding ChangePasswordCommand}"/>
+                        <Button Classes="logout-button"
+                                Content="Wyloguj"
+                                Command="{Binding LogoutCommand}"/>
+                    </StackPanel>
 
                     <StackPanel Grid.Column="2" Spacing="4" HorizontalAlignment="Right">
                         <TextBlock Text="ID zlecenia:"
