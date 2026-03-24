@@ -5,12 +5,15 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
 using System.Linq;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace employee_management_system.ViewModels;
 
 public partial class UserPanelViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _mainVm;
+    private readonly int _userId;
 
     [ObservableProperty]
     private string _employeeName = "---";
@@ -38,9 +41,10 @@ public partial class UserPanelViewModel : ViewModelBase
     public ObservableCollection<string> AvailableJobs { get; } = new();
     public ObservableCollection<string> AvailableOperations { get; } = new();
 
-    public UserPanelViewModel(MainWindowViewModel mainVm, string employeeName)
+    public UserPanelViewModel(MainWindowViewModel mainVm, int userId, string employeeName)
     {
         _mainVm = mainVm;
+        _userId = userId;
         _employeeName = employeeName;
 
         LoadJobsFromDb();
@@ -51,6 +55,19 @@ public partial class UserPanelViewModel : ViewModelBase
     private void Logout()
     {
         _mainVm.CurrentView = new LoginViewModel(_mainVm);
+    }
+
+    [RelayCommand]
+    private async System.Threading.Tasks.Task ChangePassword()
+    {
+        var vm = new ChangePasswordViewModel(_userId);
+        var window = new Views.ChangePasswordWindow(vm);
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
     }
 
     private void LoadJobsFromDb()

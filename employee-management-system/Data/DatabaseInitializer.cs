@@ -63,11 +63,19 @@ public static class DatabaseInitializer
                 FOREIGN KEY (JobTaskId) REFERENCES JobTasks(Id)
             );";
 
+        var createPositions = @"
+            CREATE TABLE IF NOT EXISTS Positions (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                PositionName TEXT NOT NULL,
+                HourlyRate REAL NOT NULL DEFAULT 0
+            );";
+
         ExecuteNonQuery(connection, createUsers);
         ExecuteNonQuery(connection, createJobs);
         ExecuteNonQuery(connection, createOperations);
         ExecuteNonQuery(connection, createJobTasks);
         ExecuteNonQuery(connection, createWorkLogs);
+        ExecuteNonQuery(connection, createPositions);
 
 
         var today = DateTime.Now.ToString("yyyy-MM-dd");
@@ -75,6 +83,7 @@ public static class DatabaseInitializer
         EnsureColumnExists(connection, "Jobs", "Description", "TEXT NOT NULL DEFAULT ''");
         EnsureColumnExists(connection, "Operations", "Description", "TEXT NOT NULL DEFAULT ''");
         EnsureColumnExists(connection, "Operations", "CurrentWorkersCount", "INTEGER NOT NULL DEFAULT 0");
+        EnsureColumnExists(connection, "Users", "PositionId", "INTEGER NULL REFERENCES Positions(Id)");
 
         ExecuteNonQuery(connection, $"UPDATE Users SET EmploymentDate = '{today}' WHERE EmploymentDate = '' OR EmploymentDate IS NULL;");
 

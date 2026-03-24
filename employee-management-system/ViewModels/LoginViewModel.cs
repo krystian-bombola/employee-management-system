@@ -74,7 +74,7 @@ public partial class LoginViewModel : ViewModelBase
         else
         {
             var employeeName = $"{user.FirstName} {user.LastName}".Trim();
-            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, employeeName);
+            _mainVm.CurrentView = new UserPanelViewModel(_mainVm, user.Id, employeeName);
         }
     }
 }
