@@ -7,6 +7,7 @@ using employee_management_system.Data;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Microsoft.EntityFrameworkCore;
 
 namespace employee_management_system.ViewModels;
 
@@ -38,6 +39,7 @@ public partial class UserPanelViewModel : ViewModelBase
     private bool _isEndOperationConfirmationVisible;
 
     private string? _runningOperationName;
+    private int? _runningJobId;
 
     public ObservableCollection<string> AvailableJobs { get; } = new();
     public ObservableCollection<string> AvailableOperations { get; } = new();
@@ -102,15 +104,19 @@ public partial class UserPanelViewModel : ViewModelBase
             return;
 
         using var db = new DatabaseContext();
-        var ops = from jt in db.JobTasks
-                  join o in db.Operations on jt.OperationId equals o.Id
-                  where jt.JobId == jobId
-                  orderby jt.Order
-                  select new { o.OperationName, o.Description };
+        var ops = db.JobTasks
+                   .Where(jt => jt.JobId == jobId && jt.Status != "Zako\u0144czone")
+                   .Include(jt => jt.Operation)
+                   .OrderBy(jt => jt.Order)
+                   .Select(jt => new { jt.Operation.OperationName, jt.Operation.Description, jt.Status })
+                   .ToList();
 
         foreach (var op in ops)
         {
-            var display = string.IsNullOrWhiteSpace(op.Description) ? op.OperationName : $"{op.OperationName} - {op.Description}";
+            var statusLabel = $"[{op.Status}]";
+            var display = string.IsNullOrWhiteSpace(op.Description)
+                ? $"{op.OperationName} {statusLabel}"
+                : $"{op.OperationName} - {op.Description} {statusLabel}";
             AvailableOperations.Add(display);
         }
     }
@@ -162,6 +168,17 @@ public partial class UserPanelViewModel : ViewModelBase
                     job.Status = "W produkcji";
                     hasChanges = true;
                 }
+
+                // Set JobTask status to "W trakcie"
+                if (op is not null)
+                {
+                    var jobTask = db.JobTasks.FirstOrDefault(jt => jt.JobId == jobId.Value && jt.OperationId == op.Id);
+                    if (jobTask is not null)
+                    {
+                        jobTask.Status = "W trakcie";
+                        hasChanges = true;
+                    }
+                }
             }
 
             if (hasChanges)
@@ -171,6 +188,7 @@ public partial class UserPanelViewModel : ViewModelBase
         }
 
         _runningOperationName = operationName;
+        _runningJobId = GetJobId(SelectedJob);
         CurrentOperation = $"{jobName} - {operationName}";
         IsOperationRunning = true;
         StartOperationCommand.NotifyCanExecuteChanged();
@@ -199,6 +217,34 @@ public partial class UserPanelViewModel : ViewModelBase
     [RelayCommand]
     private void ConfirmEndOperation()
     {
+        // Set JobTask status to "Zakończone" before stopping
+        if (!string.IsNullOrEmpty(_runningOperationName) && _runningJobId is not null)
+        {
+            using var db = new DatabaseContext();
+            var op = db.Operations.FirstOrDefault(o => o.OperationName == _runningOperationName);
+            if (op is not null)
+            {
+                var jobTask = db.JobTasks.FirstOrDefault(jt => jt.JobId == _runningJobId.Value && jt.OperationId == op.Id);
+                if (jobTask is not null)
+                {
+                    jobTask.Status = "Zako\u0144czone";
+                    db.SaveChanges();
+                }
+
+                // Auto-complete job if all tasks are done
+                var allTasks = db.JobTasks.Where(jt => jt.JobId == _runningJobId.Value).ToList();
+                if (allTasks.Count > 0 && allTasks.All(jt => jt.Status == "Zako\u0144czone"))
+                {
+                    var job = db.Jobs.FirstOrDefault(j => j.Id == _runningJobId.Value);
+                    if (job is not null)
+                    {
+                        job.Status = "Zako\u0144czone";
+                        db.SaveChanges();
+                    }
+                }
+            }
+        }
+
         StopRunningOperation();
         CurrentOperation = "Brak pracy";
         IsEndOperationConfirmationVisible = false;

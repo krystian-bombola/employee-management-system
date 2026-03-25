@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace employee_management_system.Models;
@@ -14,6 +14,7 @@ public class JobTask
     public Operation Operation { get; set; } = null!;
 
     public int Order { get; set; }
+    public string Status { get; set; } = string.Empty;
     public DateTime OperationStart { get; set; }
     public DateTime OperationEnd { get; set; }
     public TimeSpan ExecutionTime { get; set; }

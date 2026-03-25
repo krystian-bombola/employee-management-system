@@ -45,6 +45,7 @@ public static class DatabaseInitializer
                 JobId INTEGER NOT NULL,
                 OperationId INTEGER NOT NULL,
                 [Order] INTEGER NOT NULL DEFAULT 0,
+                Status TEXT NOT NULL DEFAULT 'Nowe',
                 OperationStart TEXT,
                 OperationEnd TEXT,
                 ExecutionTime TEXT,
@@ -84,6 +85,7 @@ public static class DatabaseInitializer
         EnsureColumnExists(connection, "Operations", "Description", "TEXT NOT NULL DEFAULT ''");
         EnsureColumnExists(connection, "Operations", "CurrentWorkersCount", "INTEGER NOT NULL DEFAULT 0");
         EnsureColumnExists(connection, "Users", "PositionId", "INTEGER NULL REFERENCES Positions(Id)");
+        EnsureColumnExists(connection, "JobTasks", "Status", "TEXT NOT NULL DEFAULT 'Nowe'");
 
         ExecuteNonQuery(connection, $"UPDATE Users SET EmploymentDate = '{today}' WHERE EmploymentDate = '' OR EmploymentDate IS NULL;");
 
