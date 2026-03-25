@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
 using employee_management_system.Models;
@@ -7,6 +7,7 @@ using employee_management_system.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
 
@@ -100,6 +101,21 @@ public partial class AdminWindowViewModel : ViewModelBase
     public bool IsAssignOperationsVisible { get => _isAssignOperationsVisible; set => SetProperty(ref _isAssignOperationsVisible, value); }
 
     public ObservableCollection<OperationItemViewModel> AvailableOperationsForAssign { get; } = new();
+    public ObservableCollection<JobOperationItemViewModel> JobOperations { get; } = new();
+    public ObservableCollection<OperationItemViewModel> AvailableOperationsForJobEdit { get; } = new();
+    public ObservableCollection<string> JobTaskStatuses { get; } = new() { "Nowe", "W trakcie", "Zakończone" };
+
+    private JobItemViewModel? _selectedJobForOperations;
+    public JobItemViewModel? SelectedJobForOperations { get => _selectedJobForOperations; set => SetProperty(ref _selectedJobForOperations, value); }
+
+    private OperationItemViewModel? _selectedOperationToAdd;
+    public OperationItemViewModel? SelectedOperationToAdd { get => _selectedOperationToAdd; set => SetProperty(ref _selectedOperationToAdd, value); }
+
+    private bool _isJobOperationsVisible;
+    public bool IsJobOperationsVisible { get => _isJobOperationsVisible; set => SetProperty(ref _isJobOperationsVisible, value); }
+
+    private string _jobOperationsTitle = "";
+    public string JobOperationsTitle { get => _jobOperationsTitle; set => SetProperty(ref _jobOperationsTitle, value); }
 
     public ObservableCollection<string> JobStatuses { get; } = new();
 
@@ -321,6 +337,170 @@ public partial class AdminWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void OpenJobOperations(JobItemViewModel? item)
+    {
+        if (item is null)
+            return;
+
+        using var db = new DatabaseContext();
+        var job = db.Jobs.FirstOrDefault(j => j.Id == item.Id);
+        if (job is null)
+            return;
+
+        SelectedJobForOperations = item;
+        JobOperationsTitle = $"Operacje dla zlecenia: {job.JobName}";
+
+        AvailableOperationsForJobEdit.Clear();
+        foreach (var op in db.Operations.OrderBy(o => o.OperationName).ToList())
+        {
+            AvailableOperationsForJobEdit.Add(new OperationItemViewModel(op));
+        }
+
+        JobOperations.Clear();
+        var operations = db.JobTasks
+            .Where(jt => jt.JobId == item.Id)
+            .Include(jt => jt.Operation)
+            .OrderBy(jt => jt.Order)
+            .ToList();
+
+        foreach (var jt in operations)
+        {
+            JobOperations.Add(new JobOperationItemViewModel(jt.Id, jt.OperationId, jt.Operation.OperationName, jt.Operation.Description, jt.Order, jt.Status));
+        }
+
+        NormalizeJobOperationOrder();
+        SelectedOperationToAdd = null;
+        IsJobOperationsVisible = true;
+    }
+
+    [RelayCommand]
+    private void CloseJobOperations()
+    {
+        IsJobOperationsVisible = false;
+        SelectedJobForOperations = null;
+        SelectedOperationToAdd = null;
+        JobOperations.Clear();
+    }
+
+    [RelayCommand]
+    private void AddOperationToJob()
+    {
+        if (SelectedOperationToAdd is null)
+            return;
+
+        if (JobOperations.Any(o => o.OperationId == SelectedOperationToAdd.Id))
+            return;
+
+        JobOperations.Add(new JobOperationItemViewModel(0, SelectedOperationToAdd.Id, SelectedOperationToAdd.OperationName, SelectedOperationToAdd.Description, JobOperations.Count, "Nowe"));
+        NormalizeJobOperationOrder();
+    }
+
+    [RelayCommand]
+    private void RemoveOperationFromJob(JobOperationItemViewModel? item)
+    {
+        if (item is null)
+            return;
+
+        JobOperations.Remove(item);
+        NormalizeJobOperationOrder();
+    }
+
+    [RelayCommand]
+    private void MoveJobOperationUp(JobOperationItemViewModel? item)
+    {
+        if (item is null)
+            return;
+
+        var index = JobOperations.IndexOf(item);
+        if (index <= 0)
+            return;
+
+        JobOperations.Move(index, index - 1);
+        NormalizeJobOperationOrder();
+    }
+
+    [RelayCommand]
+    private void MoveJobOperationDown(JobOperationItemViewModel? item)
+    {
+        if (item is null)
+            return;
+
+        var index = JobOperations.IndexOf(item);
+        if (index < 0 || index >= JobOperations.Count - 1)
+            return;
+
+        JobOperations.Move(index, index + 1);
+        NormalizeJobOperationOrder();
+    }
+
+    [RelayCommand]
+    private void SaveJobOperations()
+    {
+        if (SelectedJobForOperations is null)
+            return;
+
+        using var db = new DatabaseContext();
+        var existing = db.JobTasks.Where(jt => jt.JobId == SelectedJobForOperations.Id).ToList();
+        var selectedOperationIds = JobOperations.Select(o => o.OperationId).ToList();
+
+        var toDelete = existing.Where(jt => !selectedOperationIds.Contains(jt.OperationId)).ToList();
+        if (toDelete.Count > 0)
+        {
+            db.JobTasks.RemoveRange(toDelete);
+        }
+
+        for (var i = 0; i < JobOperations.Count; i++)
+        {
+            var selected = JobOperations[i];
+            var existingTask = existing.FirstOrDefault(jt => jt.OperationId == selected.OperationId);
+
+            if (existingTask is null)
+            {
+                db.JobTasks.Add(new JobTask
+                {
+                    JobId = SelectedJobForOperations.Id,
+                    OperationId = selected.OperationId,
+                    Order = i,
+                    Status = selected.Status,
+                    OperationStart = DateTime.Now,
+                    OperationEnd = DateTime.Now,
+                    ExecutionTime = TimeSpan.Zero
+                });
+            }
+            else
+            {
+                existingTask.Order = i;
+                existingTask.Status = selected.Status;
+            }
+        }
+
+        db.SaveChanges();
+
+        // Auto-complete: if all operations are "Zakończone", set job status to "Zakończone"
+        var allTasks = db.JobTasks.Where(jt => jt.JobId == SelectedJobForOperations.Id).ToList();
+        if (allTasks.Count > 0 && allTasks.All(jt => jt.Status == "Zakończone"))
+        {
+            var job = db.Jobs.FirstOrDefault(j => j.Id == SelectedJobForOperations.Id);
+            if (job is not null)
+            {
+                job.Status = "Zakończone";
+                db.SaveChanges();
+            }
+        }
+
+        IsJobOperationsVisible = false;
+        RefreshAll();
+    }
+
+    private void NormalizeJobOperationOrder()
+    {
+        for (var i = 0; i < JobOperations.Count; i++)
+        {
+            JobOperations[i].Order = i;
+        }
+    }
+
+    [RelayCommand]
     private void AddUser()
     {
         if (string.IsNullOrWhiteSpace(NewUserFirstName) ||
@@ -476,15 +656,38 @@ public partial class UserItemViewModel : ObservableObject
 public partial class OperationItemViewModel : ObservableObject
 {
     [ObservableProperty] private bool _isSelected;
+    public int Id { get; }
     public string OperationName { get; }
     public string Description { get; }
     public int CurrentWorkersCount { get; }
 
     public OperationItemViewModel(Operation op)
     {
+        Id = op.Id;
         OperationName = op.OperationName;
         Description = op.Description;
         CurrentWorkersCount = op.CurrentWorkersCount;
+    }
+}
+
+public partial class JobOperationItemViewModel : ObservableObject
+{
+    public int JobTaskId { get; }
+    public int OperationId { get; }
+    public string OperationName { get; }
+    public string Description { get; }
+
+    [ObservableProperty] private int _order;
+    [ObservableProperty] private string _status;
+
+    public JobOperationItemViewModel(int jobTaskId, int operationId, string operationName, string description, int order, string status)
+    {
+        JobTaskId = jobTaskId;
+        OperationId = operationId;
+        OperationName = operationName;
+        Description = description;
+        _order = order;
+        _status = status;
     }
 }
 public partial class OperationSelectionItemViewModel : ObservableObject
@@ -520,6 +723,7 @@ public partial class PositionItemViewModel : ObservableObject
 public partial class JobItemViewModel : ObservableObject
 {
     [ObservableProperty] private bool _isSelected;
+    public int Id { get; }
     public string JobName { get; }
     public string Description { get; }
     public string Status { get; }
@@ -527,6 +731,7 @@ public partial class JobItemViewModel : ObservableObject
 
     public JobItemViewModel(Job job)
     {
+        Id = job.Id;
         JobName = job.JobName;
         Description = job.Description;
         Status = job.Status;

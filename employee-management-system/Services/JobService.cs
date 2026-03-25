@@ -42,6 +42,7 @@ public class JobService
                     JobId = saved.Id,
                     OperationId = opId,
                     Order = order++,
+                    Status = "Nowe",
                     OperationStart = DateTime.Now,
                     OperationEnd = DateTime.Now,
                     ExecutionTime = TimeSpan.Zero
