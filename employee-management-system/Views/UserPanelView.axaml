@@ -53,6 +53,38 @@
             <Setter Property="Background" Value="#992A2A"/>
         </Style>
 
+        <Style Selector="Button.confirm-cancel">
+            <Setter Property="Background" Value="#4A90D9"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="MinWidth" Value="140"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.confirm-cancel:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#357ABD"/>
+        </Style>
+        <Style Selector="Button.confirm-cancel:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#2A6099"/>
+        </Style>
+
+        <Style Selector="Button.confirm-submit">
+            <Setter Property="Background" Value="#D94A4A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="MinWidth" Value="140"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.confirm-submit:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#BD3535"/>
+        </Style>
+        <Style Selector="Button.confirm-submit:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#992A2A"/>
+        </Style>
+
         <!-- ... existing code ... -->
     </UserControl.Styles>
 
@@ -289,24 +321,16 @@
                     <TextBlock Text="Czy na pewno operacja została zrealizowana?"
                                TextWrapping="Wrap"
                                Foreground="#333"/>
-                    <Grid ColumnDefinitions="*,12,*">
-                        <Button Grid.Column="0"
+                    <StackPanel Orientation="Horizontal"
+                                Spacing="12"
+                                HorizontalAlignment="Center">
+                        <Button Classes="confirm-cancel"
                                 Content="Nie"
-                                Command="{Binding CancelEndOperationCommand}"
-                                Background="#4A90D9"
-                                Foreground="White"
-                                FontWeight="SemiBold"
-                                Padding="12"
-                                CornerRadius="8"/>
-                        <Button Grid.Column="2"
+                                Command="{Binding CancelEndOperationCommand}"/>
+                        <Button Classes="confirm-submit"
                                 Content="Tak, zakończ"
-                                Command="{Binding ConfirmEndOperationCommand}"
-                                Background="#D94A4A"
-                                Foreground="White"
-                                FontWeight="SemiBold"
-                                Padding="12"
-                                CornerRadius="8"/>
-                    </Grid>
+                                Command="{Binding ConfirmEndOperationCommand}"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Border>
