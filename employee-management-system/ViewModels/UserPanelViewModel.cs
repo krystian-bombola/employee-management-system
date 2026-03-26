@@ -51,7 +51,6 @@ public partial class UserPanelViewModel : ViewModelBase
         _employeeName = employeeName;
 
         LoadJobsFromDb();
-        LoadOperationsFromDb();
     }
 
     [RelayCommand]
@@ -121,25 +120,6 @@ public partial class UserPanelViewModel : ViewModelBase
         }
     }
 
-    private void LoadOperationsFromDb()
-    {
-        using var db = new DatabaseContext();
-        AvailableOperations.Clear();
-
-        var operations = db.Operations
-            .OrderBy(o => o.OperationName)
-            .Select(o => new { o.OperationName, o.Description })
-            .ToList();
-
-        foreach (var op in operations)
-        {
-            var display = string.IsNullOrWhiteSpace(op.Description)
-                ? op.OperationName
-                : $"{op.OperationName} - {op.Description}";
-            AvailableOperations.Add(display);
-        }
-    }
-
     [RelayCommand(CanExecute = nameof(CanStartOperation))]
     private void StartOperation()
     {
@@ -191,6 +171,7 @@ public partial class UserPanelViewModel : ViewModelBase
         _runningJobId = GetJobId(SelectedJob);
         CurrentOperation = $"{jobName} - {operationName}";
         IsOperationRunning = true;
+        ReloadOperationsForCurrentJob(operationName);
         StartOperationCommand.NotifyCanExecuteChanged();
         StopOperationCommand.NotifyCanExecuteChanged();
     }
@@ -217,6 +198,8 @@ public partial class UserPanelViewModel : ViewModelBase
     [RelayCommand]
     private void ConfirmEndOperation()
     {
+        var completedOperationName = _runningOperationName;
+
         // Set JobTask status to "Zakończone" before stopping
         if (!string.IsNullOrEmpty(_runningOperationName) && _runningJobId is not null)
         {
@@ -248,6 +231,7 @@ public partial class UserPanelViewModel : ViewModelBase
         StopRunningOperation();
         CurrentOperation = "Brak pracy";
         IsEndOperationConfirmationVisible = false;
+        ReloadOperationsForCurrentJob(completedOperationName);
     }
 
     private void StopRunningOperation()
@@ -267,6 +251,22 @@ public partial class UserPanelViewModel : ViewModelBase
         IsOperationRunning = false;
     }
 
+    private void ReloadOperationsForCurrentJob(string? operationNameToSelect)
+    {
+        if (string.IsNullOrWhiteSpace(SelectedJob))
+        {
+            AvailableOperations.Clear();
+            SelectedOperation = null;
+            return;
+        }
+
+        SelectedOperation = null;
+        LoadOperationsForJob(SelectedJob);
+        SelectedOperation = string.IsNullOrWhiteSpace(operationNameToSelect)
+            ? null
+            : AvailableOperations.FirstOrDefault(op => GetOperationName(op) == operationNameToSelect);
+    }
+
     private static string GetJobName(string selectedJob)
     {
         var parts = selectedJob.Split(" - ", 3, StringSplitOptions.None);
@@ -275,8 +275,15 @@ public partial class UserPanelViewModel : ViewModelBase
 
     private static string GetOperationName(string selectedOperation)
     {
-        var parts = selectedOperation.Split(" - ", 2, StringSplitOptions.None);
-        return parts[0];
+        var operationDisplay = selectedOperation.Trim();
+        var statusStart = operationDisplay.LastIndexOf(" [", StringComparison.Ordinal);
+        if (statusStart >= 0 && operationDisplay.EndsWith("]", StringComparison.Ordinal))
+        {
+            operationDisplay = operationDisplay[..statusStart];
+        }
+
+        var parts = operationDisplay.Split(" - ", 2, StringSplitOptions.None);
+        return parts[0].Trim();
     }
 
     private static int? GetJobId(string selectedJob)
@@ -297,6 +304,8 @@ public partial class UserPanelViewModel : ViewModelBase
 
     partial void OnSelectedJobChanged(string? value)
     {
+        SelectedOperation = null;
+
         if (string.IsNullOrWhiteSpace(value))
         {
             OrderId = "---";
