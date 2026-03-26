@@ -51,7 +51,6 @@ public partial class UserPanelViewModel : ViewModelBase
         _employeeName = employeeName;
 
         LoadJobsFromDb();
-        LoadOperationsFromDb();
     }
 
     [RelayCommand]
@@ -117,25 +116,6 @@ public partial class UserPanelViewModel : ViewModelBase
             var display = string.IsNullOrWhiteSpace(op.Description)
                 ? $"{op.OperationName} {statusLabel}"
                 : $"{op.OperationName} - {op.Description} {statusLabel}";
-            AvailableOperations.Add(display);
-        }
-    }
-
-    private void LoadOperationsFromDb()
-    {
-        using var db = new DatabaseContext();
-        AvailableOperations.Clear();
-
-        var operations = db.Operations
-            .OrderBy(o => o.OperationName)
-            .Select(o => new { o.OperationName, o.Description })
-            .ToList();
-
-        foreach (var op in operations)
-        {
-            var display = string.IsNullOrWhiteSpace(op.Description)
-                ? op.OperationName
-                : $"{op.OperationName} - {op.Description}";
             AvailableOperations.Add(display);
         }
     }
@@ -297,6 +277,8 @@ public partial class UserPanelViewModel : ViewModelBase
 
     partial void OnSelectedJobChanged(string? value)
     {
+        SelectedOperation = null;
+
         if (string.IsNullOrWhiteSpace(value))
         {
             OrderId = "---";
