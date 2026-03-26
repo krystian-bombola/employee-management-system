@@ -145,8 +145,6 @@
                         <StackPanel IsVisible="{Binding IsJobsVisible}" Spacing="10">
                             <TextBox Watermark="Nazwa zlecenia" Text="{Binding NewJobName}"/>
                             <TextBox Watermark="Opis zlecenia" Text="{Binding NewJobDescription}"/>
-                            <ComboBox ItemsSource="{Binding JobStatuses}" SelectedItem="{Binding NewJobStatus}" HorizontalAlignment="Stretch"/>
-                            <Button Classes="admin-button" Content="Przypisz operacje" Command="{Binding PrepareAddJobCommand}"/>
                             <Button Classes="admin-button" Content="+ Dodaj zlecenie" Command="{Binding AddJobCommand}"/>
                         </StackPanel>
 
