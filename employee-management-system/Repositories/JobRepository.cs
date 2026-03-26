@@ -28,6 +28,14 @@ public class JobRepository
 
     public void Remove(Job job)
     {
+        var jobTasks = _db.JobTasks.Where(jt => jt.JobId == job.Id).ToList();
+        foreach (var jt in jobTasks)
+        {
+            var workLogs = _db.WorkLogs.Where(wl => wl.JobTaskId == jt.Id).ToList();
+            _db.WorkLogs.RemoveRange(workLogs);
+        }
+        _db.JobTasks.RemoveRange(jobTasks);
+
         _db.Jobs.Remove(job);
         _db.SaveChanges();
     }
