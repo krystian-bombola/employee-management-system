@@ -46,10 +46,10 @@ public partial class AdminWindowViewModel : ViewModelBase
     }
 
     private string _newJobName = string.Empty;
-    public string NewJobName { get => _newJobName; set { if (SetProperty(ref _newJobName, value)) { try { ConfirmAddJobCommand.NotifyCanExecuteChanged(); } catch { } } } }
+    public string NewJobName { get => _newJobName; set { if (SetProperty(ref _newJobName, value)) { AddJobCommand.NotifyCanExecuteChanged();  } } }
 
     private string _newJobDescription = string.Empty;
-    public string NewJobDescription { get => _newJobDescription; set => SetProperty(ref _newJobDescription, value); }
+    public string NewJobDescription { get => _newJobDescription; set { if (SetProperty(ref _newJobDescription, value)) { AddJobCommand.NotifyCanExecuteChanged(); } } }
 
     private string _newJobStatus = "Nowe";
     public string NewJobStatus { get => _newJobStatus; set => SetProperty(ref _newJobStatus, value); }
@@ -275,11 +275,17 @@ public partial class AdminWindowViewModel : ViewModelBase
         IsAssignOperationsVisible = true;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanAddJob))]
     private void AddJob()
     {
         PrepareAddJob();
     }
+    private bool CanAddJob()
+    {
+        return !string.IsNullOrWhiteSpace(NewJobName) &&
+               !string.IsNullOrWhiteSpace(NewJobDescription);
+    }
+
 
     [RelayCommand(CanExecute = nameof(CanConfirmAddJob))]
     private void ConfirmAddJob()
@@ -306,7 +312,9 @@ public partial class AdminWindowViewModel : ViewModelBase
 
     private bool CanConfirmAddJob()
     {
-        return !string.IsNullOrWhiteSpace(NewJobName) && AvailableOperationsForAssign.Any(o => o.IsSelected);
+        return !string.IsNullOrWhiteSpace(NewJobName) && 
+               !string.IsNullOrWhiteSpace(NewJobDescription) && 
+               AvailableOperationsForAssign.Any(o => o.IsSelected);
     }
 
     [RelayCommand]
