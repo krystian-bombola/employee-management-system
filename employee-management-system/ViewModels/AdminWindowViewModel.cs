@@ -82,6 +82,7 @@ public partial class AdminWindowViewModel : ViewModelBase
     public bool IsOperationsVisible => CurrentTabIndex == 1;
     public bool IsJobsVisible => CurrentTabIndex == 2;
     public bool IsPositionsVisible => CurrentTabIndex == 3;
+    public bool IsProductionTimeVisible => CurrentTabIndex == 4;
 
     private void OnCurrentTabIndexChanged()
     {
@@ -89,6 +90,7 @@ public partial class AdminWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsOperationsVisible));
         OnPropertyChanged(nameof(IsJobsVisible));
         OnPropertyChanged(nameof(IsPositionsVisible));
+        OnPropertyChanged(nameof(IsProductionTimeVisible));
         ApplyFilter();
     }
 
@@ -113,6 +115,14 @@ public partial class AdminWindowViewModel : ViewModelBase
 
     private bool _isJobOperationsVisible;
     public bool IsJobOperationsVisible { get => _isJobOperationsVisible; set => SetProperty(ref _isJobOperationsVisible, value); }
+
+    private bool _isJobDetailsVisible;
+    public bool IsJobDetailsVisible { get => _isJobDetailsVisible; set => SetProperty(ref _isJobDetailsVisible, value); }
+
+    private string _jobDetailsTitle = "";
+    public string JobDetailsTitle { get => _jobDetailsTitle; set => SetProperty(ref _jobDetailsTitle, value); }
+
+    public ObservableCollection<JobOperationItemViewModel> JobDetailsOperations { get; } = new();
 
     private string _jobOperationsTitle = "";
     public string JobOperationsTitle { get => _jobOperationsTitle; set => SetProperty(ref _jobOperationsTitle, value); }
@@ -373,7 +383,7 @@ public partial class AdminWindowViewModel : ViewModelBase
 
         foreach (var jt in operations)
         {
-            JobOperations.Add(new JobOperationItemViewModel(jt.Id, jt.OperationId, jt.Operation.OperationName, jt.Operation.Description, jt.Order, jt.Status));
+            JobOperations.Add(new JobOperationItemViewModel(jt.Id, jt.OperationId, jt.Operation.OperationName, jt.Operation.Description, jt.Order, jt.Status, jt.ExecutionTime));
         }
 
         NormalizeJobOperationOrder();
@@ -391,6 +401,39 @@ public partial class AdminWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void ShowJobDetails(JobItemViewModel? item)
+    {
+        if (item is null) return;
+        
+        using var db = new DatabaseContext();
+        var job = db.Jobs.FirstOrDefault(j => j.Id == item.Id);
+        if (job is null) return;
+
+        JobDetailsTitle = $"Szczegóły zlecenia: {job.JobName}";
+        JobDetailsOperations.Clear();
+        
+        var operations = db.JobTasks
+            .Where(jt => jt.JobId == item.Id)
+            .Include(jt => jt.Operation)
+            .OrderBy(jt => jt.Order)
+            .ToList();
+
+        foreach (var jt in operations)
+        {
+            JobDetailsOperations.Add(new JobOperationItemViewModel(jt.Id, jt.OperationId, jt.Operation.OperationName, jt.Operation.Description, jt.Order, jt.Status, jt.ExecutionTime));
+        }
+        
+        IsJobDetailsVisible = true;
+    }
+
+    [RelayCommand]
+    private void CloseJobDetails()
+    {
+        IsJobDetailsVisible = false;
+        JobDetailsOperations.Clear();
+    }
+
+    [RelayCommand]
     private void AddOperationToJob()
     {
         if (SelectedOperationToAdd is null)
@@ -399,7 +442,7 @@ public partial class AdminWindowViewModel : ViewModelBase
         if (JobOperations.Any(o => o.OperationId == SelectedOperationToAdd.Id))
             return;
 
-        JobOperations.Add(new JobOperationItemViewModel(0, SelectedOperationToAdd.Id, SelectedOperationToAdd.OperationName, SelectedOperationToAdd.Description, JobOperations.Count, "Nowe"));
+        JobOperations.Add(new JobOperationItemViewModel(0, SelectedOperationToAdd.Id, SelectedOperationToAdd.OperationName, SelectedOperationToAdd.Description, JobOperations.Count, "Nowe", TimeSpan.Zero));
         NormalizeJobOperationOrder();
     }
 
@@ -637,7 +680,10 @@ public partial class AdminWindowViewModel : ViewModelBase
     private void ShowJobs() { CurrentTabIndex = 2; RefreshAll(); }
 
     [RelayCommand]
-    private void ShowPositions() { CurrentTabIndex = 3; RefreshAll(); }
+    public void ShowPositions() { CurrentTabIndex = 3; RefreshAll(); }
+
+    [RelayCommand]
+    public void ShowProductionTime() { CurrentTabIndex = 4; RefreshAll(); }
 }
 
 public partial class UserItemViewModel : ObservableObject
@@ -687,8 +733,11 @@ public partial class JobOperationItemViewModel : ObservableObject
 
     [ObservableProperty] private int _order;
     [ObservableProperty] private string _status;
+    
+    public TimeSpan ExecutionTime { get; }
+    public double ExecutionTimeHours => ExecutionTime.TotalHours;
 
-    public JobOperationItemViewModel(int jobTaskId, int operationId, string operationName, string description, int order, string status)
+    public JobOperationItemViewModel(int jobTaskId, int operationId, string operationName, string description, int order, string status, TimeSpan executionTime = default)
     {
         JobTaskId = jobTaskId;
         OperationId = operationId;
@@ -696,6 +745,7 @@ public partial class JobOperationItemViewModel : ObservableObject
         Description = description;
         _order = order;
         _status = status;
+        ExecutionTime = executionTime;
     }
 }
 public partial class OperationSelectionItemViewModel : ObservableObject
@@ -736,6 +786,7 @@ public partial class JobItemViewModel : ObservableObject
     public string Description { get; }
     public string Status { get; }
     public DateTime CreatedAt { get; }
+    public double TotalExecutionTimeHours { get; }
 
     public JobItemViewModel(Job job)
     {
@@ -744,5 +795,6 @@ public partial class JobItemViewModel : ObservableObject
         Description = job.Description;
         Status = job.Status;
         CreatedAt = job.CreatedAt;
+        TotalExecutionTimeHours = job.JobTasks?.Sum(jt => jt.ExecutionTime.TotalHours) ?? 0;
     }
 }

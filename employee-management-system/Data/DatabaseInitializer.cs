@@ -107,7 +107,7 @@ public static class DatabaseInitializer
 
         var orderExists = (long)new SqliteCommand("SELECT COUNT(*) FROM Jobs WHERE JobName = 'aaaa'", connection).ExecuteScalar()!;
         if (orderExists == 0)
-            ExecuteNonQuery(connection, $"INSERT INTO Jobs (JobName, Description, CreatedAt, Status) VALUES ('aaaa', 'Opis zlecenia aaaa', '{DateTime.Now:yyyy-MM-dd}', 'New')");
+            ExecuteNonQuery(connection, $"INSERT INTO Jobs (JobName, Description, CreatedAt, Status) VALUES ('aaaa', 'Opis zlecenia aaaa', '{DateTime.Now:yyyy-MM-dd}', 'Nowe')");
     }
 
     private static void ExecuteNonQuery(SqliteConnection conn, string sql)
