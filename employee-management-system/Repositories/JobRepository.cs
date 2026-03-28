@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using employee_management_system.Data;
 using employee_management_system.Models;
 
@@ -15,10 +16,10 @@ public class JobRepository
     }
 
     public Job? GetByName(string jobName)
-        => _db.Jobs.FirstOrDefault(j => j.JobName == jobName);
+        => _db.Jobs.Include(j => j.JobTasks).FirstOrDefault(j => j.JobName == jobName);
 
     public List<Job> GetAll()
-        => _db.Jobs.ToList();
+        => _db.Jobs.Include(j => j.JobTasks).ToList();
 
     public void Add(Job job)
     {
