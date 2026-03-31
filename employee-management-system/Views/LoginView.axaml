@@ -82,6 +82,7 @@
 
                 <Button Content="Zaloguj"
                         Command="{Binding LoginCommand}"
+                        IsDefault="True"
                         Foreground="White"
                         Background="#0000FF"
                         Margin="0,12,0,0"

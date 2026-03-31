@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:employee_management_system.ViewModels"
+             mc:Ignorable="d"
+             x:Class="employee_management_system.Views.AdminPositionsSectionView"
+             x:DataType="vm:AdminPositionsSectionViewModel">
+
+    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
+        <Grid ColumnDefinitions="*,Auto" Grid.Row="0">
+            <TextBlock Grid.Column="0" Text="Stanowiska" Classes="header" VerticalAlignment="Center"/>
+            <TextBox Grid.Column="1" Watermark="Szukaj po nazwie stanowiska..." Text="{Binding SearchQuery}" Width="300"/>
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnDefinitions="300,*" ColumnSpacing="24">
+            <StackPanel Grid.Column="0" Spacing="10" VerticalAlignment="Top">
+                <TextBlock Text="Nowe Stanowisko" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,4"/>
+                <TextBox Watermark="Nazwa stanowiska" Text="{Binding NewPositionName}"/>
+                <TextBox Watermark="Stawka godzinowa (zł)" Text="{Binding NewPositionHourlyRate}"/>
+                <Button Classes="admin-button" Content="+ Dodaj stanowisko" Command="{Binding AddPositionCommand}" Margin="0,8,0,0"/>
+            </StackPanel>
+
+            <Grid Grid.Column="1" RowDefinitions="Auto,*" Height="500">
+                <Grid Grid.Row="0" ColumnDefinitions="50,3*,2*,Auto,Auto" Margin="0,0,0,10">
+                    <TextBlock Grid.Column="1" Text="Nazwa stanowiska" FontWeight="Bold"/>
+                    <TextBlock Grid.Column="2" Text="Stawka godz. (zł)" FontWeight="Bold"/>
+                </Grid>
+                <ListBox Grid.Row="1" ItemsSource="{Binding FilteredPositions}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PositionItemViewModel">
+                            <Grid ColumnDefinitions="50,3*,2*,Auto,Auto" Margin="0,10">
+                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding PositionName}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding HourlyRate, StringFormat='{}{0:F2} zł'}" VerticalAlignment="Center"/>
+                                <Button Grid.Column="3" Content="Edytuj" Classes="admin-button" Padding="8,4" FontSize="12" Margin="0,0,6,0"
+                                        Command="{Binding $parent[UserControl].((vm:AdminPositionsSectionViewModel)DataContext).EditPositionCommand}"
+                                        CommandParameter="{Binding}"/>
+                                <Button Grid.Column="4" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
+                                        Command="{Binding $parent[UserControl].((vm:AdminPositionsSectionViewModel)DataContext).RemovePositionCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

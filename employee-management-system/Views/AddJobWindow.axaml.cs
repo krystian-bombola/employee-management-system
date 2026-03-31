@@ -5,13 +5,13 @@ using employee_management_system.ViewModels;
 
 namespace employee_management_system.Views;
 
-public partial class EditUserWindow : Window
+public partial class AddJobWindow : Window
 {
-    public EditUserWindow()
+    public AddJobWindow()
     {
         InitializeComponent();
         
-        // Tunelowanie klawiszy, aby Enter i Esc działały niezależnie od fokusu
+        // Tunelowanie klawiszy dla Enter/Esc
         this.AddHandler(KeyDownEvent, (s, e) =>
         {
             var focusManager = TopLevel.GetTopLevel(this)?.FocusManager;
@@ -26,13 +26,7 @@ public partial class EditUserWindow : Window
 
             if (e.Key == Key.Enter)
             {
-                // Jeśli jesteśmy w ComboBoxie, Enter powinien zatwierdzić wybór elementu
-                if (currentFocus is ComboBox cb && cb.IsDropDownOpen)
-                {
-                    return; // Pozwalamy ComboBoxowi obsłużyć Enter
-                }
-
-                if (DataContext is EditUserViewModel vm)
+                if (DataContext is AddJobViewModel vm)
                 {
                     vm.SaveCommand.Execute(null);
                     e.Handled = true;
@@ -42,17 +36,9 @@ public partial class EditUserWindow : Window
 
             if (e.Key == Key.Down || e.Key == Key.Up)
             {
-                // Jeśli jesteśmy w ComboBoxie i jest on otwarty, pozwalamy strzałkom działać normalnie (wybór z listy)
-                if (currentFocus is ComboBox cb && cb.IsDropDownOpen)
-                {
-                    return; // Pozwalamy ComboBoxowi obsłużyć strzałki
-                }
-
-                // Nawigacja między polami
                 if (currentFocus == null)
                 {
-                    var firstTextBox = this.Find<TextBox>("FirstNameTextBox");
-                    firstTextBox?.Focus();
+                    this.Find<TextBox>("JobNameTextBox")?.Focus();
                     e.Handled = true;
                     return;
                 }
@@ -69,12 +55,11 @@ public partial class EditUserWindow : Window
 
         Opened += (s, e) =>
         {
-            var firstTextBox = this.Find<TextBox>("FirstNameTextBox");
-            firstTextBox?.Focus();
+            this.Find<TextBox>("JobNameTextBox")?.Focus();
         };
     }
 
-    public EditUserWindow(EditUserViewModel viewModel) : this()
+    public AddJobWindow(AddJobViewModel viewModel) : this()
     {
         DataContext = viewModel;
         viewModel.CloseAction = Close;
