@@ -14,6 +14,11 @@ public partial class EditUserViewModel : ObservableObject
     private readonly int _userId;
     public System.Action? CloseAction { get; set; }
 
+    [ObservableProperty] private bool _isEditMode;
+    [ObservableProperty] private string _windowTitle = string.Empty;
+    [ObservableProperty] private string _saveButtonText = string.Empty;
+    [ObservableProperty] private string _passwordLabel = string.Empty;
+
     public ObservableCollection<PositionItemViewModel> Positions { get; } = new();
 
     private string _firstName = string.Empty;
@@ -37,8 +42,26 @@ public partial class EditUserViewModel : ObservableObject
 
     public EditUserViewModel() { }
 
+    // Constructor for Add mode
+    public EditUserViewModel(ObservableCollection<PositionItemViewModel> positions)
+    {
+        IsEditMode = false;
+        WindowTitle = "Dodaj użytkownika";
+        SaveButtonText = "Dodaj";
+        PasswordLabel = "Hasło";
+
+        foreach (var p in positions)
+            Positions.Add(p);
+    }
+
+    // Constructor for Edit mode
     public EditUserViewModel(UserItemViewModel user, ObservableCollection<PositionItemViewModel> positions)
     {
+        IsEditMode = true;
+        WindowTitle = "Edytuj użytkownika";
+        SaveButtonText = "Zapisz zmiany";
+        PasswordLabel = "Nowe hasło (pozostaw puste, aby nie zmieniać)";
+
         _userId = user.Id;
         FirstName = user.FirstName;
         LastName = user.LastName;
@@ -56,9 +79,20 @@ public partial class EditUserViewModel : ObservableObject
         if (string.IsNullOrWhiteSpace(FirstName) || string.IsNullOrWhiteSpace(LastName))
             return;
 
+        if (!IsEditMode && string.IsNullOrWhiteSpace(NewPassword))
+            return;
+
         using var db = new DatabaseContext();
         var userService = new UserService(new UserRepository(db));
-        userService.Update(_userId, FirstName, LastName, Identifier, NewPassword, SelectedPosition?.Id);
+
+        if (IsEditMode)
+        {
+            userService.Update(_userId, FirstName, LastName, Identifier, NewPassword, SelectedPosition?.Id);
+        }
+        else
+        {
+            userService.Add(FirstName, LastName, Identifier, NewPassword, SelectedPosition?.Id);
+        }
 
         CloseAction?.Invoke();
     }

@@ -1,0 +1,117 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:employee_management_system.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="400"
+        x:Class="employee_management_system.Views.AddJobWindow"
+        x:DataType="vm:AddJobViewModel"
+        Title="Nowe Zlecenie"
+        Width="450" Height="400"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        ExtendClientAreaToDecorationsHint="True"
+        Background="Transparent"
+        RequestedThemeVariant="Light">
+
+    <Window.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Style.Resources>
+                <SolidColorBrush x:Key="TextControlBackground" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="White"/>
+                <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="White"/>
+                <SolidColorBrush x:Key="TextControlForeground" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="Black"/>
+                <SolidColorBrush x:Key="TextControlForegroundFocused" Color="Black"/>
+            </Style.Resources>
+        </Style>
+        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2196F3"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#BDBDBD"/>
+        </Style>
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+
+        <!-- Dynamic styles for buttons inside this window since they are not global -->
+        <Style Selector="Button.admin-button">
+            <Setter Property="Background" Value="#2F6FB7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#255A93"/>
+        </Style>
+        <Style Selector="Button.logout-button">
+            <Setter Property="Background" Value="#D94A4A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#BD3535"/>
+        </Style>
+    </Window.Styles>
+
+    <Border Background="White" CornerRadius="12" Margin="10" Padding="24" BoxShadow="0 4 16 0 #20000000">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,24">
+                <TextBlock Text="Nowe Zlecenie" FontSize="24" FontWeight="Bold" Foreground="#1A1A1A"/>
+                <TextBlock Text="Wprowadź podstawowe dane zlecenia" FontSize="14" Foreground="#666"/>
+            </StackPanel>
+
+            <!-- Content -->
+            <StackPanel Grid.Row="1" Spacing="16">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Nazwa zlecenia" Classes="label"/>
+                    <TextBox Name="JobNameTextBox" Text="{Binding JobName}" Watermark="np. Projekt Alpha"/>
+                </StackPanel>
+
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Opis" Classes="label"/>
+                    <TextBox Text="{Binding Description}" Watermark="Krótki opis zlecenia..." Height="100" AcceptsReturn="True" TextWrapping="Wrap"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Footer -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,12,*" Margin="0,24,0,0">
+                <Button Grid.Column="0" 
+                        Classes="logout-button" 
+                        Content="Anuluj" 
+                        Padding="16,12"
+                        Command="{Binding CancelCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+                <Button Grid.Column="2" 
+                        Classes="admin-button" 
+                        Content="Dalej" 
+                        Padding="16,12"
+                        Command="{Binding SaveCommand}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
