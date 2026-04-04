@@ -1,0 +1,116 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:employee_management_system.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="620" d:DesignHeight="560"
+        x:Class="employee_management_system.Views.SetPriorityWindow"
+        x:DataType="vm:SetPriorityViewModel"
+        Title="Krok 3: Ustaw priorytet"
+        Width="620"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#F3F4F6">
+
+    <Window.Styles>
+        <Style Selector="Button.admin-button">
+            <Setter Property="Background" Value="#2F6FB7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#255A93"/>
+        </Style>
+        <Style Selector="Button.logout-button">
+            <Setter Property="Background" Value="#D94A4A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#BD3535"/>
+        </Style>
+    </Window.Styles>
+
+    <Border Padding="24">
+        <StackPanel Spacing="16">
+            <TextBlock Text="Krok 3: Ustaw priorytet"
+                       FontSize="18" FontWeight="Bold" Foreground="#111"/>
+            <TextBlock Text="Ustaw kolejność wykonywania operacji dla tego zlecenia:"
+                       Foreground="#555" FontSize="14"/>
+
+            <Border Background="#F5F7FA" CornerRadius="8" Padding="8"
+                    BorderBrush="#E5E7EB" BorderThickness="1">
+                <ScrollViewer Height="380">
+                    <ItemsControl ItemsSource="{Binding Operations}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:JobOperationItemViewModel">
+                                <Border Background="White" CornerRadius="8"
+                                        Padding="12,10" Margin="0,0,0,6"
+                                        BorderBrush="#E5E7EB" BorderThickness="1">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <Border Grid.Column="0" Background="#2F6FB7"
+                                                CornerRadius="12" Width="28" Height="28"
+                                                Margin="0,0,12,0">
+                                            <TextBlock Text="{Binding Order, StringFormat={}{0}}"
+                                                       Foreground="White" FontSize="12"
+                                                       FontWeight="Bold"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding OperationName}"
+                                                       FontWeight="SemiBold" FontSize="14" Foreground="#111"/>
+                                            <TextBlock Text="{Binding Description}"
+                                                       FontSize="12" Foreground="#666" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal"
+                                                    Spacing="6" VerticalAlignment="Center">
+                                            <Button Content="▲" Padding="8,4" FontSize="12"
+                                                    Background="#2F6FB7" Foreground="White"
+                                                    CornerRadius="6"
+                                                    Command="{Binding $parent[Window].((vm:SetPriorityViewModel)DataContext).MoveUpCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.Styles>
+                                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="#4B8AD1"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Style>
+                                                </Button.Styles>
+                                            </Button>
+                                            <Button Content="▼" Padding="8,4" FontSize="12"
+                                                    Background="#2F6FB7" Foreground="White"
+                                                    CornerRadius="6"
+                                                    Command="{Binding $parent[Window].((vm:SetPriorityViewModel)DataContext).MoveDownCommand}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.Styles>
+                                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="#4B8AD1"/>
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Style>
+                                                </Button.Styles>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <Grid ColumnDefinitions="*,12,*">
+                <Button Grid.Column="0" Classes="logout-button" Content="Anuluj" Command="{Binding CancelCommand}"/>
+                <Button Grid.Column="2" Classes="admin-button" Content="Utwórz zlecenie" Command="{Binding ConfirmCommand}"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

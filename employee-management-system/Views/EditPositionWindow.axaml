@@ -69,6 +69,23 @@
             <Setter Property="Background" Value="#E0E0E0"/>
         </Style>
 
+        <Style Selector="Button.logout-button">
+            <Setter Property="Background" Value="#D94A4A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#BD3535"/>
+        </Style>
+        <Style Selector="Button.logout-button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#992A2A"/>
+        </Style>
+
         <Style Selector="TextBlock.label">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
@@ -108,7 +125,7 @@
 
             <Grid ColumnDefinitions="*,12,*">
                 <Button Grid.Column="0"
-                        Classes="secondary-button"
+                        Classes="logout-button"
                         Content="Anuluj"
                         Command="{Binding CancelCommand}"/>
                 <Button Grid.Column="2"

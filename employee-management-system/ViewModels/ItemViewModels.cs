@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Models;
 
 namespace employee_management_system.ViewModels;
@@ -39,6 +40,9 @@ public partial class OperationItemViewModel : ObservableObject
         OperationName = op.OperationName;
         Description = op.Description;
     }
+
+    [RelayCommand]
+    private void ToggleSelection() => IsSelected = !IsSelected;
 }
 
 public partial class JobOperationItemViewModel : ObservableObject
