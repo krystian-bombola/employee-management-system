@@ -122,6 +122,7 @@
             <Setter Property="TextElement.Foreground" Value="Black"/>
         </Style>
 
+
     </UserControl.Styles>
 
     <Grid Background="#F3F4F6" Margin="24" HorizontalAlignment="Stretch" MaxWidth="1440"

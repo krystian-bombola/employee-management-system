@@ -21,25 +21,12 @@ public partial class AdminJobsSectionViewModel : ViewModelBase
     [ObservableProperty] private JobItemViewModel? _jobToDelete;
     [ObservableProperty] private JobItemViewModel? _selectedJob;
 
-    [ObservableProperty] private bool _isAssignOperationsVisible;
-    [ObservableProperty] private bool _isJobOperationsVisible;
     [ObservableProperty] private bool _isJobDetailsVisible;
     [ObservableProperty] private string _jobDetailsTitle = "";
-    [ObservableProperty] private string _jobOperationsTitle = "";
-    [ObservableProperty] private JobItemViewModel? _selectedJobForOperations;
-    [ObservableProperty] private OperationItemViewModel? _selectedOperationToAdd;
-
-    // Tymczasowe dane dla nowego zlecenia (przekazywane z dialogu)
-    private string _tempNewJobName = string.Empty;
-    private string _tempNewJobDescription = string.Empty;
 
     public ObservableCollection<JobItemViewModel> Jobs { get; } = new();
     public ObservableCollection<JobItemViewModel> FilteredJobs { get; } = new();
     public ObservableCollection<string> JobStatuses { get; } = new() { "Nowe", "W trakcie", "Zatrzymane", "Zakończone" };
-    public ObservableCollection<OperationItemViewModel> AvailableOperationsForAssign { get; } = new();
-    public ObservableCollection<JobOperationItemViewModel> JobOperations { get; } = new();
-    public ObservableCollection<OperationItemViewModel> AvailableOperationsForJobEdit { get; } = new();
-    public ObservableCollection<string> JobTaskStatuses { get; } = new() { "Nowe", "W trakcie", "Zakończone" };
     public ObservableCollection<JobOperationItemViewModel> JobDetailsOperations { get; } = new();
 
     public void Refresh(string? targetId = null)
@@ -76,61 +63,70 @@ public partial class AdminJobsSectionViewModel : ViewModelBase
     [RelayCommand]
     private async Task AddJob()
     {
-        var vm = new AddJobViewModel();
-        var window = new Views.AddJobWindow(vm);
+        var mainWindow = GetMainWindow();
+        if (mainWindow is null) return;
 
-        if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
-            && desktop.MainWindow is not null)
-        {
-            await window.ShowDialog(desktop.MainWindow);
-        }
+        // Krok 1: Nazwa i opis
+        var step1Vm = new AddJobViewModel();
+        var step1Win = new Views.AddJobWindow(step1Vm);
+        await step1Win.ShowDialog(mainWindow);
+        if (string.IsNullOrWhiteSpace(step1Vm.JobName)) return;
 
-        if (string.IsNullOrWhiteSpace(vm.JobName)) return; // Anulowano
+        // Krok 2: Wybierz operacje
+        var step2Vm = new AssignOperationsViewModel();
+        var step2Win = new Views.AssignOperationsWindow(step2Vm);
+        await step2Win.ShowDialog(mainWindow);
+        var selected = step2Vm.Operations.Where(o => o.IsSelected).ToList();
+        if (!selected.Any()) return;
 
-        _tempNewJobName = vm.JobName;
-        _tempNewJobDescription = vm.Description;
+        // Krok 3: Ustaw priorytet
+        var tempOps = selected.Select((o, i) =>
+            new JobOperationItemViewModel(0, o.Id, o.OperationName, o.Description, i, "Nowe", TimeSpan.Zero));
+        var step3Vm = new SetPriorityViewModel(tempOps);
+        var step3Win = new Views.SetPriorityWindow(step3Vm);
+        await step3Win.ShowDialog(mainWindow);
+        if (!step3Vm.Confirmed) return;
 
-        // Teraz wybierz operacje
-        AvailableOperationsForAssign.Clear();
+        // Zapisz
+        var orderedOpIds = step3Vm.Operations.OrderBy(o => o.Order).Select(o => o.OperationId).ToList();
         using var db = new DatabaseContext();
-        foreach (var existing in db.Operations.ToList())
-        {
-            var op = new Operation { Id = existing.Id, OperationName = existing.OperationName, Description = existing.Description };
-            var opVm = new OperationItemViewModel(op);
-            opVm.PropertyChanged += (_, __) => ConfirmAddJobCommand.NotifyCanExecuteChanged();
-            AvailableOperationsForAssign.Add(opVm);
-        }
-
-        IsAssignOperationsVisible = true;
-    }
-
-    [RelayCommand(CanExecute = nameof(CanConfirmAddJob))]
-    private void ConfirmAddJob()
-    {
-        if (string.IsNullOrWhiteSpace(_tempNewJobName)) return;
-        if (!AvailableOperationsForAssign.Any(o => o.IsSelected)) return;
-
-        using var db = new DatabaseContext();
-        var selectedNames = AvailableOperationsForAssign.Where(o => o.IsSelected).Select(o => o.OperationName).ToList();
-        var selectedOpIds = db.Operations.Where(o => selectedNames.Contains(o.OperationName)).Select(o => o.Id).ToList();
-
         var jobService = new JobService(new JobRepository(db));
-        jobService.Add(_tempNewJobName, _tempNewJobDescription, selectedOpIds, "Nowe");
-
-        IsAssignOperationsVisible = false;
-        _tempNewJobName = string.Empty;
-        _tempNewJobDescription = string.Empty;
+        jobService.Add(step1Vm.JobName, step1Vm.Description, orderedOpIds, "Nowe");
         Refresh();
     }
 
-    private bool CanConfirmAddJob() => !string.IsNullOrWhiteSpace(_tempNewJobName) && AvailableOperationsForAssign.Any(o => o.IsSelected);
+    private static Avalonia.Controls.Window? GetMainWindow() =>
+        (Avalonia.Application.Current?.ApplicationLifetime
+            as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)
+            ?.MainWindow;
 
     [RelayCommand]
-    private void CancelAddJob()
+    private async Task EditJob(JobItemViewModel? item)
     {
-        IsAssignOperationsVisible = false;
-        _tempNewJobName = string.Empty;
-        _tempNewJobDescription = string.Empty;
+        var target = item ?? SelectedJob;
+        if (target is null) return;
+
+        var mainWindow = GetMainWindow();
+        if (mainWindow is null) return;
+
+        var editVm = new AddJobViewModel
+        {
+            JobName = target.JobName,
+            Description = target.Description,
+            WindowTitle = "Edytuj zlecenie",
+            HeaderText = "Edytuj nazwę i opis",
+            ConfirmButtonText = "Zapisz"
+        };
+        var editWin = new Views.AddJobWindow(editVm);
+        await editWin.ShowDialog(mainWindow);
+
+        if (string.IsNullOrWhiteSpace(editVm.JobName)) return;
+
+        using var db = new DatabaseContext();
+        var jobService = new JobService(new JobRepository(db));
+        jobService.UpdateJobNameAndDescription(target.Id, editVm.JobName, editVm.Description);
+        
+        Refresh();
     }
 
     [RelayCommand]
@@ -174,39 +170,20 @@ public partial class AdminJobsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void OpenJobOperations(JobItemViewModel? item)
+    private async Task OpenJobOperations(JobItemViewModel? item)
     {
         var target = item ?? SelectedJob;
         if (target is null) return;
 
-        using var db = new DatabaseContext();
-        var job = db.Jobs.FirstOrDefault(j => j.Id == target.Id);
-        if (job is null) return;
+        var mainWindow = GetMainWindow();
+        if (mainWindow is null) return;
 
-        SelectedJobForOperations = target;
-        JobOperationsTitle = $"Operacje dla zlecenia: {job.JobName}";
+        var editVm = new EditJobOperationsViewModel(target.Id, target.JobName);
+        var editWin = new Views.EditJobOperationsWindow(editVm);
+        
+        editVm.OnSavedAction = () => Refresh();
 
-        AvailableOperationsForJobEdit.Clear();
-        foreach (var op in db.Operations.OrderBy(o => o.OperationName).ToList())
-            AvailableOperationsForJobEdit.Add(new OperationItemViewModel(op));
-
-        JobOperations.Clear();
-        var operations = db.JobTasks.Where(jt => jt.JobId == target.Id).Include(jt => jt.Operation).OrderBy(jt => jt.Order).ToList();
-        foreach (var jt in operations)
-            JobOperations.Add(new JobOperationItemViewModel(jt.Id, jt.OperationId, jt.Operation.OperationName, jt.Operation.Description, jt.Order, jt.Status, jt.ExecutionTime));
-
-        NormalizeJobOperationOrder();
-        SelectedOperationToAdd = null;
-        IsJobOperationsVisible = true;
-    }
-
-    [RelayCommand]
-    private void CloseJobOperations()
-    {
-        IsJobOperationsVisible = false;
-        SelectedJobForOperations = null;
-        SelectedOperationToAdd = null;
-        JobOperations.Clear();
+        await editWin.ShowDialog(mainWindow);
     }
 
     [RelayCommand]
@@ -231,99 +208,5 @@ public partial class AdminJobsSectionViewModel : ViewModelBase
     {
         IsJobDetailsVisible = false;
         JobDetailsOperations.Clear();
-    }
-
-    [RelayCommand]
-    private void AddOperationToJob()
-    {
-        if (SelectedOperationToAdd is null || JobOperations.Any(o => o.OperationId == SelectedOperationToAdd.Id)) return;
-        JobOperations.Add(new JobOperationItemViewModel(0, SelectedOperationToAdd.Id, SelectedOperationToAdd.OperationName, SelectedOperationToAdd.Description, JobOperations.Count, "Nowe", TimeSpan.Zero));
-        NormalizeJobOperationOrder();
-    }
-
-    [RelayCommand]
-    private void RemoveOperationFromJob(JobOperationItemViewModel? item)
-    {
-        if (item is null) return;
-        JobOperations.Remove(item);
-        NormalizeJobOperationOrder();
-    }
-
-    [RelayCommand]
-    private void MoveJobOperationUp(JobOperationItemViewModel? item)
-    {
-        if (item is null) return;
-        var index = JobOperations.IndexOf(item);
-        if (index <= 0) return;
-        JobOperations.Move(index, index - 1);
-        NormalizeJobOperationOrder();
-    }
-
-    [RelayCommand]
-    private void MoveJobOperationDown(JobOperationItemViewModel? item)
-    {
-        if (item is null) return;
-        var index = JobOperations.IndexOf(item);
-        if (index < 0 || index >= JobOperations.Count - 1) return;
-        JobOperations.Move(index, index + 1);
-        NormalizeJobOperationOrder();
-    }
-
-    [RelayCommand]
-    private void SaveJobOperations()
-    {
-        if (SelectedJobForOperations is null) return;
-
-        using var db = new DatabaseContext();
-        var existing = db.JobTasks.Where(jt => jt.JobId == SelectedJobForOperations.Id).ToList();
-        var selectedOperationIds = JobOperations.Select(o => o.OperationId).ToList();
-
-        var toDelete = existing.Where(jt => !selectedOperationIds.Contains(jt.OperationId)).ToList();
-        if (toDelete.Count > 0) db.JobTasks.RemoveRange(toDelete);
-
-        for (var i = 0; i < JobOperations.Count; i++)
-        {
-            var selected = JobOperations[i];
-            var existingTask = existing.FirstOrDefault(jt => jt.OperationId == selected.OperationId);
-
-            if (existingTask is null)
-            {
-                db.JobTasks.Add(new JobTask
-                {
-                    JobId = SelectedJobForOperations.Id,
-                    OperationId = selected.OperationId,
-                    Order = i,
-                    Status = selected.Status,
-                    OperationStart = DateTime.Now,
-                    OperationEnd = DateTime.Now,
-                    ExecutionTime = TimeSpan.Zero
-                });
-            }
-            else
-            {
-                existingTask.Order = i;
-                existingTask.Status = selected.Status;
-            }
-        }
-        db.SaveChanges();
-
-        var allTasks = db.JobTasks.Where(jt => jt.JobId == SelectedJobForOperations.Id).ToList();
-        if (allTasks.Count > 0 && allTasks.All(jt => jt.Status == "Zakończone"))
-        {
-            var job = db.Jobs.FirstOrDefault(j => j.Id == SelectedJobForOperations.Id);
-            if (job is not null)
-            {
-                job.Status = "Zakończone";
-                db.SaveChanges();
-            }
-        }
-
-        IsJobOperationsVisible = false;
-        Refresh();
-    }
-
-    private void NormalizeJobOperationOrder()
-    {
-        for (var i = 0; i < JobOperations.Count; i++) JobOperations[i].Order = i;
     }
 }

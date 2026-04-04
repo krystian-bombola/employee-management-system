@@ -59,4 +59,16 @@ public class JobService
         if (job is not null)
             _jobRepository.Remove(job);
     }
+
+    public void UpdateJobNameAndDescription(int jobId, string newName, string newDescription)
+    {
+        using var db = new Data.DatabaseContext();
+        var dbJob = db.Jobs.Find(jobId);
+        if (dbJob is not null)
+        {
+            dbJob.JobName = newName;
+            dbJob.Description = newDescription;
+            db.SaveChanges();
+        }
+    }
 }
