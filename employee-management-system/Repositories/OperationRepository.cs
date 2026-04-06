@@ -26,6 +26,9 @@ public class OperationRepository
     public List<Operation> GetAll()
         => _db.Operations.ToList();
 
+    public bool HasJobTasks(int operationId)
+        => _db.JobTasks.Any(jt => jt.OperationId == operationId);
+
     public void Add(Operation operation)
     {
         _db.Operations.Add(operation);

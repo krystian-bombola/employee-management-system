@@ -16,8 +16,6 @@ public partial class AdminUsersSectionViewModel : ViewModelBase
     private string _searchQuery = string.Empty;
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) ApplyFilter(); } }
 
-    [ObservableProperty] private bool _isDeleteConfirmationVisible;
-    [ObservableProperty] private UserItemViewModel? _userToDelete;
     [ObservableProperty] private UserItemViewModel? _selectedUser;
 
 
@@ -80,23 +78,17 @@ public partial class AdminUsersSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void RemoveUser(UserItemViewModel? item)
+    private async Task RemoveUser(UserItemViewModel? item)
     {
         var target = item ?? SelectedUser;
         if (target is null) return;
-
-        UserToDelete = target;
-        IsDeleteConfirmationVisible = true;
-    }
-
-    [RelayCommand]
-    private void ConfirmDelete()
-    {
-        if (UserToDelete is null) return;
+        var confirmed = await DialogService.ShowDeleteConfirmationAsync(
+            $"Czy na pewno chcesz usunąć użytkownika {target.FirstName} {target.LastName}?");
+        if (!confirmed) return;
 
         // Zapamiętaj ID użytkownik poniżej przed usunięciem
         string? nextTargetId = null;
-        var index = FilteredUsers.IndexOf(UserToDelete);
+        var index = FilteredUsers.IndexOf(target);
         if (index >= 0)
         {
             if (index + 1 < FilteredUsers.Count)
@@ -107,19 +99,13 @@ public partial class AdminUsersSectionViewModel : ViewModelBase
 
         using var db = new DatabaseContext();
         var userService = new UserService(new UserRepository(db));
-        userService.Remove(UserToDelete.FirstName, UserToDelete.LastName, UserToDelete.Identifier);
-
-        IsDeleteConfirmationVisible = false;
-        UserToDelete = null;
+        if (!userService.TryRemove(target.FirstName, target.LastName, target.Identifier, out var errorMessage))
+        {
+            await DialogService.ShowMessageAsync(errorMessage, "Nie można usunąć użytkownika");
+            return;
+        }
         
         Refresh(nextTargetId);
-    }
-
-    [RelayCommand]
-    private void CancelDelete()
-    {
-        IsDeleteConfirmationVisible = false;
-        UserToDelete = null;
     }
 
     [RelayCommand]

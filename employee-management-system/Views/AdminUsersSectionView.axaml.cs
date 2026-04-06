@@ -20,21 +20,6 @@ public partial class AdminUsersSectionView : UserControl
             var focusManager = topLevel?.FocusManager;
             var currentFocus = focusManager?.GetFocusedElement() as Control;
 
-            if (DataContext is AdminUsersSectionViewModel vm && vm.IsDeleteConfirmationVisible)
-            {
-                if (e.Key == Avalonia.Input.Key.Escape)
-                {
-                    vm.CancelDeleteCommand.Execute(null);
-                    e.Handled = true;
-                }
-                else if (e.Key == Avalonia.Input.Key.Enter)
-                {
-                    vm.ConfirmDeleteCommand.Execute(null);
-                    e.Handled = true;
-                }
-                return;
-            }
-
             // Obsługa skoku do listy przy strzałkach (jeśli nie jesteśmy jeszcze w liście)
             if (e.Key == Avalonia.Input.Key.Down || e.Key == Avalonia.Input.Key.Up)
             {
@@ -63,26 +48,7 @@ public partial class AdminUsersSectionView : UserControl
             {
                 vm.PropertyChanged += (ps, pe) =>
                 {
-                    if (pe.PropertyName == nameof(AdminUsersSectionViewModel.IsDeleteConfirmationVisible))
-                    {
-                        if (vm.IsDeleteConfirmationVisible)
-                        {
-                            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                            {
-                                var button = this.Find<Button>("CancelDeleteButton");
-                                button?.Focus();
-                            }, Avalonia.Threading.DispatcherPriority.Input);
-                        }
-                        else
-                        {
-                            // Powrót fokusu na listę po zamknięciu okna potwierdzenia
-                            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                            {
-                                this.Find<ListBox>("UsersListBox")?.Focus();
-                            }, Avalonia.Threading.DispatcherPriority.Input);
-                        }
-                    }
-                    else if (pe.PropertyName == nameof(AdminUsersSectionViewModel.SelectedUser) && vm.SelectedUser != null)
+                    if (pe.PropertyName == nameof(AdminUsersSectionViewModel.SelectedUser) && vm.SelectedUser != null)
                     {
                         // Upewnij się, że element jest widoczny i sfokusowany po zmianie (np. po edycji)
                         Avalonia.Threading.Dispatcher.UIThread.Post(() =>

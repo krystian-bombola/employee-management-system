@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
 using employee_management_system.Repositories;
@@ -77,21 +78,47 @@ public partial class AdminOperationsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void RemoveOperation(OperationItemViewModel? item)
+    private async Task RemoveOperation(OperationItemViewModel? item)
     {
+        var confirmed = false;
+
+        if (item is not null)
+        {
+            confirmed = await DialogService.ShowDeleteConfirmationAsync(
+                $"Czy na pewno chcesz usunąć operację {item.OperationName}?");
+        }
+        else
+        {
+            var selected = Operations.Where(o => o.IsSelected).ToList();
+            if (selected.Count == 0)
+                return;
+
+            confirmed = await DialogService.ShowDeleteConfirmationAsync(
+                $"Czy na pewno chcesz usunąć zaznaczone operacje ({selected.Count})?");
+        }
+
+        if (!confirmed) return;
+
         using var db = new DatabaseContext();
         var operationService = new OperationService(new OperationRepository(db));
 
         if (item is not null)
         {
-            operationService.Remove(item.OperationName);
+            if (!operationService.TryRemove(item.OperationName, out var errorMessage))
+            {
+                await DialogService.ShowMessageAsync(errorMessage, "Nie można usunąć operacji");
+                return;
+            }
         }
         else
         {
-            var selected = Operations.Where(o => o.IsSelected).ToList();
-            foreach (var s in selected)
+            foreach (var s in Operations.Where(o => o.IsSelected).ToList())
             {
-                operationService.Remove(s.OperationName);
+                if (!operationService.TryRemove(s.OperationName, out var errorMessage))
+                {
+                    await DialogService.ShowMessageAsync(errorMessage, "Nie można usunąć operacji");
+                    return;
+                }
             }
         }
         Refresh();

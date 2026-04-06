@@ -1,10 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
 using employee_management_system.Models;
+using employee_management_system.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace employee_management_system.ViewModels;
@@ -72,9 +74,14 @@ public partial class EditJobOperationsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void RemoveOperation(JobOperationItemViewModel? item)
+    private async Task RemoveOperation(JobOperationItemViewModel? item)
     {
         if (item is null) return;
+        var confirmed = await DialogService.ShowDeleteConfirmationAsync(
+            $"Czy na pewno chcesz usunąć operację {item.OperationName} z tego zlecenia?");
+        if (!confirmed)
+            return;
+
         Operations.Remove(item);
         NormalizeOrder();
         UpdateAvailableOperations();
@@ -161,4 +168,5 @@ public partial class EditJobOperationsViewModel : ViewModelBase
     {
         for (var i = 0; i < Operations.Count; i++) Operations[i].Order = i;
     }
+
 }

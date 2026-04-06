@@ -60,23 +60,5 @@
         </Grid>
 
 
-        <Border Grid.RowSpan="3" Background="#80000000" IsVisible="{Binding IsDeleteConfirmationVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="12" Padding="24" Width="400" BoxShadow="0 4 16 0 #33000000">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="Potwierdzenie usunięcia" FontSize="18" FontWeight="SemiBold" Foreground="#1A1A1A"/>
-                    <TextBlock TextWrapping="Wrap" Foreground="#333">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="Czy na pewno chcesz usunąć zlecenie {0}?">
-                                <Binding Path="JobToDelete.JobName"/>
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                    <Grid ColumnDefinitions="*,12,*" IsVisible="{Binding IsDeleteConfirmationVisible}">
-                         <Button Name="CancelDeleteButton" Grid.Column="0" Classes="logout-button" Content="Nie" Padding="12,10" Command="{Binding CancelDeleteCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                        <Button Name="ConfirmDeleteButton" Grid.Column="2" Classes="admin-button" Content="Tak, usuń" Padding="12,10" Command="{Binding ConfirmDeleteCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                    </Grid>
-                </StackPanel>
-            </Border>
-        </Border>
     </Grid>
 </UserControl>

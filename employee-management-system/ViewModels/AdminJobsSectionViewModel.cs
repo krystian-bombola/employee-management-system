@@ -17,8 +17,6 @@ public partial class AdminJobsSectionViewModel : ViewModelBase
     private string _searchQuery = string.Empty;
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) ApplyFilter(); } }
 
-    [ObservableProperty] private bool _isDeleteConfirmationVisible;
-    [ObservableProperty] private JobItemViewModel? _jobToDelete;
     [ObservableProperty] private JobItemViewModel? _selectedJob;
 
     [ObservableProperty] private bool _isJobDetailsVisible;
@@ -130,23 +128,17 @@ public partial class AdminJobsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void RemoveJob(JobItemViewModel? item)
+    private async Task RemoveJob(JobItemViewModel? item)
     {
         var target = item ?? SelectedJob;
         if (target is null) return;
-
-        JobToDelete = target;
-        IsDeleteConfirmationVisible = true;
-    }
-
-    [RelayCommand]
-    private void ConfirmDelete()
-    {
-        if (JobToDelete is null) return;
+        var confirmed = await DialogService.ShowDeleteConfirmationAsync(
+            $"Czy na pewno chcesz usunąć zlecenie {target.JobName}?");
+        if (!confirmed) return;
 
         // Pamięć wyboru
         string? nextTargetId = null;
-        var index = FilteredJobs.IndexOf(JobToDelete);
+        var index = FilteredJobs.IndexOf(target);
         if (index >= 0)
         {
             if (index + 1 < FilteredJobs.Count) nextTargetId = FilteredJobs[index + 1].JobName;
@@ -155,18 +147,9 @@ public partial class AdminJobsSectionViewModel : ViewModelBase
 
         using var db = new DatabaseContext();
         var jobService = new JobService(new JobRepository(db));
-        jobService.Remove(JobToDelete.JobName);
+        jobService.Remove(target.JobName);
 
-        IsDeleteConfirmationVisible = false;
-        JobToDelete = null;
         Refresh(nextTargetId);
-    }
-
-    [RelayCommand]
-    private void CancelDelete()
-    {
-        IsDeleteConfirmationVisible = false;
-        JobToDelete = null;
     }
 
     [RelayCommand]
