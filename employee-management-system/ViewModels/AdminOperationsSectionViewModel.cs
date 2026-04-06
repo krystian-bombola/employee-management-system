@@ -59,6 +59,24 @@ public partial class AdminOperationsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private async Task EditOperation(OperationItemViewModel? item)
+    {
+        if (item is null)
+            return;
+
+        var vm = new AddOperationViewModel(item);
+        var window = new Views.AddOperationWindow(vm);
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
+
+        Refresh();
+    }
+
+    [RelayCommand]
     private void RemoveOperation(OperationItemViewModel? item)
     {
         using var db = new DatabaseContext();

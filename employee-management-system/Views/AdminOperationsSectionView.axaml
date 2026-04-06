@@ -19,7 +19,7 @@
         <Grid Grid.Row="1">
             <Grid RowDefinitions="Auto,*" Height="550">
                 <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
-                    <Grid ColumnDefinitions="50,220,*,80">
+                    <Grid ColumnDefinitions="50,220,*,90,80">
                         <TextBlock Grid.Column="1" Text="Nazwa operacji" FontWeight="Bold" Foreground="#333"/>
                         <TextBlock Grid.Column="2" Text="Opis" FontWeight="Bold" Foreground="#333"/>
                     </Grid>
@@ -27,11 +27,14 @@
                 <ListBox Grid.Row="1" ItemsSource="{Binding FilteredOperations}">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:OperationItemViewModel">
-                            <Grid ColumnDefinitions="50,220,*,80" Margin="12,10">
+                            <Grid ColumnDefinitions="50,220,*,90,80" Margin="12,10">
                                 <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 <TextBlock Grid.Column="1" Text="{Binding OperationName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black"/>
                                 <TextBlock Grid.Column="2" Text="{Binding Description}" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="Black" FontSize="13"/>
-                                <Button Grid.Column="3" Content="Usuń" Classes="logout-button" Padding="10,5" FontSize="12" HorizontalAlignment="Stretch"
+                                <Button Grid.Column="3" Content="Edytuj" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0" HorizontalAlignment="Stretch"
+                                        Command="{Binding $parent[UserControl].((vm:AdminOperationsSectionViewModel)DataContext).EditOperationCommand}"
+                                        CommandParameter="{Binding}"/>
+                                <Button Grid.Column="4" Content="Usuń" Classes="logout-button" Padding="10,5" FontSize="12" HorizontalAlignment="Stretch"
                                         Command="{Binding $parent[UserControl].((vm:AdminOperationsSectionViewModel)DataContext).RemoveOperationCommand}"
                                         CommandParameter="{Binding}"/>
                             </Grid>

@@ -17,6 +17,9 @@ public class OperationRepository
     public Operation? GetByName(string operationName)
         => _db.Operations.FirstOrDefault(o => o.OperationName == operationName);
 
+    public Operation? GetById(int operationId)
+        => _db.Operations.FirstOrDefault(o => o.Id == operationId);
+
     public List<string> GetAllNames()
         => _db.Operations.Select(o => o.OperationName).ToList();
 
@@ -32,6 +35,12 @@ public class OperationRepository
     public void Remove(Operation operation)
     {
         _db.Operations.Remove(operation);
+        _db.SaveChanges();
+    }
+
+    public void Update(Operation operation)
+    {
+        _db.Operations.Update(operation);
         _db.SaveChanges();
     }
 }

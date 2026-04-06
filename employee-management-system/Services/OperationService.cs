@@ -26,6 +26,17 @@ public class OperationService
         _operationRepository.Add(operation);
     }
 
+    public void Update(int operationId, string operationName, string description)
+    {
+        var operation = _operationRepository.GetById(operationId);
+        if (operation is null)
+            return;
+
+        operation.OperationName = operationName;
+        operation.Description = description;
+        _operationRepository.Update(operation);
+    }
+
     public void Remove(string operationName)
     {
         var operation = _operationRepository.GetByName(operationName);
