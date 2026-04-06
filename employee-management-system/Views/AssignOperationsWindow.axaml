@@ -11,48 +11,7 @@
         SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
-        Background="#F3F4F6">
-
-    <Window.Styles>
-        <Style Selector="Button.admin-button">
-            <Setter Property="Background" Value="#2F6FB7"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="14,10"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#255A93"/>
-        </Style>
-        <Style Selector="Button.admin-button:disabled /template/ ContentPresenter">
-            <Setter Property="Background" Value="#8FB8E6"/>
-            <Setter Property="TextElement.Foreground" Value="White"/>
-        </Style>
-        <Style Selector="Button.logout-button">
-            <Setter Property="Background" Value="#D94A4A"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="14,10"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#BD3535"/>
-        </Style>
-        <Style Selector="ListBoxItem">
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="0,2"/>
-        </Style>
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-    </Window.Styles>
+        Classes="dialog-window assign-operations-window">
 
     <Border Padding="24">
         <StackPanel Spacing="16">
@@ -67,19 +26,9 @@
                          Background="Transparent" SelectionMode="Single">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:OperationItemViewModel">
-                            <Button Command="{Binding ToggleSelectionCommand}"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Stretch"
-                                    Padding="10,8" CornerRadius="8"
-                                    Background="Transparent" BorderThickness="0">
-                                <Button.Styles>
-                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="#F0F4F8"/>
-                                    </Style>
-                                    <Style Selector="Button:pressed /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="#E2EAF4"/>
-                                    </Style>
-                                </Button.Styles>
+                            <Button Classes="list-select-button"
+                                    Command="{Binding ToggleSelectionCommand}"
+                                    Padding="10,8">
                                 <Grid ColumnDefinitions="40,*">
                                     <CheckBox Grid.Column="0"
                                               IsChecked="{Binding IsSelected}"

@@ -1,0 +1,297 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="TextBox">
+        <Setter Property="Padding" Value="12"/>
+        <Style.Resources>
+            <SolidColorBrush x:Key="TextControlBackground" Color="White"/>
+            <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="White"/>
+            <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="White"/>
+            <SolidColorBrush x:Key="TextControlForeground" Color="Black"/>
+            <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="Black"/>
+            <SolidColorBrush x:Key="TextControlForegroundFocused" Color="Black"/>
+            <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#888888"/>
+            <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#888888"/>
+            <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#888888"/>
+            <SolidColorBrush x:Key="TextControlBorderBrush" Color="#999999"/>
+            <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#999999"/>
+            <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#0000FF"/>
+        </Style.Resources>
+    </Style>
+
+    <Style Selector="ComboBox">
+        <Style.Resources>
+            <SolidColorBrush x:Key="ComboBoxBackground" Color="White"/>
+            <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="White"/>
+            <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="White"/>
+            <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="White"/>
+            <SolidColorBrush x:Key="ComboBoxForeground" Color="Black"/>
+            <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="Black"/>
+            <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="Black"/>
+            <SolidColorBrush x:Key="ComboBoxForegroundFocused" Color="Black"/>
+            <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="#999999"/>
+            <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="#999999"/>
+            <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="#0000FF"/>
+            <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="#0000FF"/>
+            <SolidColorBrush x:Key="ComboBoxPlaceholderForeground" Color="#888888"/>
+            <SolidColorBrush x:Key="ComboBoxPlaceholderForegroundPointerOver" Color="#888888"/>
+            <SolidColorBrush x:Key="ComboBoxPlaceholderForegroundFocused" Color="#888888"/>
+        </Style.Resources>
+    </Style>
+
+    <Style Selector="ListBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+    </Style>
+
+    <Style Selector="ListBoxItem">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="BorderBrush" Value="#E8E8E8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#F4F7FA"/>
+        <Setter Property="BorderBrush" Value="#D0D9E2"/>
+        <Setter Property="TextElement.Foreground" Value="Black"/>
+    </Style>
+
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="#EAF2FA"/>
+        <Setter Property="BorderBrush" Value="#2F6FB7"/>
+        <Setter Property="TextElement.Foreground" Value="Black"/>
+    </Style>
+
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+        <Setter Property="Background" Value="#EAF2FA"/>
+        <Setter Property="BorderBrush" Value="#2F6FB7"/>
+        <Setter Property="TextElement.Foreground" Value="Black"/>
+    </Style>
+
+    <Style Selector="Button.admin-button">
+        <Setter Property="Background" Value="#2F6FB7"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#255A93"/>
+    </Style>
+    <Style Selector="Button.admin-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#1E4875"/>
+    </Style>
+    <Style Selector="Button.admin-button:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="#8FB8E6"/>
+        <Setter Property="TextElement.Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Button.logout-button">
+        <Setter Property="Background" Value="#D94A4A"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#BD3535"/>
+    </Style>
+    <Style Selector="Button.logout-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#992A2A"/>
+    </Style>
+
+    <Style Selector="Button.primary-button">
+        <Setter Property="Background" Value="#2F6FB7"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.primary-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#255A93"/>
+    </Style>
+    <Style Selector="Button.primary-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#1E4875"/>
+    </Style>
+
+    <Style Selector="Button.secondary-button">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Foreground" Value="#333"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="#CCCCCC"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    <Style Selector="Button.secondary-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#F0F0F0"/>
+    </Style>
+    <Style Selector="Button.secondary-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#E0E0E0"/>
+    </Style>
+
+    <Style Selector="Button.confirm-cancel">
+        <Setter Property="Background" Value="#4A90D9"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="MinWidth" Value="140"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.confirm-cancel:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#357ABD"/>
+    </Style>
+    <Style Selector="Button.confirm-cancel:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#2A6099"/>
+    </Style>
+
+    <Style Selector="Button.confirm-submit">
+        <Setter Property="Background" Value="#D94A4A"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="MinWidth" Value="140"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.confirm-submit:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#BD3535"/>
+    </Style>
+    <Style Selector="Button.confirm-submit:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#992A2A"/>
+    </Style>
+
+    <Style Selector="Button.primary-login-button">
+        <Setter Property="Background" Value="#0000FF"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.primary-login-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#0000AA"/>
+    </Style>
+    <Style Selector="Button.primary-login-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#000088"/>
+    </Style>
+
+    <Style Selector="Button.list-select-button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+    <Style Selector="Button.list-select-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#F0F4F8"/>
+    </Style>
+    <Style Selector="Button.list-select-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#E2EAF4"/>
+    </Style>
+
+    <Style Selector="Button.success-action-button">
+        <Setter Property="Background" Value="#4AD94A"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.success-action-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#35BD35"/>
+    </Style>
+    <Style Selector="Button.success-action-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#2A992A"/>
+    </Style>
+    <Style Selector="Button.success-action-button:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="#7FE07F"/>
+        <Setter Property="TextElement.Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Button.pause-action-button">
+        <Setter Property="Background" Value="#4A90D9"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.pause-action-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#357ABD"/>
+    </Style>
+    <Style Selector="Button.pause-action-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#2A6099"/>
+    </Style>
+    <Style Selector="Button.pause-action-button:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="#7FB3E0"/>
+        <Setter Property="TextElement.Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Button.danger-action-button">
+        <Setter Property="Background" Value="#D94A4A"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Padding" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="Button.danger-action-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#BD3535"/>
+    </Style>
+    <Style Selector="Button.danger-action-button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="#992A2A"/>
+    </Style>
+    <Style Selector="Button.danger-action-button:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="#E07F7F"/>
+        <Setter Property="TextElement.Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Button.icon-action-button">
+        <Setter Property="Background" Value="#2F6FB7"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="Button.icon-action-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#4B8AD1"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Button.icon-danger-button">
+        <Setter Property="Background" Value="#D94A4A"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="Button.icon-danger-button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#E55E5E"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+</Styles>

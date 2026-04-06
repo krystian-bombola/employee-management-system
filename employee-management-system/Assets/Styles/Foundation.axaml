@@ -1,0 +1,50 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Styles.Resources>
+        <SolidColorBrush x:Key="PageBackgroundBrush" Color="#F3F4F6"/>
+        <SolidColorBrush x:Key="SurfaceBrush" Color="White"/>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#2F6FB7"/>
+        <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#255A93"/>
+        <SolidColorBrush x:Key="PrimaryPressedBrush" Color="#1E4875"/>
+        <SolidColorBrush x:Key="PrimaryMutedBrush" Color="#8FB8E6"/>
+        <SolidColorBrush x:Key="DangerBrush" Color="#D94A4A"/>
+        <SolidColorBrush x:Key="DangerHoverBrush" Color="#BD3535"/>
+        <SolidColorBrush x:Key="DangerPressedBrush" Color="#992A2A"/>
+        <SolidColorBrush x:Key="SuccessBrush" Color="#4AD94A"/>
+        <SolidColorBrush x:Key="SuccessHoverBrush" Color="#35BD35"/>
+        <SolidColorBrush x:Key="SuccessPressedBrush" Color="#2A992A"/>
+        <SolidColorBrush x:Key="SuccessDisabledBrush" Color="#7FE07F"/>
+        <SolidColorBrush x:Key="InfoBrush" Color="#4A90D9"/>
+        <SolidColorBrush x:Key="InfoHoverBrush" Color="#357ABD"/>
+        <SolidColorBrush x:Key="InfoPressedBrush" Color="#2A6099"/>
+        <SolidColorBrush x:Key="InfoDisabledBrush" Color="#7FB3E0"/>
+        <SolidColorBrush x:Key="NeutralTextBrush" Color="#111111"/>
+        <SolidColorBrush x:Key="MutedTextBrush" Color="#555555"/>
+        <SolidColorBrush x:Key="SoftBorderBrush" Color="#E5E7EB"/>
+    </Styles.Resources>
+
+    <Style Selector="Window.dialog-window">
+        <Setter Property="Background" Value="{StaticResource PageBackgroundBrush}"/>
+    </Style>
+
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="24"/>
+        <Setter Property="BoxShadow" Value="0 1 4 0 #22000000"/>
+    </Style>
+
+    <Style Selector="TextBlock.header">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Margin" Value="0,0,0,10"/>
+    </Style>
+
+    <Style Selector="TextBlock.label">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#555"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+</Styles>
