@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
 using employee_management_system.Repositories;
@@ -15,9 +14,6 @@ public partial class AdminPositionsSectionViewModel : ViewModelBase
 {
     private string _searchQuery = string.Empty;
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) ApplyFilter(); } }
-
-    [ObservableProperty] private string _newPositionName = string.Empty;
-    [ObservableProperty] private string _newPositionHourlyRate = string.Empty;
 
     public ObservableCollection<PositionItemViewModel> Positions { get; } = new();
     public ObservableCollection<PositionItemViewModel> FilteredPositions { get; } = new();
@@ -45,17 +41,17 @@ public partial class AdminPositionsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void AddPosition()
+    private async Task AddPosition()
     {
-        if (string.IsNullOrWhiteSpace(NewPositionName)) return;
-        if (!decimal.TryParse(NewPositionHourlyRate.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var rate)) return;
+        var vm = new EditPositionViewModel(isAddMode: true);
+        var window = new Views.EditPositionWindow(vm);
 
-        using var db = new DatabaseContext();
-        var positionService = new PositionService(new PositionRepository(db));
-        positionService.Add(NewPositionName, rate);
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
 
-        NewPositionName = string.Empty;
-        NewPositionHourlyRate = string.Empty;
         Refresh();
     }
 
