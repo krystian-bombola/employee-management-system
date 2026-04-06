@@ -10,10 +10,10 @@
     <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
         <Grid ColumnDefinitions="*,Auto" Grid.Row="0">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
-                <TextBlock Text="Operacje" Classes="header" VerticalAlignment="Center"/>
+                <TextBlock Text="Operacje" Classes="header" Margin="0" VerticalAlignment="Center"/>
                 <Button Classes="admin-button" Content="+ Dodaj operację" Command="{Binding AddOperationCommand}"/>
             </StackPanel>
-            <TextBox Grid.Column="1" Watermark="Szukaj po nazwie lub opisie..." Text="{Binding SearchQuery}" Width="300"/>
+            <TextBox Grid.Column="1" Watermark="Szukaj po nazwie lub opisie..." Text="{Binding SearchQuery}" Width="300" Margin="0,0,0,10"/>
         </Grid>
 
         <Grid Grid.Row="1">
