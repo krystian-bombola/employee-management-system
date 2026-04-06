@@ -11,40 +11,6 @@
         <vm:LoginViewModel/>
     </Design.DataContext>
 
-    <UserControl.Styles>
-        <Style Selector="TextBox">
-            <Style.Resources>
-                <SolidColorBrush x:Key="TextControlBackground" Color="White"/>
-                <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="White"/>
-                <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="White"/>
-
-                <SolidColorBrush x:Key="TextControlForeground" Color="Black"/>
-                <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="Black"/>
-                <SolidColorBrush x:Key="TextControlForegroundFocused" Color="Black"/>
-
-                <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#888888"/>
-                <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#888888"/>
-                <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#888888"/>
-
-                <SolidColorBrush x:Key="TextControlBorderBrush" Color="#999999"/>
-                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#999999"/>
-                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#0000FF"/>
-            </Style.Resources>
-        </Style>
-        <Style Selector="Button">
-            <Style.Resources>
-                <SolidColorBrush x:Key="ButtonBackground" Color="#0000FF"/>
-                <SolidColorBrush x:Key="ButtonForeground" Color="White"/>
-
-                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0000AA"/>
-                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White"/>
-
-                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#000088"/>
-                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White"/>
-            </Style.Resources>
-        </Style>
-    </UserControl.Styles>
-
     <Grid Margin="24">
         <StackPanel HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -80,15 +46,11 @@
                            IsVisible="{Binding IsErrorVisible}"
                            Margin="0,4,0,0"/>
 
-                <Button Content="Zaloguj"
+                <Button Classes="primary-login-button"
+                        Content="Zaloguj"
                         Command="{Binding LoginCommand}"
                         IsDefault="True"
-                        Foreground="White"
-                        Background="#0000FF"
-                        Margin="0,12,0,0"
-                        Padding="12"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"/>
+                        Margin="0,12,0,0"/>
                 </StackPanel>
             </Border>
         </StackPanel>

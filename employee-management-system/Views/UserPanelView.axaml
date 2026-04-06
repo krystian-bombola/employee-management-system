@@ -11,83 +11,6 @@
         <vm:UserPanelViewModel/>
     </Design.DataContext>
 
-    <UserControl.Styles>
-        <!-- ComboBox style matching project theme -->
-        <Style Selector="ComboBox">
-            <Style.Resources>
-                <SolidColorBrush x:Key="ComboBoxBackground" Color="White"/>
-                <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="White"/>
-                <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="White"/>
-                <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="White"/>
-
-                <SolidColorBrush x:Key="ComboBoxForeground" Color="Black"/>
-                <SolidColorBrush x:Key="ComboBoxForegroundPointerOver" Color="Black"/>
-                <SolidColorBrush x:Key="ComboBoxForegroundPressed" Color="Black"/>
-                <SolidColorBrush x:Key="ComboBoxForegroundFocused" Color="Black"/>
-
-                <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="#999999"/>
-                <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="#999999"/>
-                <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="#0000FF"/>
-                <SolidColorBrush x:Key="ComboBoxBorderBrushFocused" Color="#0000FF"/>
-
-                <SolidColorBrush x:Key="ComboBoxPlaceholderForeground" Color="#888888"/>
-                <SolidColorBrush x:Key="ComboBoxPlaceholderForegroundPointerOver" Color="#888888"/>
-                <SolidColorBrush x:Key="ComboBoxPlaceholderForegroundFocused" Color="#888888"/>
-            </Style.Resources>
-        </Style>
-
-        <!-- Logout button (red) -->
-        <Style Selector="Button.logout-button">
-            <Setter Property="Background" Value="#D94A4A"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="12,8"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#BD3535"/>
-        </Style>
-        <Style Selector="Button.logout-button:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="#992A2A"/>
-        </Style>
-
-        <Style Selector="Button.confirm-cancel">
-            <Setter Property="Background" Value="#4A90D9"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="12"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="MinWidth" Value="140"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.confirm-cancel:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#357ABD"/>
-        </Style>
-        <Style Selector="Button.confirm-cancel:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="#2A6099"/>
-        </Style>
-
-        <Style Selector="Button.confirm-submit">
-            <Setter Property="Background" Value="#D94A4A"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="12"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="MinWidth" Value="140"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.confirm-submit:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#BD3535"/>
-        </Style>
-        <Style Selector="Button.confirm-submit:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="#992A2A"/>
-        </Style>
-
-        <!-- ... existing code ... -->
-    </UserControl.Styles>
-
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="24" Spacing="16">
@@ -193,32 +116,8 @@
                     <Grid ColumnDefinitions="*,16,*,16,*">
                         <!-- Rozpocznij -->
                         <Button Grid.Column="0"
-                                Command="{Binding StartOperationCommand}"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Padding="14"
-                                CornerRadius="8"
-                                Background="#4AD94A"
-                                Foreground="White"
-                                FontWeight="SemiBold">
-
-                            <Button.Styles>
-                                <Style Selector="Button">
-                                    <Setter Property="Background" Value="#4AD94A"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="Opacity" Value="1"/>
-                                </Style>
-                                <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#35BD35"/>
-                                </Style>
-                                <Style Selector="Button:pressed /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#2A992A"/>
-                                </Style>
-                                <Style Selector="Button:disabled /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#7FE07F"/>
-                                    <Setter Property="TextElement.Foreground" Value="White"/>
-                                </Style>
-                            </Button.Styles>
+                                Classes="success-action-button"
+                                Command="{Binding StartOperationCommand}">
 
                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                 <TextBlock Text="▶" VerticalAlignment="Center"/>
@@ -228,32 +127,8 @@
 
                         <!-- Wstrzymaj -->
                         <Button Grid.Column="2"
-                                Command="{Binding StopOperationCommand}"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Padding="14"
-                                CornerRadius="8"
-                                Background="#4A90D9"
-                                Foreground="White"
-                                FontWeight="SemiBold">
-
-                            <Button.Styles>
-                                <Style Selector="Button">
-                                    <Setter Property="Background" Value="#4A90D9"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="Opacity" Value="1"/>
-                                </Style>
-                                <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#357ABD"/>
-                                </Style>
-                                <Style Selector="Button:pressed /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#2A6099"/>
-                                </Style>
-                                <Style Selector="Button:disabled /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#7FB3E0"/>
-                                    <Setter Property="TextElement.Foreground" Value="White"/>
-                                </Style>
-                            </Button.Styles>
+                                Classes="pause-action-button"
+                                Command="{Binding StopOperationCommand}">
 
                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                 <TextBlock Text="⏸" VerticalAlignment="Center"/>
@@ -263,32 +138,8 @@
 
                         <!-- Zakończ -->
                         <Button Grid.Column="4"
-                                Command="{Binding RequestEndOperationCommand}"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Padding="14"
-                                CornerRadius="8"
-                                Background="#D94A4A"
-                                Foreground="White"
-                                FontWeight="SemiBold">
-
-                            <Button.Styles>
-                                <Style Selector="Button">
-                                    <Setter Property="Background" Value="#D94A4A"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="Opacity" Value="1"/>
-                                </Style>
-                                <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#BD3535"/>
-                                </Style>
-                                <Style Selector="Button:pressed /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#992A2A"/>
-                                </Style>
-                                <Style Selector="Button:disabled /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#E07F7F"/>
-                                    <Setter Property="TextElement.Foreground" Value="White"/>
-                                </Style>
-                            </Button.Styles>
+                                Classes="danger-action-button"
+                                Command="{Binding RequestEndOperationCommand}">
 
                             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                                 <TextBlock Text="⏹" VerticalAlignment="Center"/>

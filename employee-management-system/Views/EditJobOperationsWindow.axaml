@@ -12,34 +12,7 @@
         SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
         CanResize="False"
-        Background="#F3F4F6">
-
-    <Window.Styles>
-        <Style Selector="Button.admin-button">
-            <Setter Property="Background" Value="#2F6FB7"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="14,10"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#255A93"/>
-        </Style>
-        <Style Selector="Button.logout-button">
-            <Setter Property="Background" Value="#D94A4A"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="14,10"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#BD3535"/>
-        </Style>
-    </Window.Styles>
+        Classes="dialog-window edit-job-operations-window">
 
     <Grid>
         <Border Padding="24">
@@ -92,41 +65,17 @@
                                             <ComboBox Grid.Column="2" ItemsSource="{Binding #EditJobOpsWin.((vm:EditJobOperationsViewModel)DataContext).TaskStatuses}" SelectedItem="{Binding Status}" MinWidth="120" Padding="6,4" FontSize="12" VerticalAlignment="Center" Margin="8,0"/>
                                             <StackPanel Grid.Column="3" Orientation="Horizontal"
                                                         Spacing="6" VerticalAlignment="Center">
-                                                <Button Content="▲" Padding="8,4" FontSize="12"
-                                                        Background="#2F6FB7" Foreground="White"
-                                                        CornerRadius="6"
+                                                <Button Classes="icon-action-button" Content="▲" Padding="8,4" FontSize="12"
                                                         Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).MoveUpCommand}"
                                                         CommandParameter="{Binding}">
-                                                    <Button.Styles>
-                                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                            <Setter Property="Background" Value="#4B8AD1"/>
-                                                            <Setter Property="Foreground" Value="White"/>
-                                                        </Style>
-                                                    </Button.Styles>
                                                 </Button>
-                                                <Button Content="▼" Padding="8,4" FontSize="12"
-                                                        Background="#2F6FB7" Foreground="White"
-                                                        CornerRadius="6"
+                                                <Button Classes="icon-action-button" Content="▼" Padding="8,4" FontSize="12"
                                                         Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).MoveDownCommand}"
                                                         CommandParameter="{Binding}">
-                                                    <Button.Styles>
-                                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                            <Setter Property="Background" Value="#4B8AD1"/>
-                                                            <Setter Property="Foreground" Value="White"/>
-                                                        </Style>
-                                                    </Button.Styles>
                                                 </Button>
-                                                <Button Content="✕" Padding="8,4" FontSize="12"
-                                                        Background="#D94A4A" Foreground="White"
-                                                        CornerRadius="6"
+                                                <Button Classes="icon-danger-button" Content="✕" Padding="8,4" FontSize="12"
                                                         Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).RemoveOperationCommand}"
                                                         CommandParameter="{Binding}">
-                                                    <Button.Styles>
-                                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                            <Setter Property="Background" Value="#E55E5E"/>
-                                                            <Setter Property="Foreground" Value="White"/>
-                                                        </Style>
-                                                    </Button.Styles>
                                                 </Button>
                                             </StackPanel>
                                         </Grid>
