@@ -16,28 +16,32 @@
             <TextBox Grid.Column="1" Watermark="Szukaj po nazwie stanowiska..." Text="{Binding SearchQuery}" Width="300"/>
         </Grid>
 
-        <Grid Grid.Row="1" RowDefinitions="Auto,*" Height="500">
-                <Grid Grid.Row="0" ColumnDefinitions="50,3*,2*,Auto,Auto" Margin="0,0,0,10">
-                    <TextBlock Grid.Column="1" Text="Nazwa stanowiska" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="2" Text="Stawka godz. (zł)" FontWeight="Bold"/>
-                </Grid>
+        <Grid Grid.Row="1">
+            <Grid RowDefinitions="Auto,*" Height="550">
+                <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
+                    <Grid ColumnDefinitions="50,*,150,90,80">
+                        <TextBlock Grid.Column="1" Text="Nazwa stanowiska" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock Grid.Column="2" Text="Stawka godz. (zł)" FontWeight="Bold" Foreground="#333"/>
+                    </Grid>
+                </Border>
                 <ListBox Grid.Row="1" ItemsSource="{Binding FilteredPositions}">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:PositionItemViewModel">
-                            <Grid ColumnDefinitions="50,3*,2*,Auto,Auto" Margin="0,10">
+                            <Grid ColumnDefinitions="50,*,150,90,80" Margin="12,10">
                                 <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="{Binding PositionName}" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="2" Text="{Binding HourlyRate, StringFormat='{}{0:F2} zł'}" VerticalAlignment="Center"/>
-                                <Button Grid.Column="3" Content="Edytuj" Classes="admin-button" Padding="8,4" FontSize="12" Margin="0,0,6,0"
+                                <TextBlock Grid.Column="1" Text="{Binding PositionName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black"/>
+                                <TextBlock Grid.Column="2" Text="{Binding HourlyRate, StringFormat='{}{0:F2} zł'}" VerticalAlignment="Center" Foreground="Black" FontSize="13"/>
+                                <Button Grid.Column="3" Content="Edytuj" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0" HorizontalAlignment="Stretch"
                                         Command="{Binding $parent[UserControl].((vm:AdminPositionsSectionViewModel)DataContext).EditPositionCommand}"
                                         CommandParameter="{Binding}"/>
-                                <Button Grid.Column="4" Content="Usuń" Classes="logout-button" Padding="8,4" FontSize="12"
+                                <Button Grid.Column="4" Content="Usuń" Classes="logout-button" Padding="10,5" FontSize="12" HorizontalAlignment="Stretch"
                                         Command="{Binding $parent[UserControl].((vm:AdminPositionsSectionViewModel)DataContext).RemovePositionCommand}"
                                         CommandParameter="{Binding}"/>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>
