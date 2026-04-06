@@ -35,9 +35,6 @@ public partial class UserPanelViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isOperationRunning;
 
-    [ObservableProperty]
-    private bool _isEndOperationConfirmationVisible;
-
     private string? _runningOperationName;
     private int? _runningJobId;
 
@@ -184,19 +181,37 @@ public partial class UserPanelViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanStopOperation))]
-    private void RequestEndOperation()
+    private async System.Threading.Tasks.Task RequestEndOperation()
     {
-        IsEndOperationConfirmationVisible = true;
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop
+            || desktop.MainWindow is null)
+        {
+            return;
+        }
+
+        var confirmed = false;
+        var window = new Views.ConfirmActionWindow();
+        var vm = new ConfirmActionViewModel(
+            "Potwierdzenie",
+            "Czy na pewno operacja została zrealizowana?",
+            "Tak, zakończ",
+            "Nie",
+            result =>
+            {
+                confirmed = result;
+                window.Close();
+            });
+
+        window.DataContext = vm;
+        await window.ShowDialog(desktop.MainWindow);
+
+        if (!confirmed)
+            return;
+
+        CompleteRunningOperation();
     }
 
-    [RelayCommand]
-    private void CancelEndOperation()
-    {
-        IsEndOperationConfirmationVisible = false;
-    }
-
-    [RelayCommand]
-    private void ConfirmEndOperation()
+    private void CompleteRunningOperation()
     {
         var completedOperationName = _runningOperationName;
 
@@ -230,7 +245,6 @@ public partial class UserPanelViewModel : ViewModelBase
 
         StopRunningOperation();
         CurrentOperation = "Brak pracy";
-        IsEndOperationConfirmationVisible = false;
         ReloadOperationsForCurrentJob(completedOperationName);
     }
 
@@ -331,9 +345,5 @@ public partial class UserPanelViewModel : ViewModelBase
         StartOperationCommand.NotifyCanExecuteChanged();
         StopOperationCommand.NotifyCanExecuteChanged();
         RequestEndOperationCommand.NotifyCanExecuteChanged();
-        if (!value)
-        {
-            IsEndOperationConfirmationVisible = false;
-        }
     }
 }
