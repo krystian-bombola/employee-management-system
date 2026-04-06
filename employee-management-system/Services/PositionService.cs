@@ -29,4 +29,18 @@ public class PositionService
     }
 
     public void Remove(int id) => _repository.Remove(id);
+
+    public bool TryRemove(int id, out string errorMessage)
+    {
+        errorMessage = string.Empty;
+
+        if (_repository.HasUsers(id))
+        {
+            errorMessage = "Nie można usunąć stanowiska, ponieważ jest przypisane do co najmniej jednego użytkownika.";
+            return false;
+        }
+
+        _repository.Remove(id);
+        return true;
+    }
 }

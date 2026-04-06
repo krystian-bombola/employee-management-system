@@ -1,8 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:employee_management_system.ViewModels"
-        x:Class="employee_management_system.Views.EditPositionWindow"
-        x:DataType="vm:EditPositionViewModel"
+        x:Class="employee_management_system.Views.AddOperationWindow"
+        x:DataType="vm:AddOperationViewModel"
         Title="{Binding WindowTitle}"
         Width="420"
         SizeToContent="Height"
@@ -11,7 +11,7 @@
         Background="#F3F4F6">
 
     <Design.DataContext>
-        <vm:EditPositionViewModel/>
+        <vm:AddOperationViewModel/>
     </Design.DataContext>
 
     <Window.Styles>
@@ -50,25 +50,6 @@
             <Setter Property="Background" Value="#1E4875"/>
         </Style>
 
-        <Style Selector="Button.secondary-button">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#333"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="14,10"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="#CCCCCC"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-        <Style Selector="Button.secondary-button:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#F0F0F0"/>
-        </Style>
-        <Style Selector="Button.secondary-button:pressed /template/ ContentPresenter">
-            <Setter Property="Background" Value="#E0E0E0"/>
-        </Style>
-
         <Style Selector="Button.logout-button">
             <Setter Property="Background" Value="#D94A4A"/>
             <Setter Property="Foreground" Value="White"/>
@@ -96,7 +77,6 @@
 
     <Border Padding="24">
         <StackPanel Spacing="0">
-
             <TextBlock Text="{Binding WindowTitle}"
                        FontSize="18"
                        FontWeight="Bold"
@@ -109,17 +89,21 @@
                     BoxShadow="0 1 4 0 #22000000"
                     Margin="0,0,0,16">
                 <StackPanel Spacing="12">
-
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Nazwa stanowiska" Classes="label"/>
-                        <TextBox Name="PositionNameTextBox" Text="{Binding PositionName}" Watermark="Nazwa stanowiska"/>
+                        <TextBlock Text="Nazwa operacji" Classes="label"/>
+                        <TextBox Name="OperationNameTextBox"
+                                 Text="{Binding OperationName}"
+                                 Watermark="Nazwa operacji"/>
                     </StackPanel>
 
                     <StackPanel Spacing="4">
-                        <TextBlock Text="Stawka godzinowa (zł)" Classes="label"/>
-                        <TextBox Text="{Binding HourlyRate}" Watermark="Stawka godzinowa (zł)"/>
+                        <TextBlock Text="Opis operacji" Classes="label"/>
+                        <TextBox Text="{Binding Description}"
+                                 Watermark="Opis operacji"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MinHeight="96"/>
                     </StackPanel>
-
                 </StackPanel>
             </Border>
 
@@ -133,7 +117,6 @@
                         Content="{Binding SaveButtonText}"
                         Command="{Binding SaveCommand}"/>
             </Grid>
-
         </StackPanel>
     </Border>
 </Window>

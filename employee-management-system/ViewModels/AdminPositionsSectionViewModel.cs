@@ -16,9 +16,6 @@ public partial class AdminPositionsSectionViewModel : ViewModelBase
     private string _searchQuery = string.Empty;
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) ApplyFilter(); } }
 
-    [ObservableProperty] private string _newPositionName = string.Empty;
-    [ObservableProperty] private string _newPositionHourlyRate = string.Empty;
-
     public ObservableCollection<PositionItemViewModel> Positions { get; } = new();
     public ObservableCollection<PositionItemViewModel> FilteredPositions { get; } = new();
 
@@ -45,35 +42,65 @@ public partial class AdminPositionsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void AddPosition()
+    private async Task AddPosition()
     {
-        if (string.IsNullOrWhiteSpace(NewPositionName)) return;
-        if (!decimal.TryParse(NewPositionHourlyRate.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var rate)) return;
+        var vm = new EditPositionViewModel(isAddMode: true);
+        var window = new Views.EditPositionWindow(vm);
 
-        using var db = new DatabaseContext();
-        var positionService = new PositionService(new PositionRepository(db));
-        positionService.Add(NewPositionName, rate);
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
 
-        NewPositionName = string.Empty;
-        NewPositionHourlyRate = string.Empty;
         Refresh();
     }
 
     [RelayCommand]
-    private void RemovePosition(PositionItemViewModel? item)
+    private async Task RemovePosition(PositionItemViewModel? item)
     {
+        var confirmed = false;
+
+        if (item is not null)
+        {
+            confirmed = await DialogService.ShowDeleteConfirmationAsync(
+                $"Czy na pewno chcesz usunąć stanowisko {item.PositionName}?");
+        }
+        else
+        {
+            var selected = Positions.Where(p => p.IsSelected).ToList();
+            if (selected.Count == 0)
+                return;
+
+            confirmed = await DialogService.ShowDeleteConfirmationAsync(
+                $"Czy na pewno chcesz usunąć zaznaczone stanowiska ({selected.Count})?");
+        }
+
+        if (!confirmed) return;
+
         using var db = new DatabaseContext();
         var positionService = new PositionService(new PositionRepository(db));
 
         if (item is not null)
         {
-            positionService.Remove(item.Id);
+            if (!positionService.TryRemove(item.Id, out var errorMessage))
+            {
+                await DialogService.ShowMessageAsync(errorMessage, "Nie można usunąć stanowiska");
+                return;
+            }
         }
         else
         {
             foreach (var s in Positions.Where(p => p.IsSelected).ToList())
-                positionService.Remove(s.Id);
+            {
+                if (!positionService.TryRemove(s.Id, out var errorMessage))
+                {
+                    await DialogService.ShowMessageAsync(errorMessage, "Nie można usunąć stanowiska");
+                    return;
+                }
+            }
         }
+
         Refresh();
     }
 
@@ -93,4 +120,5 @@ public partial class AdminPositionsSectionViewModel : ViewModelBase
 
         Refresh();
     }
+
 }

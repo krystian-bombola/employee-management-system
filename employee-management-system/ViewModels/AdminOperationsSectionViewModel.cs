@@ -1,5 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
@@ -12,9 +15,6 @@ public partial class AdminOperationsSectionViewModel : ViewModelBase
 {
     private string _searchQuery = string.Empty;
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) ApplyFilter(); } }
-
-    [ObservableProperty] private string? _newOperationName;
-    [ObservableProperty] private string? _newOperationDescription;
 
     public ObservableCollection<OperationItemViewModel> Operations { get; } = new();
     public ObservableCollection<OperationItemViewModel> FilteredOperations { get; } = new();
@@ -45,36 +45,80 @@ public partial class AdminOperationsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void AddOperation()
+    private async Task AddOperation()
     {
-        if (string.IsNullOrWhiteSpace(NewOperationName))
-            return;
+        var vm = new AddOperationViewModel();
+        var window = new Views.AddOperationWindow(vm);
 
-        using var db = new DatabaseContext();
-        var operationService = new OperationService(new OperationRepository(db));
-        operationService.Add(NewOperationName, NewOperationDescription ?? string.Empty);
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
 
-        NewOperationName = string.Empty;
-        NewOperationDescription = string.Empty;
         Refresh();
     }
 
     [RelayCommand]
-    private void RemoveOperation(OperationItemViewModel? item)
+    private async Task EditOperation(OperationItemViewModel? item)
     {
+        if (item is null)
+            return;
+
+        var vm = new AddOperationViewModel(item);
+        var window = new Views.AddOperationWindow(vm);
+
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
+
+        Refresh();
+    }
+
+    [RelayCommand]
+    private async Task RemoveOperation(OperationItemViewModel? item)
+    {
+        var confirmed = false;
+
+        if (item is not null)
+        {
+            confirmed = await DialogService.ShowDeleteConfirmationAsync(
+                $"Czy na pewno chcesz usunąć operację {item.OperationName}?");
+        }
+        else
+        {
+            var selected = Operations.Where(o => o.IsSelected).ToList();
+            if (selected.Count == 0)
+                return;
+
+            confirmed = await DialogService.ShowDeleteConfirmationAsync(
+                $"Czy na pewno chcesz usunąć zaznaczone operacje ({selected.Count})?");
+        }
+
+        if (!confirmed) return;
+
         using var db = new DatabaseContext();
         var operationService = new OperationService(new OperationRepository(db));
 
         if (item is not null)
         {
-            operationService.Remove(item.OperationName);
+            if (!operationService.TryRemove(item.OperationName, out var errorMessage))
+            {
+                await DialogService.ShowMessageAsync(errorMessage, "Nie można usunąć operacji");
+                return;
+            }
         }
         else
         {
-            var selected = Operations.Where(o => o.IsSelected).ToList();
-            foreach (var s in selected)
+            foreach (var s in Operations.Where(o => o.IsSelected).ToList())
             {
-                operationService.Remove(s.OperationName);
+                if (!operationService.TryRemove(s.OperationName, out var errorMessage))
+                {
+                    await DialogService.ShowMessageAsync(errorMessage, "Nie można usunąć operacji");
+                    return;
+                }
             }
         }
         Refresh();

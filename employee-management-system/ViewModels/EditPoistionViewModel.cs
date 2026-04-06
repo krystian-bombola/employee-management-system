@@ -11,6 +11,10 @@ public partial class EditPositionViewModel : ObservableObject
     private readonly int _positionId;
     public System.Action? CloseAction { get; set; }
 
+    [ObservableProperty] private bool _isEditMode;
+    [ObservableProperty] private string _windowTitle = string.Empty;
+    [ObservableProperty] private string _saveButtonText = string.Empty;
+
     private string _positionName = string.Empty;
     public string PositionName { get => _positionName; set => SetProperty(ref _positionName, value); }
 
@@ -19,8 +23,18 @@ public partial class EditPositionViewModel : ObservableObject
 
     public EditPositionViewModel() { }
 
+    public EditPositionViewModel(bool isAddMode)
+    {
+        IsEditMode = !isAddMode;
+        WindowTitle = "Dodaj stanowisko";
+        SaveButtonText = "Dodaj";
+    }
+
     public EditPositionViewModel(PositionItemViewModel position)
     {
+        IsEditMode = true;
+        WindowTitle = "Edytuj stanowisko";
+        SaveButtonText = "Zapisz zmiany";
         _positionId = position.Id;
         PositionName = position.PositionName;
         HourlyRate = position.HourlyRate.ToString("F2");
@@ -37,7 +51,15 @@ public partial class EditPositionViewModel : ObservableObject
 
         using var db = new DatabaseContext();
         var service = new PositionService(new PositionRepository(db));
-        service.Update(_positionId, PositionName, rate);
+
+        if (IsEditMode)
+        {
+            service.Update(_positionId, PositionName, rate);
+        }
+        else
+        {
+            service.Add(PositionName, rate);
+        }
 
         CloseAction?.Invoke();
     }

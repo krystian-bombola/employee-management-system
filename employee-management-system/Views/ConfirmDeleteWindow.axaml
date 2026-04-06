@@ -1,0 +1,64 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:employee_management_system.ViewModels"
+        x:Class="employee_management_system.Views.ConfirmDeleteWindow"
+        x:DataType="vm:ConfirmDeleteViewModel"
+        Title="{Binding WindowTitle}"
+        Width="400"
+        SizeToContent="Height"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="#F3F4F6">
+
+    <Window.Styles>
+        <Style Selector="Button.admin-button">
+            <Setter Property="Background" Value="#2F6FB7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.admin-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#255A93"/>
+        </Style>
+        <Style Selector="Button.logout-button">
+            <Setter Property="Background" Value="#D94A4A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.logout-button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#BD3535"/>
+        </Style>
+    </Window.Styles>
+
+    <Border Padding="24">
+        <StackPanel Spacing="16">
+            <TextBlock Text="{Binding WindowTitle}"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="#1A1A1A"/>
+            <TextBlock Text="{Binding Message}"
+                       TextWrapping="Wrap"
+                       Foreground="#333"/>
+            <Grid ColumnDefinitions="*,12,*">
+                <Button Name="CancelButton"
+                        Grid.Column="0"
+                        Classes="logout-button"
+                        Content="Nie"
+                        Command="{Binding CancelCommand}"/>
+                <Button Grid.Column="2"
+                        Classes="admin-button"
+                        Content="Tak, usuń"
+                        Command="{Binding ConfirmCommand}"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

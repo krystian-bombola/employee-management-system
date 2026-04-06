@@ -21,6 +21,9 @@ public class UserRepository
     public List<User> GetAll()
         => _db.Users.Include(u => u.Position).ToList();
 
+    public bool HasWorkLogs(int userId)
+        => _db.WorkLogs.Any(wl => wl.UserId == userId);
+
     public void Add(User user)
     {
         _db.Users.Add(user);

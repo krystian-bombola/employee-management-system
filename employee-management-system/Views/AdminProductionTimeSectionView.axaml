@@ -10,27 +10,26 @@
     <Grid>
         <Grid RowDefinitions="Auto,*" RowSpacing="12">
             <Grid ColumnDefinitions="*,Auto" Grid.Row="0">
-                <TextBlock Grid.Column="0" Text="Czas produkcji" Classes="header" VerticalAlignment="Center"/>
-                <TextBox Grid.Column="1" Watermark="Szukaj po nazwie lub statusie..." Text="{Binding SearchQuery}" Width="300"/>
+                <TextBlock Grid.Column="0" Text="Czas produkcji" Classes="header" Margin="0" VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" Watermark="Szukaj po nazwie lub statusie..." Text="{Binding SearchQuery}" Width="300" Margin="0,0,0,10"/>
             </Grid>
 
             <Grid Grid.Row="1" RowDefinitions="Auto,*" Height="460">
                 <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
-                    <Grid ColumnDefinitions="40,*,150,150,150">
-                        <TextBlock Grid.Column="1" Text="Nazwa zlecenia" FontWeight="Bold" Foreground="#333"/>
-                        <TextBlock Grid.Column="2" Text="Status" FontWeight="Bold" Foreground="#333"/>
-                        <TextBlock Grid.Column="3" Text="Czas pracy (h)" FontWeight="Bold" Foreground="#333"/>
+                    <Grid ColumnDefinitions="*,150,150,150">
+                        <TextBlock Grid.Column="0" Text="Nazwa zlecenia" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock Grid.Column="1" Text="Status" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock Grid.Column="2" Text="Czas pracy (h)" FontWeight="Bold" Foreground="#333"/>
                     </Grid>
                 </Border>
                 <ListBox Grid.Row="1" ItemsSource="{Binding FilteredJobs}">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:JobItemViewModel">
-                            <Grid ColumnDefinitions="40,*,150,150,150" Margin="12,10">
-                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="{Binding JobName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Grid.Column="2" Text="{Binding Status}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Column="3" Text="{Binding TotalExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
-                                <Button Grid.Column="4" Content="Pokaż szczegóły" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0"
+                            <Grid ColumnDefinitions="*,150,150,150" Margin="12,10">
+                                <TextBlock Grid.Column="0" Text="{Binding JobName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Status}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TotalExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
+                                <Button Grid.Column="3" Content="Pokaż szczegóły" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0"
                                         Command="{Binding $parent[UserControl].((vm:AdminProductionTimeSectionViewModel)DataContext).ShowJobDetailsCommand}"
                                         CommandParameter="{Binding}"/>
                             </Grid>
@@ -39,50 +38,5 @@
                 </ListBox>
             </Grid>
         </Grid>
-        
-        <!-- Job Details Popup -->
-        <Border Background="#80000000" IsVisible="{Binding IsJobDetailsVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Border HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" CornerRadius="12" Padding="24" Width="700" MaxHeight="600">
-                <StackPanel Spacing="14">
-                    <TextBlock Text="{Binding JobDetailsTitle}" FontSize="18" FontWeight="Bold" Foreground="#1A1A1A"/>
-                    <Separator Margin="0,4"/>
-
-                    <Grid ColumnDefinitions="40,*,120,40" Margin="0,4,0,0">
-                        <TextBlock Grid.Column="0" Text="Nr" FontWeight="SemiBold" Foreground="#333" HorizontalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="Operacja" FontWeight="SemiBold" Foreground="#333"/>
-                        <TextBlock Grid.Column="2" Text="Status" FontWeight="SemiBold" Foreground="#333"/>
-                        <TextBlock Grid.Column="3" Text="Czas" FontWeight="SemiBold" Foreground="#333"/>
-                    </Grid>
-
-                    <Border Background="#F5F7FA" CornerRadius="8" Padding="8">
-                        <ScrollViewer Height="300">
-                            <ItemsControl ItemsSource="{Binding JobDetailsOperations}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:JobOperationItemViewModel">
-                                        <Border Background="White" CornerRadius="6" Padding="12,8" Margin="0,0,0,4" BorderBrush="#E0E0E0" BorderThickness="1">
-                                            <Grid ColumnDefinitions="40,*,120,40">
-                                                <Border Grid.Column="0" Background="#2F6FB7" CornerRadius="12" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Order, StringFormat=\{0\}}" Foreground="White" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding OperationName}" FontWeight="SemiBold" FontSize="13" Foreground="Black"/>
-                                                    <TextBlock Text="{Binding Description}" FontSize="11" Foreground="Black" TextTrimming="CharacterEllipsis"/>
-                                                </StackPanel>
-                                                <TextBlock Grid.Column="2" Text="{Binding Status}" FontSize="12" Foreground="Black" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="3" Text="{Binding ExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Border>
-
-                    <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,8,0,0">
-                        <Button Classes="admin-button" Content="Zamknij" Padding="16,8" Command="{Binding CloseJobDetailsCommand}"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </Border>
     </Grid>
 </UserControl>

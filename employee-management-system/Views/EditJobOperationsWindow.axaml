@@ -41,105 +41,108 @@
         </Style>
     </Window.Styles>
 
-    <Border Padding="24">
-        <StackPanel Spacing="16">
-            <TextBlock Text="{Binding Title}"
-                       FontSize="18" FontWeight="Bold" Foreground="#111"/>
-            
-            <StackPanel Orientation="Horizontal" Spacing="10">
-                <ComboBox ItemsSource="{Binding AvailableOperations}"
-                          SelectedItem="{Binding SelectedOperationToAdd}"
-                          PlaceholderText="Wybierz operację do dodania"
-                          HorizontalAlignment="Stretch" MinWidth="350" CornerRadius="8" Padding="12,8">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:OperationItemViewModel">
-                            <TextBlock Text="{Binding OperationName}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Button Classes="admin-button" Content="+ Dodaj" Padding="20,10" Command="{Binding AddOperationCommand}"/>
-            </StackPanel>
-            
-            <TextBlock Text="Kolejność operacji:"
-                       Foreground="#555" FontSize="14" FontWeight="SemiBold"/>
+    <Grid>
+        <Border Padding="24">
+            <StackPanel Spacing="16">
+                <TextBlock Text="{Binding Title}"
+                           FontSize="18" FontWeight="Bold" Foreground="#111"/>
 
-            <Border Background="#F5F7FA" CornerRadius="8" Padding="8"
-                    BorderBrush="#E5E7EB" BorderThickness="1">
-                <ScrollViewer Height="380">
-                    <ItemsControl ItemsSource="{Binding Operations}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="vm:JobOperationItemViewModel">
-                                <Border Background="White" CornerRadius="8"
-                                        Padding="12,10" Margin="0,0,0,6"
-                                        BorderBrush="#E5E7EB" BorderThickness="1">
-                                    <Grid ColumnDefinitions="Auto,*,Auto,Auto">
-                                        <Border Grid.Column="0" Background="#2F6FB7"
-                                                CornerRadius="12" Width="28" Height="28"
-                                                Margin="0,0,12,0">
-                                            <TextBlock Text="{Binding Order, StringFormat={}{0}}"
-                                                       Foreground="White" FontSize="12"
-                                                       FontWeight="Bold"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center"/>
-                                        </Border>
-                                        <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding OperationName}"
-                                                       FontWeight="SemiBold" FontSize="14" Foreground="#111"/>
-                                            <TextBlock Text="{Binding Description}"
-                                                       FontSize="12" Foreground="#666" TextWrapping="Wrap"/>
-                                        </StackPanel>
-                                        <ComboBox Grid.Column="2" ItemsSource="{Binding #EditJobOpsWin.((vm:EditJobOperationsViewModel)DataContext).TaskStatuses}" SelectedItem="{Binding Status}" MinWidth="120" Padding="6,4" FontSize="12" VerticalAlignment="Center" Margin="8,0"/>
-                                        <StackPanel Grid.Column="3" Orientation="Horizontal"
-                                                    Spacing="6" VerticalAlignment="Center">
-                                            <Button Content="▲" Padding="8,4" FontSize="12"
-                                                    Background="#2F6FB7" Foreground="White"
-                                                    CornerRadius="6"
-                                                    Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).MoveUpCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <Button.Styles>
-                                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                        <Setter Property="Background" Value="#4B8AD1"/>
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                    </Style>
-                                                </Button.Styles>
-                                            </Button>
-                                            <Button Content="▼" Padding="8,4" FontSize="12"
-                                                    Background="#2F6FB7" Foreground="White"
-                                                    CornerRadius="6"
-                                                    Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).MoveDownCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <Button.Styles>
-                                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                        <Setter Property="Background" Value="#4B8AD1"/>
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                    </Style>
-                                                </Button.Styles>
-                                            </Button>
-                                            <Button Content="✕" Padding="8,4" FontSize="12"
-                                                    Background="#D94A4A" Foreground="White"
-                                                    CornerRadius="6"
-                                                    Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).RemoveOperationCommand}"
-                                                    CommandParameter="{Binding}">
-                                                <Button.Styles>
-                                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                        <Setter Property="Background" Value="#E55E5E"/>
-                                                        <Setter Property="Foreground" Value="White"/>
-                                                    </Style>
-                                                </Button.Styles>
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <ComboBox ItemsSource="{Binding AvailableOperations}"
+                              SelectedItem="{Binding SelectedOperationToAdd}"
+                              PlaceholderText="Wybierz operację do dodania"
+                              HorizontalAlignment="Stretch" MinWidth="350" CornerRadius="8" Padding="12,8">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:OperationItemViewModel">
+                                <TextBlock Text="{Binding OperationName}"/>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </Border>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Classes="admin-button" Content="+ Dodaj" Padding="20,10" Command="{Binding AddOperationCommand}"/>
+                </StackPanel>
 
-            <Grid ColumnDefinitions="*,12,*">
-                <Button Grid.Column="0" Classes="logout-button" Content="Anuluj" Command="{Binding CancelCommand}"/>
-                <Button Grid.Column="2" Classes="admin-button" Content="Zapisz operacje" Command="{Binding SaveCommand}"/>
-            </Grid>
-        </StackPanel>
-    </Border>
+                <TextBlock Text="Kolejność operacji:"
+                           Foreground="#555" FontSize="14" FontWeight="SemiBold"/>
+
+                <Border Background="#F5F7FA" CornerRadius="8" Padding="8"
+                        BorderBrush="#E5E7EB" BorderThickness="1">
+                    <ScrollViewer Height="380">
+                        <ItemsControl ItemsSource="{Binding Operations}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:JobOperationItemViewModel">
+                                    <Border Background="White" CornerRadius="8"
+                                            Padding="12,10" Margin="0,0,0,6"
+                                            BorderBrush="#E5E7EB" BorderThickness="1">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                            <Border Grid.Column="0" Background="#2F6FB7"
+                                                    CornerRadius="12" Width="28" Height="28"
+                                                    Margin="0,0,12,0">
+                                                <TextBlock Text="{Binding Order, StringFormat={}{0}}"
+                                                           Foreground="White" FontSize="12"
+                                                           FontWeight="Bold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding OperationName}"
+                                                           FontWeight="SemiBold" FontSize="14" Foreground="#111"/>
+                                                <TextBlock Text="{Binding Description}"
+                                                           FontSize="12" Foreground="#666" TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                            <ComboBox Grid.Column="2" ItemsSource="{Binding #EditJobOpsWin.((vm:EditJobOperationsViewModel)DataContext).TaskStatuses}" SelectedItem="{Binding Status}" MinWidth="120" Padding="6,4" FontSize="12" VerticalAlignment="Center" Margin="8,0"/>
+                                            <StackPanel Grid.Column="3" Orientation="Horizontal"
+                                                        Spacing="6" VerticalAlignment="Center">
+                                                <Button Content="▲" Padding="8,4" FontSize="12"
+                                                        Background="#2F6FB7" Foreground="White"
+                                                        CornerRadius="6"
+                                                        Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).MoveUpCommand}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Styles>
+                                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                            <Setter Property="Background" Value="#4B8AD1"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                        </Style>
+                                                    </Button.Styles>
+                                                </Button>
+                                                <Button Content="▼" Padding="8,4" FontSize="12"
+                                                        Background="#2F6FB7" Foreground="White"
+                                                        CornerRadius="6"
+                                                        Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).MoveDownCommand}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Styles>
+                                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                            <Setter Property="Background" Value="#4B8AD1"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                        </Style>
+                                                    </Button.Styles>
+                                                </Button>
+                                                <Button Content="✕" Padding="8,4" FontSize="12"
+                                                        Background="#D94A4A" Foreground="White"
+                                                        CornerRadius="6"
+                                                        Command="{Binding $parent[Window].((vm:EditJobOperationsViewModel)DataContext).RemoveOperationCommand}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Styles>
+                                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                            <Setter Property="Background" Value="#E55E5E"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                        </Style>
+                                                    </Button.Styles>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+
+                <Grid ColumnDefinitions="*,12,*">
+                    <Button Grid.Column="0" Classes="logout-button" Content="Anuluj" Command="{Binding CancelCommand}"/>
+                    <Button Grid.Column="2" Classes="admin-button" Content="Zapisz operacje" Command="{Binding SaveCommand}"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+    </Grid>
 </Window>

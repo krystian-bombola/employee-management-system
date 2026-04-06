@@ -16,6 +16,8 @@ public class PositionRepository
 
     public List<Position> GetAll() => _db.Positions.ToList();
 
+    public bool HasUsers(int positionId) => _db.Users.Any(u => u.PositionId == positionId);
+
     public void Add(Position position)
     {
         _db.Positions.Add(position);

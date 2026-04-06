@@ -302,38 +302,6 @@
             </StackPanel>
         </ScrollViewer>
 
-        <Border IsVisible="{Binding IsEndOperationConfirmationVisible}"
-                Background="#80000000"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-            <Border Width="420"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="20"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    BoxShadow="0 4 16 0 #33000000">
-                <StackPanel Spacing="16">
-                    <TextBlock Text="Potwierdzenie"
-                               FontSize="18"
-                               FontWeight="SemiBold"
-                               Foreground="#111"/>
-                    <TextBlock Text="Czy na pewno operacja została zrealizowana?"
-                               TextWrapping="Wrap"
-                               Foreground="#333"/>
-                    <StackPanel Orientation="Horizontal"
-                                Spacing="12"
-                                HorizontalAlignment="Center">
-                        <Button Classes="confirm-cancel"
-                                Content="Nie"
-                                Command="{Binding CancelEndOperationCommand}"/>
-                        <Button Classes="confirm-submit"
-                                Content="Tak, zakończ"
-                                Command="{Binding ConfirmEndOperationCommand}"/>
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-        </Border>
     </Grid>
 
 </UserControl>

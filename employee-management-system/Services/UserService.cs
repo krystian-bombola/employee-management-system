@@ -44,6 +44,28 @@ public class UserService
             _userRepository.Remove(user);
     }
 
+    public bool TryRemove(string firstName, string lastName, string identifier, out string errorMessage)
+    {
+        errorMessage = string.Empty;
+
+        var user = _userRepository.GetAll()
+            .Find(u => u.FirstName == firstName &&
+                       u.LastName == lastName &&
+                       u.Identifier == identifier);
+
+        if (user is null)
+            return true;
+
+        if (_userRepository.HasWorkLogs(user.Id))
+        {
+            errorMessage = "Nie można usunąć użytkownika, ponieważ ma zapisany czas pracy w historii.";
+            return false;
+        }
+
+        _userRepository.Remove(user);
+        return true;
+    }
+
     public void Update(int id, string firstName, string lastName, string identifier, string? newPassword, int? positionId)
     {
         var user = _userRepository.GetAll().Find(u => u.Id == id);
