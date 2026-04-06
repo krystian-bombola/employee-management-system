@@ -16,21 +16,20 @@
 
             <Grid Grid.Row="1" RowDefinitions="Auto,*" Height="460">
                 <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
-                    <Grid ColumnDefinitions="40,*,150,150,150">
-                        <TextBlock Grid.Column="1" Text="Nazwa zlecenia" FontWeight="Bold" Foreground="#333"/>
-                        <TextBlock Grid.Column="2" Text="Status" FontWeight="Bold" Foreground="#333"/>
-                        <TextBlock Grid.Column="3" Text="Czas pracy (h)" FontWeight="Bold" Foreground="#333"/>
+                    <Grid ColumnDefinitions="*,150,150,150">
+                        <TextBlock Grid.Column="0" Text="Nazwa zlecenia" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock Grid.Column="1" Text="Status" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock Grid.Column="2" Text="Czas pracy (h)" FontWeight="Bold" Foreground="#333"/>
                     </Grid>
                 </Border>
                 <ListBox Grid.Row="1" ItemsSource="{Binding FilteredJobs}">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:JobItemViewModel">
-                            <Grid ColumnDefinitions="40,*,150,150,150" Margin="12,10">
-                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="{Binding JobName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black" TextTrimming="CharacterEllipsis"/>
-                                <TextBlock Grid.Column="2" Text="{Binding Status}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Column="3" Text="{Binding TotalExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
-                                <Button Grid.Column="4" Content="Pokaż szczegóły" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0"
+                            <Grid ColumnDefinitions="*,150,150,150" Margin="12,10">
+                                <TextBlock Grid.Column="0" Text="{Binding JobName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black" TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Status}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Column="2" Text="{Binding TotalExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
+                                <Button Grid.Column="3" Content="Pokaż szczegóły" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0"
                                         Command="{Binding $parent[UserControl].((vm:AdminProductionTimeSectionViewModel)DataContext).ShowJobDetailsCommand}"
                                         CommandParameter="{Binding}"/>
                             </Grid>
@@ -50,7 +49,7 @@
                     <Grid ColumnDefinitions="40,*,120,40" Margin="0,4,0,0">
                         <TextBlock Grid.Column="0" Text="Nr" FontWeight="SemiBold" Foreground="#333" HorizontalAlignment="Center"/>
                         <TextBlock Grid.Column="1" Text="Operacja" FontWeight="SemiBold" Foreground="#333"/>
-                        <TextBlock Grid.Column="2" Text="Status" FontWeight="SemiBold" Foreground="#333"/>
+                        <TextBlock Grid.Column="1" Text="Status" FontWeight="SemiBold" Foreground="#333"/>
                         <TextBlock Grid.Column="3" Text="Czas" FontWeight="SemiBold" Foreground="#333"/>
                     </Grid>
 
@@ -68,7 +67,7 @@
                                                     <TextBlock Text="{Binding OperationName}" FontWeight="SemiBold" FontSize="13" Foreground="Black"/>
                                                     <TextBlock Text="{Binding Description}" FontSize="11" Foreground="Black" TextTrimming="CharacterEllipsis"/>
                                                 </StackPanel>
-                                                <TextBlock Grid.Column="2" Text="{Binding Status}" FontSize="12" Foreground="Black" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Status}" FontSize="12" Foreground="Black" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                                 <TextBlock Grid.Column="3" Text="{Binding ExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
                                             </Grid>
                                         </Border>

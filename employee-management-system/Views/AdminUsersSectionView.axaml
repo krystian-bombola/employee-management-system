@@ -21,12 +21,12 @@
             <Grid Grid.Row="1">
                 <Grid RowDefinitions="Auto,*" Height="550">
                     <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
-                        <Grid ColumnDefinitions="50,*,*,*,*,*,90,80">
-                            <TextBlock Grid.Column="1" Text="Imię" FontWeight="Bold" Foreground="#333"/>
-                            <TextBlock Grid.Column="2" Text="Nazwisko" FontWeight="Bold" Foreground="#333"/>
-                            <TextBlock Grid.Column="3" Text="ID" FontWeight="Bold" Foreground="#333"/>
-                            <TextBlock Grid.Column="4" Text="Data zatrudnienia" FontWeight="Bold" Foreground="#333"/>
-                            <TextBlock Grid.Column="5" Text="Stanowisko" FontWeight="Bold" Foreground="#333"/>
+                        <Grid ColumnDefinitions="*,*,*,*,*,90,80">
+                            <TextBlock Grid.Column="0" Text="Imię" FontWeight="Bold" Foreground="#333"/>
+                            <TextBlock Grid.Column="1" Text="Nazwisko" FontWeight="Bold" Foreground="#333"/>
+                            <TextBlock Grid.Column="2" Text="ID" FontWeight="Bold" Foreground="#333"/>
+                            <TextBlock Grid.Column="3" Text="Data zatrudnienia" FontWeight="Bold" Foreground="#333"/>
+                            <TextBlock Grid.Column="4" Text="Stanowisko" FontWeight="Bold" Foreground="#333"/>
                         </Grid>
                     </Border>
                     <ListBox Name="UsersListBox" Grid.Row="1" 
@@ -38,17 +38,16 @@
                         </ListBox.KeyBindings>
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="vm:UserItemViewModel">
-                                <Grid ColumnDefinitions="50,*,*,*,*,*,90,80" Margin="12,10">
-                                    <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding FirstName}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding LastName}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="3" Text="{Binding Identifier}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="4" Text="{Binding EmploymentDate}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="5" Text="{Binding PositionName}" VerticalAlignment="Center"/>
-                                    <Button Grid.Column="6" Content="Edytuj" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0" HorizontalAlignment="Stretch"
+                                <Grid ColumnDefinitions="*,*,*,*,*,90,80" Margin="12,10">
+                                    <TextBlock Grid.Column="0" Text="{Binding FirstName}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding LastName}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Identifier}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding EmploymentDate}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding PositionName}" VerticalAlignment="Center"/>
+                                    <Button Grid.Column="5" Content="Edytuj" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0" HorizontalAlignment="Stretch"
                                             Command="{Binding $parent[UserControl].((vm:AdminUsersSectionViewModel)DataContext).EditUserCommand}"
                                             CommandParameter="{Binding}"/>
-                                    <Button Grid.Column="7" Content="Usuń" Classes="logout-button" Padding="10,5" FontSize="12" HorizontalAlignment="Stretch"
+                                    <Button Grid.Column="6" Content="Usuń" Classes="logout-button" Padding="10,5" FontSize="12" HorizontalAlignment="Stretch"
                                             Command="{Binding $parent[UserControl].((vm:AdminUsersSectionViewModel)DataContext).RemoveUserCommand}"
                                             CommandParameter="{Binding}"/>
                                 </Grid>

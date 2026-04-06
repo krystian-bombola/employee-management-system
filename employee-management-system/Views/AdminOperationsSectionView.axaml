@@ -8,40 +8,66 @@
              x:DataType="vm:AdminOperationsSectionViewModel">
 
     <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12">
-        <Grid ColumnDefinitions="*,Auto" Grid.Row="0">
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
-                <TextBlock Text="Operacje" Classes="header" Margin="0" VerticalAlignment="Center"/>
-                <Button Classes="admin-button" Content="+ Dodaj operację" Command="{Binding AddOperationCommand}"/>
-            </StackPanel>
-            <TextBox Grid.Column="1" Watermark="Szukaj po nazwie lub opisie..." Text="{Binding SearchQuery}" Width="300" Margin="0,0,0,10"/>
-        </Grid>
+        <Grid RowDefinitions="Auto,*,Auto" RowSpacing="12" Grid.RowSpan="3">
+            <Grid ColumnDefinitions="*,Auto" Grid.Row="0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                    <TextBlock Text="Operacje" Classes="header" Margin="0" VerticalAlignment="Center"/>
+                    <Button Classes="admin-button" Content="+ Dodaj operację" Command="{Binding AddOperationCommand}"/>
+                </StackPanel>
+                <TextBox Grid.Column="1" Watermark="Szukaj po nazwie lub opisie..." Text="{Binding SearchQuery}" Width="300" Margin="0,0,0,10"/>
+            </Grid>
 
-        <Grid Grid.Row="1">
-            <Grid RowDefinitions="Auto,*" Height="550">
-                <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
-                    <Grid ColumnDefinitions="50,220,*,90,80">
-                        <TextBlock Grid.Column="1" Text="Nazwa operacji" FontWeight="Bold" Foreground="#333"/>
-                        <TextBlock Grid.Column="2" Text="Opis" FontWeight="Bold" Foreground="#333"/>
-                    </Grid>
-                </Border>
-                <ListBox Grid.Row="1" ItemsSource="{Binding FilteredOperations}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:OperationItemViewModel">
-                            <Grid ColumnDefinitions="50,220,*,90,80" Margin="12,10">
-                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="{Binding OperationName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black"/>
-                                <TextBlock Grid.Column="2" Text="{Binding Description}" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="Black" FontSize="13"/>
-                                <Button Grid.Column="3" Content="Edytuj" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0" HorizontalAlignment="Stretch"
-                                        Command="{Binding $parent[UserControl].((vm:AdminOperationsSectionViewModel)DataContext).EditOperationCommand}"
-                                        CommandParameter="{Binding}"/>
-                                <Button Grid.Column="4" Content="Usuń" Classes="logout-button" Padding="10,5" FontSize="12" HorizontalAlignment="Stretch"
-                                        Command="{Binding $parent[UserControl].((vm:AdminOperationsSectionViewModel)DataContext).RemoveOperationCommand}"
-                                        CommandParameter="{Binding}"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+            <Grid Grid.Row="1">
+                <Grid RowDefinitions="Auto,*" Height="550">
+                    <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
+                        <Grid ColumnDefinitions="220,*,90,80">
+                            <TextBlock Grid.Column="0" Text="Nazwa operacji" FontWeight="Bold" Foreground="#333"/>
+                            <TextBlock Grid.Column="1" Text="Opis" FontWeight="Bold" Foreground="#333"/>
+                        </Grid>
+                    </Border>
+                    <ListBox Name="OperationsListBox" Grid.Row="1" ItemsSource="{Binding FilteredOperations}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:OperationItemViewModel">
+                                <Grid ColumnDefinitions="220,*,90,80" Margin="12,10">
+                                    <TextBlock Grid.Column="0" Text="{Binding OperationName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Description}" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="Black" FontSize="13"/>
+                                    <Button Grid.Column="2" Content="Edytuj" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0" HorizontalAlignment="Stretch"
+                                            Command="{Binding $parent[UserControl].((vm:AdminOperationsSectionViewModel)DataContext).EditOperationCommand}"
+                                            CommandParameter="{Binding}"/>
+                                    <Button Grid.Column="3" Content="Usuń" Classes="logout-button" Padding="10,5" FontSize="12" HorizontalAlignment="Stretch"
+                                            Command="{Binding $parent[UserControl].((vm:AdminOperationsSectionViewModel)DataContext).RemoveOperationCommand}"
+                                            CommandParameter="{Binding}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
             </Grid>
         </Grid>
+
+        <Border Grid.RowSpan="3"
+                Background="#80000000"
+                IsVisible="{Binding IsDeleteConfirmationVisible}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+            <Border HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="24"
+                    Width="400"
+                    BoxShadow="0 4 16 0 #33000000">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Potwierdzenie" FontSize="18" FontWeight="SemiBold" Foreground="#1A1A1A"/>
+                    <TextBlock Text="{Binding DeleteConfirmationMessage}" TextWrapping="Wrap" Foreground="#333"/>
+                    <Grid ColumnDefinitions="*,12,*">
+                        <Button Name="CancelDeleteButton" Grid.Column="0" Classes="logout-button" Content="Nie" Padding="12,10"
+                                Command="{Binding CancelDeleteCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                        <Button Name="ConfirmDeleteButton" Grid.Column="2" Classes="admin-button" Content="Tak, usuń" Padding="12,10"
+                                Command="{Binding ConfirmDeleteCommand}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Border>
     </Grid>
 </UserControl>
