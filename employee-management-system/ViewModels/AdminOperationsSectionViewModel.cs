@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
 using employee_management_system.Repositories;
@@ -12,9 +14,6 @@ public partial class AdminOperationsSectionViewModel : ViewModelBase
 {
     private string _searchQuery = string.Empty;
     public string SearchQuery { get => _searchQuery; set { if (SetProperty(ref _searchQuery, value)) ApplyFilter(); } }
-
-    [ObservableProperty] private string? _newOperationName;
-    [ObservableProperty] private string? _newOperationDescription;
 
     public ObservableCollection<OperationItemViewModel> Operations { get; } = new();
     public ObservableCollection<OperationItemViewModel> FilteredOperations { get; } = new();
@@ -45,17 +44,17 @@ public partial class AdminOperationsSectionViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void AddOperation()
+    private async Task AddOperation()
     {
-        if (string.IsNullOrWhiteSpace(NewOperationName))
-            return;
+        var vm = new AddOperationViewModel();
+        var window = new Views.AddOperationWindow(vm);
 
-        using var db = new DatabaseContext();
-        var operationService = new OperationService(new OperationRepository(db));
-        operationService.Add(NewOperationName, NewOperationDescription ?? string.Empty);
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            await window.ShowDialog(desktop.MainWindow);
+        }
 
-        NewOperationName = string.Empty;
-        NewOperationDescription = string.Empty;
         Refresh();
     }
 

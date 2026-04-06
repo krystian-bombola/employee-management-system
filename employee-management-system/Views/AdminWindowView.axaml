@@ -141,11 +141,11 @@
 
         <Border Grid.Row="1" Classes="card" Padding="20">
             <Grid>
-                <views:AdminUsersSectionView DataContext="{Binding UsersViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsUsersVisible}"/>
-                <views:AdminOperationsSectionView DataContext="{Binding OperationsViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsOperationsVisible}"/>
-                <views:AdminJobsSectionView DataContext="{Binding JobsViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsJobsVisible}"/>
-                <views:AdminPositionsSectionView DataContext="{Binding PositionsViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsPositionsVisible}"/>
-                <views:AdminProductionTimeSectionView DataContext="{Binding ProductionTimeViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsProductionTimeVisible}"/>
+                <views:AdminUsersSectionView DataContext="{Binding UsersViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsUsersVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+                <views:AdminOperationsSectionView DataContext="{Binding OperationsViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsOperationsVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+                <views:AdminJobsSectionView DataContext="{Binding JobsViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsJobsVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+                <views:AdminPositionsSectionView DataContext="{Binding PositionsViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsPositionsVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
+                <views:AdminProductionTimeSectionView DataContext="{Binding ProductionTimeViewModel}" IsVisible="{Binding $parent[UserControl].((vm:AdminWindowViewModel)DataContext).IsProductionTimeVisible}" HorizontalAlignment="Stretch" VerticalAlignment="Top"/>
             </Grid>
         </Border>
 
