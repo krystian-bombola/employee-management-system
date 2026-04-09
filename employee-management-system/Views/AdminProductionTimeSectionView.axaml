@@ -16,20 +16,22 @@
 
             <Grid Grid.Row="1" RowDefinitions="Auto,*" Height="460">
                 <Border Grid.Row="0" Background="#F0F4F8" CornerRadius="6" Padding="12,10" Margin="0,0,0,6">
-                    <Grid ColumnDefinitions="*,150,150,150">
+                    <Grid ColumnDefinitions="*,100,120,100,150">
                         <TextBlock Grid.Column="0" Text="Nazwa zlecenia" FontWeight="Bold" Foreground="#333"/>
                         <TextBlock Grid.Column="1" Text="Status" FontWeight="Bold" Foreground="#333"/>
-                        <TextBlock Grid.Column="2" Text="Czas pracy (h)" FontWeight="Bold" Foreground="#333"/>
+                        <TextBlock Grid.Column="2" Text="Koszt" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="3" Text="Czas (h)" FontWeight="Bold" Foreground="#333" HorizontalAlignment="Right"/>
                     </Grid>
                 </Border>
                 <ListBox Grid.Row="1" ItemsSource="{Binding FilteredJobs}">
                     <ListBox.ItemTemplate>
                         <DataTemplate x:DataType="vm:JobItemViewModel">
-                            <Grid ColumnDefinitions="*,150,150,150" Margin="12,10">
+                            <Grid ColumnDefinitions="*,100,120,100,150" Margin="12,10">
                                 <TextBlock Grid.Column="0" Text="{Binding JobName}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="14" Foreground="Black" TextTrimming="CharacterEllipsis"/>
                                 <TextBlock Grid.Column="1" Text="{Binding Status}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Column="2" Text="{Binding TotalExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold"/>
-                                <Button Grid.Column="3" Content="Pokaż szczegóły" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0"
+                                <TextBlock Grid.Column="2" Text="{Binding ComputedCostFormatted}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                <TextBlock Grid.Column="3" Text="{Binding TotalExecutionTimeHours, StringFormat=\{0:F2\}}" VerticalAlignment="Center" FontSize="13" Foreground="Black" FontWeight="SemiBold" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                <Button Grid.Column="4" Content="Pokaż szczegóły" Classes="admin-button" Padding="10,5" FontSize="12" Margin="6,0,6,0"
                                         Command="{Binding $parent[UserControl].((vm:AdminProductionTimeSectionViewModel)DataContext).ShowJobDetailsCommand}"
                                         CommandParameter="{Binding}"/>
                             </Grid>

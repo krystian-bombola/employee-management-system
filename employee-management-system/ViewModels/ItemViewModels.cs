@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Models;
+using employee_management_system.Data;
 
 namespace employee_management_system.ViewModels;
 
@@ -110,6 +112,9 @@ public partial class JobItemViewModel : ObservableObject
     public DateTime CreatedAt { get; }
     public double TotalExecutionTimeHours { get; }
 
+    public double ComputedCost { get; }
+    public string ComputedCostFormatted => Math.Round(ComputedCost, 2) <= 0 ? "—" : $"{ComputedCost:F2} zł";
+
     public JobItemViewModel(Job job)
     {
         Id = job.Id;
@@ -118,5 +123,57 @@ public partial class JobItemViewModel : ObservableObject
         Status = job.Status;
         CreatedAt = job.CreatedAt;
         TotalExecutionTimeHours = job.JobTasks?.Sum(jt => jt.ExecutionTime.TotalHours) ?? 0;
+
+        try
+        {
+            using var db = new DatabaseContext();
+
+            double defaultHourlyRate = 40.0;
+            if (db.Positions.Any())
+            {
+                defaultHourlyRate = (double)db.Positions.Average(p => p.HourlyRate);
+            }
+
+            double labor = 0.0;
+            double totalHours = 0.0;
+
+            var tasks = db.JobTasks.Where(jt => jt.JobId == job.Id).ToList();
+            foreach (var t in tasks)
+            {
+                var wls = db.WorkLogs.Where(w => w.JobTaskId == t.Id)
+                    .Include(w => w.User)
+                    .ThenInclude(u => u.Position)
+                    .ToList();
+
+                if (wls.Any())
+                {
+                    foreach (var wl in wls)
+                    {
+                        var duration = (wl.WorkEnd - wl.WorkStart).TotalHours;
+                        if (duration <= 0) continue;
+                        double rate = defaultHourlyRate;
+                        if (wl.User?.Position != null) rate = (double)wl.User.Position.HourlyRate;
+                        labor += duration * rate;
+                        totalHours += duration;
+                    }
+                }
+                else
+                {
+                    var execHours = t.ExecutionTime.TotalHours;
+                    if (execHours > 0)
+                    {
+                        labor += execHours * defaultHourlyRate;
+                        totalHours += execHours;
+                    }
+                }
+            }
+
+            double additionalPerHour = 220.0; 
+            ComputedCost = labor + (totalHours * additionalPerHour);
+        }
+        catch
+        {
+            ComputedCost = 0.0;
+        }
     }
 }

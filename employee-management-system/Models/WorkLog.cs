@@ -12,6 +12,6 @@ public class WorkLog
     public int JobTaskId { get; set; }
     public JobTask JobTask { get; set; } = null!;
 
-    public TimeSpan WorkStart { get; set; }
-    public TimeSpan WorkEnd { get; set; }
+    public DateTime WorkStart { get; set; }
+    public DateTime WorkEnd { get; set; }
 }

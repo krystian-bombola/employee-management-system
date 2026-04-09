@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using employee_management_system.Data;
+using employee_management_system.Models;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -162,6 +163,25 @@ public partial class UserPanelViewModel : ViewModelBase
             {
                 db.SaveChanges();
             }
+
+            // Create a WorkLog entry for this user and jobTask with WorkStart = now
+            var opForLog = db.Operations.FirstOrDefault(o => o.OperationName == operationName);
+            if (opForLog is not null && jobId is not null)
+            {
+                var jobTask = db.JobTasks.FirstOrDefault(jt => jt.JobId == jobId.Value && jt.OperationId == opForLog.Id);
+                if (jobTask is not null)
+                {
+                    var wl = new Models.WorkLog
+                    {
+                        UserId = _userId,
+                        JobTaskId = jobTask.Id,
+                        WorkStart = DateTime.Now,
+                        WorkEnd = DateTime.Now // temporary, will be updated on stop
+                    };
+                    db.WorkLogs.Add(wl);
+                    db.SaveChanges();
+                }
+            }
         }
 
         _runningOperationName = operationName;
@@ -176,6 +196,31 @@ public partial class UserPanelViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanStopOperation))]
     private void StopOperation()
     {
+        if (!string.IsNullOrEmpty(_runningOperationName) && _runningJobId is not null)
+        {
+            using var db = new DatabaseContext();
+            var op = db.Operations.FirstOrDefault(o => o.OperationName == _runningOperationName);
+            if (op is not null)
+            {
+                var jobTask = db.JobTasks.FirstOrDefault(jt => jt.JobId == _runningJobId.Value && jt.OperationId == op.Id);
+                if (jobTask is not null)
+                {
+                    var wl = db.WorkLogs.Where(w => w.UserId == _userId && w.JobTaskId == jobTask.Id)
+                                .OrderByDescending(w => w.WorkStart)
+                                .FirstOrDefault();
+                    if (wl is not null)
+                    {
+                        wl.WorkEnd = DateTime.Now;
+                        var total = db.WorkLogs.Where(w => w.JobTaskId == jobTask.Id)
+                                    .ToList()
+                                    .Sum(w => (w.WorkEnd - w.WorkStart).TotalMilliseconds);
+                        jobTask.ExecutionTime = TimeSpan.FromMilliseconds(total);
+                        db.SaveChanges();
+                    }
+                }
+            }
+        }
+
         StopRunningOperation();
         CurrentOperation = "Brak pracy";
     }
@@ -226,6 +271,12 @@ public partial class UserPanelViewModel : ViewModelBase
                 if (jobTask is not null)
                 {
                     jobTask.Status = "Zako\u0144czone";
+                    db.SaveChanges();
+
+                    var totalMs = db.WorkLogs.Where(w => w.JobTaskId == jobTask.Id)
+                                    .ToList()
+                                    .Sum(w => (w.WorkEnd - w.WorkStart).TotalMilliseconds);
+                    jobTask.ExecutionTime = TimeSpan.FromMilliseconds(totalMs);
                     db.SaveChanges();
                 }
 
