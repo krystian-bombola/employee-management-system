@@ -79,7 +79,7 @@ public partial class ChangePasswordViewModel : ObservableObject
         }
 
         var service = new UserService(repo);
-        service.Update(_userId, user.FirstName, user.LastName, user.Identifier, NewPassword, user.PositionId);
+        service.Update(_userId, user.FirstName, user.LastName, user.Identifier, NewPassword, user.PositionId, user.IsAdmin);
 
         CloseAction?.Invoke();
     }

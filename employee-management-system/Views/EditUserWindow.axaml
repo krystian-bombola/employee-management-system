@@ -66,6 +66,13 @@
                         </ComboBox>
                     </StackPanel>
 
+                    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                        <CheckBox Classes="admin-checkbox" IsChecked="{Binding IsAdmin}" VerticalAlignment="Center"/>
+                        <TextBlock Text="Nadaj uprawnienia administratora"
+                                   VerticalAlignment="Center"
+                                   Foreground="#333"/>
+                    </StackPanel>
+
                 </StackPanel>
             </Border>
 
