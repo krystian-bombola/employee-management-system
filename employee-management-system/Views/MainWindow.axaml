@@ -10,10 +10,10 @@
         Title="System zarządzania produkcją"
         Background="#eee"
         Foreground="#111"
-        Width="960"
-        Height="640"
-        MinWidth="1280"
-        MinHeight="840"
+        Width="1040"
+        Height="780"
+        MinWidth="1040"
+        MinHeight="780"
         CanResize="True">
 
     <Design.DataContext>
