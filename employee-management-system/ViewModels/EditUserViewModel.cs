@@ -18,6 +18,7 @@ public partial class EditUserViewModel : ObservableObject
     [ObservableProperty] private string _windowTitle = string.Empty;
     [ObservableProperty] private string _saveButtonText = string.Empty;
     [ObservableProperty] private string _passwordLabel = string.Empty;
+    [ObservableProperty] private bool _isAdmin;
 
     public ObservableCollection<PositionItemViewModel> Positions { get; } = new();
 
@@ -66,6 +67,7 @@ public partial class EditUserViewModel : ObservableObject
         FirstName = user.FirstName;
         LastName = user.LastName;
         Identifier = user.Identifier;
+        IsAdmin = user.IsAdmin;
 
         foreach (var p in positions)
             Positions.Add(p);
@@ -87,11 +89,11 @@ public partial class EditUserViewModel : ObservableObject
 
         if (IsEditMode)
         {
-            userService.Update(_userId, FirstName, LastName, Identifier, NewPassword, SelectedPosition?.Id);
+            userService.Update(_userId, FirstName, LastName, Identifier, NewPassword, SelectedPosition?.Id, IsAdmin);
         }
         else
         {
-            userService.Add(FirstName, LastName, Identifier, NewPassword, SelectedPosition?.Id);
+            userService.Add(FirstName, LastName, Identifier, NewPassword, SelectedPosition?.Id, IsAdmin);
         }
 
         CloseAction?.Invoke();

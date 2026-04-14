@@ -15,7 +15,7 @@ public class UserService
 
     public List<User> GetAll() => _userRepository.GetAll();
 
-    public void Add(string firstName, string lastName, string identifier, string password, int? positionId)
+    public void Add(string firstName, string lastName, string identifier, string password, int? positionId, bool isAdmin)
     {
         var salt = PasswordService.GenerateSalt();
         var hash = PasswordService.HashPassword(password, salt);
@@ -27,6 +27,7 @@ public class UserService
             Identifier = identifier,
             PasswordHash = hash,
             PasswordSalt = salt,
+            IsAdmin = isAdmin,
             PositionId = positionId,
             EmploymentDate = System.DateTime.Now.ToString("yyyy-MM-dd")
         };
@@ -66,7 +67,7 @@ public class UserService
         return true;
     }
 
-    public void Update(int id, string firstName, string lastName, string identifier, string? newPassword, int? positionId)
+    public void Update(int id, string firstName, string lastName, string identifier, string? newPassword, int? positionId, bool isAdmin)
     {
         var user = _userRepository.GetAll().Find(u => u.Id == id);
         if (user is null) return;
@@ -75,6 +76,7 @@ public class UserService
         user.LastName = lastName;
         user.Identifier = identifier;
         user.PositionId = positionId;
+        user.IsAdmin = isAdmin;
 
         if (!string.IsNullOrWhiteSpace(newPassword))
         {

@@ -17,6 +17,7 @@ public partial class UserItemViewModel : ObservableObject
     public string Identifier { get; }
     public string EmploymentDate { get; }
     public string PositionName { get; }
+    public bool IsAdmin { get; }
 
     public UserItemViewModel(User user)
     {
@@ -26,6 +27,7 @@ public partial class UserItemViewModel : ObservableObject
         Identifier = user.Identifier;
         EmploymentDate = user.EmploymentDate;
         PositionName = user.Position?.PositionName ?? "—";
+        IsAdmin = user.IsAdmin;
     }
 }
 
