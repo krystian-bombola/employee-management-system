@@ -13,5 +13,5 @@ public class WorkLog
     public JobTask JobTask { get; set; } = null!;
 
     public DateTime WorkStart { get; set; }
-    public DateTime WorkEnd { get; set; }
+    public DateTime? WorkEnd { get; set; }
 }

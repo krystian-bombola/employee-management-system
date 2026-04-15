@@ -49,6 +49,7 @@ public partial class UserPanelViewModel : ViewModelBase
         _employeeName = employeeName;
 
         LoadJobsFromDb();
+        RestoreRunningOperationFromDb();
     }
 
     [RelayCommand]
@@ -176,7 +177,7 @@ public partial class UserPanelViewModel : ViewModelBase
                         UserId = _userId,
                         JobTaskId = jobTask.Id,
                         WorkStart = DateTime.Now,
-                        WorkEnd = DateTime.Now // temporary, will be updated on stop
+                        WorkEnd = null
                     };
                     db.WorkLogs.Add(wl);
                     db.SaveChanges();
@@ -205,15 +206,17 @@ public partial class UserPanelViewModel : ViewModelBase
                 var jobTask = db.JobTasks.FirstOrDefault(jt => jt.JobId == _runningJobId.Value && jt.OperationId == op.Id);
                 if (jobTask is not null)
                 {
-                    var wl = db.WorkLogs.Where(w => w.UserId == _userId && w.JobTaskId == jobTask.Id)
-                                .OrderByDescending(w => w.WorkStart)
-                                .FirstOrDefault();
+                    var wl = db.WorkLogs
+                        .Where(w => w.UserId == _userId && w.JobTaskId == jobTask.Id && w.WorkEnd == null)
+                        .OrderByDescending(w => w.WorkStart)
+                        .FirstOrDefault();
                     if (wl is not null)
                     {
                         wl.WorkEnd = DateTime.Now;
-                        var total = db.WorkLogs.Where(w => w.JobTaskId == jobTask.Id)
-                                    .ToList()
-                                    .Sum(w => (w.WorkEnd - w.WorkStart).TotalMilliseconds);
+                        var total = db.WorkLogs
+                            .Where(w => w.JobTaskId == jobTask.Id && w.WorkEnd != null)
+                            .ToList()
+                            .Sum(w => (w.WorkEnd!.Value - w.WorkStart).TotalMilliseconds);
                         jobTask.ExecutionTime = TimeSpan.FromMilliseconds(total);
                         db.SaveChanges();
                     }
@@ -275,7 +278,8 @@ public partial class UserPanelViewModel : ViewModelBase
 
                     var totalMs = db.WorkLogs.Where(w => w.JobTaskId == jobTask.Id)
                                     .ToList()
-                                    .Sum(w => (w.WorkEnd - w.WorkStart).TotalMilliseconds);
+                                    .Where(w => w.WorkEnd != null)
+                                    .Sum(w => (w.WorkEnd!.Value - w.WorkStart).TotalMilliseconds);
                     jobTask.ExecutionTime = TimeSpan.FromMilliseconds(totalMs);
                     db.SaveChanges();
                 }
@@ -330,6 +334,38 @@ public partial class UserPanelViewModel : ViewModelBase
         SelectedOperation = string.IsNullOrWhiteSpace(operationNameToSelect)
             ? null
             : AvailableOperations.FirstOrDefault(op => GetOperationName(op) == operationNameToSelect);
+    }
+
+    private void RestoreRunningOperationFromDb()
+    {
+        using var db = new DatabaseContext();
+
+        var active = db.WorkLogs
+            .Include(wl => wl.JobTask)
+                .ThenInclude(jt => jt.Job)
+            .Include(wl => wl.JobTask)
+                .ThenInclude(jt => jt.Operation)
+            .Where(wl => wl.UserId == _userId && wl.WorkEnd == null)
+            .OrderByDescending(wl => wl.WorkStart)
+            .FirstOrDefault();
+
+        if (active?.JobTask is null)
+            return;
+
+        _runningJobId = active.JobTask.JobId;
+        _runningOperationName = active.JobTask.Operation?.OperationName;
+        if (string.IsNullOrWhiteSpace(_runningOperationName))
+            return;
+
+        // Select the job so operations list can be refreshed/selected.
+        SelectedJob = AvailableJobs.FirstOrDefault(j => j.StartsWith($"{_runningJobId} -", StringComparison.Ordinal));
+
+        CurrentOperation = $"{active.JobTask.Job?.JobName ?? _runningJobId.ToString()} - {_runningOperationName}";
+        IsOperationRunning = true;
+        ReloadOperationsForCurrentJob(_runningOperationName);
+        StartOperationCommand.NotifyCanExecuteChanged();
+        StopOperationCommand.NotifyCanExecuteChanged();
+        RequestEndOperationCommand.NotifyCanExecuteChanged();
     }
 
     private static string GetJobName(string selectedJob)

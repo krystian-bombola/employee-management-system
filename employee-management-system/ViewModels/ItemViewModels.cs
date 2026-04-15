@@ -151,7 +151,8 @@ public partial class JobItemViewModel : ObservableObject
                 {
                     foreach (var wl in wls)
                     {
-                        var duration = (wl.WorkEnd - wl.WorkStart).TotalHours;
+                        if (wl.WorkEnd is null) continue;
+                        var duration = (wl.WorkEnd.Value - wl.WorkStart).TotalHours;
                         if (duration <= 0) continue;
                         double rate = defaultHourlyRate;
                         if (wl.User?.Position != null) rate = (double)wl.User.Position.HourlyRate;
